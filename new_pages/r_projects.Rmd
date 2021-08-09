@@ -1,6 +1,7 @@
 
 # R projects {}  
 
+R项目可以将您的工作打包到一个可移植的、自包含的文件夹中。在项目中，所有相关的脚本、数据文件、图形/输出和历史都存储在子文件夹中，重要的是，*工作目录*是项目的根文件夹。
 
 An R project enables your work to be bundled in a portable, self-contained folder. Within the project, all the relevant scripts, data files, figures/outputs, and history are stored in sub-folders and importantly - the *working directory* is the project's root folder.  
 
