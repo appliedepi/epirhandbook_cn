@@ -8,7 +8,16 @@ An R project enables your work to be bundled in a portable, self-contained folde
 
 ## Suggested use  
 
+使用R的一种常见、有效且无故障的方法是将这三个元素组合起来。一个离散的工作项目托管在一个R项目中。每个元素在下面的章节中进行描述。
+
 A common, efficient, and trouble-free way to use R is to combine these 3 elements. One discrete work project is hosted within one R project. Each element is described in the sections below.  
+
+1) 一个**R项目**
+-一个独立的工作环境，包含数据、脚本、输出等文件夹。
+2) **here**包的相对文件路径
+-文件路径是相对于R项目的根文件夹写入的-更多信息请参见[Import and export]
+3)进口/出口的**里约热内卢**包装
+- `import()`和`export()`通过扩展名处理任何文件类型(例如.csv， .xlsx， .png)
 
 1) An **R project**  
      - A self-contained working environment with folders for data, scripts, outputs, etc.  
@@ -23,6 +32,13 @@ A common, efficient, and trouble-free way to use R is to combine these 3 element
 <!-- ======================================================= -->
 ## Creating an R project {}
 
+要创建一个R项目，从“文件”菜单中选择“新建项目”。
+*如果你想为项目创建一个新文件夹，选择“新目录”并指明创建的位置。
+*如果您想在现有文件夹中创建项目，请单击“现有目录”并指明该文件夹。
+*如果你想克隆一个Github库，选择第三个选项“版本控制”，然后选择“Git”。详情请参阅[版本控制和与Git和Github的协作]页面。
+
+这里的超链接需要注意修改哦~~
+
 To create an R project, select "New Project" from the File menu.
 
 * If you want to create a new folder for the project, select "New directory" and indicate where you want it to be created.  
@@ -34,6 +50,9 @@ To create an R project, select "New Project" from the File menu.
 knitr::include_graphics(here::here("images", "create_project.png"))
 ```
 
+您创建的R项目将以包含*.Rproj *文件。该文件是一种快捷方式，很可能是您打开项目的主要方式。您也可以通过选择“文件”菜单中的“打开项目”来打开项目。或者，在RStudio的右上方，你会看到一个R项目图标和一个可用R项目的下拉菜单。
+
+要退出R项目，可以打开一个新项目，或者关闭项目(File - close project)。
 
 The R project you create will come in the form of a folder containing a *.Rproj* file. This file is a shortcut and likely the primary way you will open your project. You can also open a project by selecting "Open Project" from the File menu. Alternatively on the far upper right side of RStudio you will see an R project icon and a drop-down menu of available R projects. 
 
@@ -42,7 +61,10 @@ To exit from an R project, either open a new project, or close the project (File
 
 ### Switch projects {.unnumbered}
 
-To switch between projects, click the R project icon and drop-down menu at the very top-right of RStudio. You will see options to Close Project, Open Project, and a list of recent projects.  
+To switch between projects, click the R project icon and drop-down menu at the very top-right of RStudio. You will see options to Close Project, Open Project, and a list of recent projects. 
+
+要在项目之间切换，请单击RStudio右上角的R项目图标和下拉菜单。您将看到关闭项目、打开项目的选项，以及最近项目的列表。
+
 
 ```{r out.width = "100%", fig.align = "center", echo=F}
 knitr::include_graphics(here::here("images", "Rproject_dropdown.png"))
@@ -53,27 +75,40 @@ knitr::include_graphics(here::here("images", "Rproject_dropdown.png"))
 
 It is generally advised that you start RStudio each time with a "clean slate" - that is, with your workspace **not** preserved from your previous session. This will mean that your objects and results will not persist session-to-session (you must re-create them by running your scripts). This is good, because it will force you to write better scripts and avoid errors in the long run.  
 
-To set RStudio to have a "clean slate" each time at start-up:  
+通常建议你每次启动RStudio时都带着“clean slate”——也就是说，把你的工作空间**而不是**保存在你的前一个会话中。这将意味着您的对象和结果将不会保持会话到会话(您必须通过运行脚本重新创建它们)。这很好，因为它将迫使您编写更好的脚本，并在长期运行中避免错误。
+
+To set RStudio to have a "clean slate" each time at start-up:
+
+要将RStudio设置为每次启动时都“clean slate”:
 
 * Select "Project Options" from the Tools menu.  
 * In the "General" tab, set RStudio to **not** restore .RData into workspace at startup, and to **not** save workspace to .RData on exit.  
 
+*从工具菜单中选择“项目选项”。
+*在“General”选项卡中，设置RStudio为**而不是**在启动时将. rdata恢复到工作区中，并在退出时将rdata保存到。rdata中。
 
 
 ### Organization {.unnumbered}  
 
-It is common to have subfolders in your project. Consider having folders such as "data", "scripts", "figures", "presentations". You can add folders in the typical way you would add a new folder for your computer. Alternatively, see the page on [Directory interactions] to learn how to create new folders with R commands.  
+It is common to have subfolders in your project. Consider having folders such as "data", "scripts", "figures", "presentations". You can add folders in the typical way you would add a new folder for your computer. Alternatively, see the page on [Directory interactions] to learn how to create new folders with R commands.
 
+在项目中有子文件夹是很常见的。可以考虑使用“data”、“scripts”、“figures”、“presentations”等文件夹。您可以以为您的计算机添加新文件夹的典型方式添加文件夹。或者，请参阅[目录交互]页面了解如何使用R命令创建新文件夹。
+
+这里记住要改【目录交互】的超链接哦~~~
 
 ### Version control {.unnumbered}  
 
 Consider a version control system. It could be something as simple as having dates on the names of scripts (e.g. "transmission_analysis_2020-10-03.R") and an "archive" folder. Consider also having commented header text at the top of each script with a description, tags, authors, and change log.  
 
-A more complicated method would involve using Github or a similar platform for version control. See the page on [Version control and collaboration with Git and Github].  
+考虑一个版本控制系统。它可以是一些简单的事情，比如在脚本的名字上加上日期(例如:“transmission_analysis_2020-10-03.R”)和一个“存档”文件夹。还可以考虑在每个脚本的顶部添加注释头文本，包括描述、标签、作者和更改日志。
+
+A more complicated method would involve using Github or a similar platform for version control. See the page on [Version control and collaboration with Git and Github]. 
+
+更复杂的方法是使用Github或类似平台进行版本控制。参见[与Git和Github的版本控制和协作]页面。
 
 One tip is that you can search across an entire project or folder using the "Find in Files" tool (Edit menu). It can search and even replace strings across multiple files.  
 
-
+一个技巧是，你可以使用“在文件中查找”工具(编辑菜单)搜索整个项目或文件夹。它可以在多个文件中搜索甚至替换字符串。
 
 
 
@@ -82,8 +117,11 @@ One tip is that you can search across an entire project or folder using the "Fin
 
 Below are some examples of import/export/saving using `here()` from within an R projct. Read more about using the **here** package in the [Import and export] page.  
 
+下面是在R项目中使用' here() '导入/导出/保存的一些例子。在[Import and export]页面阅读更多关于使用**here**包的信息。
 
-*Importing `linelist_raw.xlsx` from the "data" folder in your R project*  
+
+*Importing `linelist_raw.xlsx` from the "data" folder in your R project* 
+*从R项目的data文件夹中导入linelist_raw.xlsx*
 
 ```{r eval=F}
 linelist <- import(here("data", "linelist_raw.xlsx"))
@@ -91,11 +129,15 @@ linelist <- import(here("data", "linelist_raw.xlsx"))
 
 *Exporting the R object `linelist` as "my_linelist.rds" to the "clean" folder within the "data" folder in your R project.*   
 
+*将R对象' linelist '导出为"my_linelist. "在R项目的“data”文件夹中的“clean”文件夹。*
+
 ```{r, eval=F}
 export(linelist, here("data","clean", "my_linelist.rds"))
 ```
 
 *Saving the most recently printed plot as "epicurve_2021-02-15.png" within the "epicurves" folder in "outputs" folder in your R project.*  
+
+*将最近打印的图形保存为“epicurve_201202-15 .png”，保存在R项目的“outputs”文件夹中的“epicurves”文件夹中。*
 
 ```{r, eval=F}
 ggsave(here("outputs", "epicurves", "epicurve_2021-02-15.png"))
@@ -109,6 +151,6 @@ ggsave(here("outputs", "epicurves", "epicurve_2021-02-15.png"))
 
 RStudio webpage on [using R projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)
 
-
+RStudio网页[使用R项目](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)
 
 
