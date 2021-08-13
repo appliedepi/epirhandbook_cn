@@ -236,10 +236,13 @@ my_data <- import(file.choose())
 
 ## Import data  
 
-To use `import()` to import a dataset is quite simple. Simply provide the path to the file (including the file name and file extension) in quotes. If using `here()` to build the file path, follow the instructions above. Below are a few examples:  
+To use `import()` to import a dataset is quite simple. Simply provide the path to the file (including the file name and file extension) in quotes. If using `here()` to build the file path, follow the instructions above. Below are a few examples: 
+
+使用`import() `导入数据集非常简单。只需在引号中提供文件的路径(包括文件名和文件扩展名)。如果使用`here()` 来构建文件路径，请遵循上面的说明。以下是一些例子:
 
 Importing a csv file that is located in your "working directory" or in the R project root folder:  
 
+导入位于“工作目录”或R项目根文件夹中的csv文件:
 ```{r, eval=F}
 linelist <- import("linelist_cleaned.csv")
 ```
@@ -247,12 +250,15 @@ linelist <- import("linelist_cleaned.csv")
 
 Importing the first sheet of an Excel workbook that is located in "data" and "linelists" sub-folders of the R project (the file path built using `here()`):  
 
+导入位于R项目的"data"和"linelists"子文件夹中的Excel工作簿的第一张工作表(使用`here() `构建的文件路径):
 ```{r, eval=F}
 linelist <- import(here("data", "linelists", "linelist_cleaned.xlsx"))
 ```
 
 
-Importing a data frame (a .rds file) using an absolute file path:  
+Importing a data frame (a .rds file) using an absolute file path:
+
+使用绝对文件路径导入数据帧(.rds文件):
 
 ```{r, eval=F}
 linelist <- import("C:/Users/Laura/Documents/tuberculosis/data/linelists/linelist_cleaned.rds")
@@ -266,11 +272,15 @@ linelist <- import("C:/Users/Laura/Documents/tuberculosis/data/linelists/linelis
 
 By default, if you provide an Excel workbook (.xlsx) to `import()`, the workbook's first sheet will be imported. If you want to import a specific **sheet**, include the sheet name to the `which = ` argument. For example:  
 
+默认情况下，如果您为` import()`提供一个Excel工作簿(.xlsx)，工作簿的第一个工作表将被导入。如果您想要导入一个特定的**工作表**，请将工作表名称包含到` which = `参数中。例如:
+
 ```{r eval=F}
 my_data <- import("my_excel_file.xlsx", which = "Sheetname")
 ```
 
 If using the `here()` method to provide a relative pathway to `import()`, you can still indicate a specific sheet by adding the `which = ` argument after the closing parentheses of the `here()` function.  
+
+如果使用`here() `方法来提供通往` import() `的相对路径，您仍然可以通过在` here() `函数的圆括号后添加`which = `参数来指示特定的工作表。
 
 ```{r import_sheet_here, eval=F}
 # Demonstration: importing a specific Excel sheet when using relative pathways with the 'here' package
@@ -279,9 +289,11 @@ linelist_raw <- import(here("data", "linelist.xlsx"), which = "Sheet1")`
 
 To *export* a data frame from R to a specific Excel sheet and have the rest of the Excel workbook remain unchanged, you will have to import, edit, and export with an alternative package catered to this purpose such as **openxlsx**. See more information in the page on [Directory interactions] or [at this github page](https://ycphs.github.io/openxlsx/).
 
+要将数据框架从R导出到特定的Excel表格，并保持Excel工作簿的其余部分不变，您必须使用另一个包(如**openxlsx**)进行导入、编辑和导出。在[目录交互]页面或[在这个github页面](https://ycphs.github.io/openxlsx/)查看更多信息。
+
 If your Excel workbook is .xlsb (binary format Excel workbook) you may not be able to import it using **rio**. Consider re-saving it as .xlsx, or using a package like **readxlsb** which is built for [this purpose](https://cran.r-project.org/web/packages/readxlsb/vignettes/read-xlsb-workbook.html).  
 
-
+如果您的Excel工作簿是.xlsb(二进制格式的Excel工作簿)，您可能无法使用**rio**导入它。考虑将其重新保存为.xlsx，或者使用为[此目的]构建的**readxlsb**包(https://cran.r-project.org/web/packages/readxlsb/vignettes/read-xlsb-workbook.html)。
 
 
 
@@ -291,15 +303,23 @@ If your Excel workbook is .xlsb (binary format Excel workbook) you may not be ab
 
 You may want to designate which value(s) in your dataset should be considered as missing. As explained in the page on [Missing data], the value in R for missing data is `NA`, but perhaps the dataset you want to import uses 99, "Missing", or just empty character space "" instead.  
 
+您可能希望指定您的数据集中哪些值应该被认为是缺失的。正如在[丢失的数据]的页面上解释的，在R中的值为丢失的数据是' NA '，但也许你想要导入的数据集使用99，"Missing"，或只是空字符空间""代替。
+
 Use the `na = ` argument for `import()` and provide the value(s) within quotes (even if they are numbers). You can specify multiple values by including them within a vector, using `c()` as shown below.  
 
-Here, the value "99" in the imported dataset is considered missing and converted to `NA` in R.  
+在`import() `中使用` na = `参数，并在引号中提供值(即使它们是数字)。可以使用` c() `在vector中指定多个值，如下所示。
+
+Here, the value "99" in the imported dataset is considered missing and converted to `NA` in R.
+
+在这里，被导入的数据集中的值“99”被认为丢失了，并被转换为R中的`NA`。
 
 ```{r, eval=F}
 linelist <- import(here("data", "my_linelist.xlsx"), na = "99")
 ```
 
 Here, any of the values "Missing", "" (empty cell), or " " (single space) in the imported dataset are converted to `NA` in R.  
+
+在这里，任何值"Missing"， ""(空单元格)，或""(单个空格)在导入的数据集转换为`NA`在R。
 
 ```{r, eval=F}
 linelist <- import(here("data", "my_linelist.csv"), na = c("Missing", "", " "))
@@ -311,6 +331,8 @@ linelist <- import(here("data", "my_linelist.csv"), na = c("Missing", "", " "))
 
 Sometimes, you may want to avoid importing a row of data. You can do this with the argument `skip = ` if using `import()` from **rio** on a .xlsx or .csv file. Provide the number of rows you want to skip. 
 
+有时，您可能希望避免导入一行数据。如果在.xlsx或.csv文件上使用`import()`from **rio**，你可以使用参数' skip = '来实现这一点。提供要跳过的行数。
+
 
 ```{r, eval=F}
 linelist_raw <- import("linelist_raw.xlsx", skip = 1)  # does not import header row
@@ -318,11 +340,14 @@ linelist_raw <- import("linelist_raw.xlsx", skip = 1)  # does not import header 
 
 Unfortunately `skip = ` only accepts one integer value, *not* a range (e.g. "2:10" does not work). To skip import of specific rows that are not consecutive from the top, consider importing multiple times and using `bind_rows()` from **dplyr**. See the example below of skipping only row 2.  
 
+不幸的是' skip = '只接受一个整数值，*而不是*一个范围(例如。“2:10”不行)。要跳过不从顶部连续导入的特定行，请考虑多次导入并使用**dplyr**中的`bind_rows()`。参见下面只跳过第2行的示例。
 
 
 ### Manage a second header row {.unnumbered}  
 
 Sometimes, your data may have a *second* row, for example if it is a "data dictionary" row as shown below. This situation can be problematic because it can result in all columns being imported as class "character".  
+
+有时，您的数据可能有*second*行，例如，如果它是“数据字典”行，如下所示。这种情况可能会有问题，因为它可能导致所有列都被导入为类“character”。
 
 ```{r, echo=F}
 # HIDDEN FROM READER
@@ -357,6 +382,7 @@ linelist_2headers <- rio::import(here::here("data", "case_linelists", "linelist_
 
 Below is an example of this kind of dataset (with the first row being the data dictionary).  
 
+下面是此类数据集的一个示例(第一行是数据字典)。
 ```{r message=FALSE, echo=F}
 # display the linelist data as a table
 DT::datatable(head(linelist_2headers, 5), rownames = FALSE, filter="top", options = list(pageLength = 4, scrollX=T), class = 'white-space: nowrap' )
@@ -364,15 +390,25 @@ DT::datatable(head(linelist_2headers, 5), rownames = FALSE, filter="top", option
 
 #### Remove the second header row {.unnumbered}  
 
-To drop the second header row, you will likely need to import the data twice.  
+To drop the second header row, you will likely need to import the data twice. 
+
+要删除第二个标题行，您可能需要导入两次数据。
 
 1) Import the data in order to store the correct column names  
 2) Import the data again, skipping the first *two* rows (header and second rows)  
 3) Bind the correct names onto the reduced dataframe
 
+1） 导入数据以存储正确的列名
+2） 再次导入数据，跳过前* 2 *行(标题和第二行)
+3） 将正确的名称绑定到缩减的数据帧上
+
 The exact argument used to bind the correct column names depends on the type of data file (.csv, .tsv, .xlsx, etc.). This is because **rio** is using a different function for the different file types (see table above).  
 
+用于绑定正确列名的确切参数取决于数据文件的类型(.csv、.tsv、.xlsx等)。这是因为**里约热内卢**为不同的文件类型使用了不同的函数(参见上表)。
+
 **For Excel files:** (`col_names = `)  
+
+**对于Excel文件:** (' col_names = ')
 
 ```{r, eval=F}
 # import first time; store the column names
@@ -387,6 +423,8 @@ linelist_raw <- import("linelist_raw.xlsx",
 
 **For CSV files:** (`col.names = `)  
 
+**对于CSV文件:** (' col.names = ')
+
 ```{r, eval=F}
 # import first time; sotre column names
 linelist_raw_names <- import("linelist_raw.csv") %>% names() # save true column names
@@ -400,6 +438,8 @@ linelist_raw <- import("linelist_raw.csv",
 
 **Backup option** - changing column names as a separate command
 
+**备份选项** -更改列名作为一个单独的命令
+
 ```{r, eval=F}
 # assign/overwrite headers using the base 'colnames()' function
 colnames(linelist_raw) <- linelist_raw_names
@@ -409,6 +449,8 @@ colnames(linelist_raw) <- linelist_raw_names
 #### Make a data dictionary {.unnumbered}  
 
 Bonus! If you do have a second row that is a data dictionary, you can easily create a proper data dictionary from it. This tip is adapted from this [post](https://alison.rbind.io/post/2018-02-23-read-multiple-header-rows/).  
+
+奖金!如果您确实有第二行是数据字典，那么您可以很容易地从中创建一个合适的数据字典。这条建议摘自这篇文章(https://alison.rbind.io/post/2018-02-23-read-multiple-header-rows/)。
 
 
 ```{r}
@@ -430,7 +472,11 @@ DT::datatable(dict, rownames = FALSE, filter="top", options = list(pageLength = 
 
 In some cases when your raw dataset has *two* header rows (or more specifically, the 2nd row of data is a secondary header), you may want to "combine" them or add the values in the second header row into the first header row.  
 
+在某些情况下，当你的原始数据集有*两个*标题行(或更具体地说，第二行数据是一个二级标题)，你可能想要“合并”他们或添加值在第二个标题行到第一个标题行。
+
 The command below will define the data frame's column names as the combination (pasting together) of the first (true) headers with the value immediately underneath (in the first row).  
+
+下面的命令将把数据帧的列名定义为第一个(true)标题的组合(粘贴在一起)，该值直接位于下面(第一行)。
 
 ```{r, eval=F}
 names(my_data) <- paste(names(my_data), my_data[1, ], sep = "_")
@@ -444,20 +490,28 @@ names(my_data) <- paste(names(my_data), my_data[1, ], sep = "_")
 You can import data from an online Google spreadsheet with the **googlesheet4** package and by authenticating your access to the spreadsheet.  
 
 
+您可以使用**googlesheet4**包从在线谷歌电子表格导入数据，并通过验证您对电子表格的访问。
+
 ```{r, eval=F}
 pacman::p_load("googlesheets4")
 ```
 
 Below, a demo Google sheet is imported and saved. This command may prompt confirmation of authentification of your Google account. Follow prompts and pop-ups in your internet browser to grant Tidyverse API packages permissions to edit, create, and delete your spreadsheets in Google Drive.  
 
+下面，一个演示谷歌表被导入并保存。此命令可能提示确认您的谷歌帐户的身份验证。按照提示和弹出在您的互联网浏览器授予Tidyverse API包的权限来编辑，创建和删除您的电子表格在谷歌驱动器。
 
-The sheet below is "viewable for anyone with the link" and you can try to import it.  
+
+The sheet below is "viewable for anyone with the link" and you can try to import it. 
+
+下面的表格是“任何人都可以看到的链接”，你可以尝试导入它。
 
 ```{r, eval=F}
 Gsheets_demo <- read_sheet("https://docs.google.com/spreadsheets/d/1scgtzkVLLHAe5a6_eFQEwkZcc14yFUx1KgOMZ4AKUfY/edit#gid=0")
 ```
 
 The sheet can also be imported using only the sheet ID, a shorter part of the URL:  
+
+工作表也可以只使用工作表ID导入，URL的较短部分:
 
 ```{r, eval=F}
 Gsheets_demo <- read_sheet("1scgtzkVLLHAe5a6_eFQEwkZcc14yFUx1KgOMZ4AKUfY")
@@ -466,10 +520,17 @@ Gsheets_demo <- read_sheet("1scgtzkVLLHAe5a6_eFQEwkZcc14yFUx1KgOMZ4AKUfY")
 
 Another package, **googledrive** offers useful functions for writing, editing, and deleting Google sheets. For example, using the  `gs4_create()` and `sheet_write()` functions found in this package. 
 
+另一个包，**googledrive**提供有用的功能，编写，编辑和删除谷歌表。例如，使用这个包中的' gs4_create() '和' sheet_write() '函数。
+
 Here are some other helpful online tutorials:  
 [basic Google sheets importing tutorial](https://arbor-analytics.com/post/getting-your-data-into-r-from-google-sheets/)  
 [more detailed tutorial](https://googlesheets4.tidyverse.org/articles/googlesheets4.html)  
 [interaction between the googlesheets4 and tidyverse](https://googlesheets4.tidyverse.org/articles/articles/drive-and-sheets.html)  
+
+以下是一些其他有用的在线教程:
+[基本谷歌表单导入教程](https://arbor-analytics.com/post/getting-your-data-into-r-from-google-sheets/)
+(更详细的教程)(https://googlesheets4.tidyverse.org/articles/googlesheets4.html)
+[googlesheets4和tidyverse之间的互动](https://googlesheets4.tidyverse.org/articles/articles/drive-and-sheets.html)
 
 
 
@@ -478,7 +539,7 @@ Here are some other helpful online tutorials:
 
 See the page on [Iteration, loops, and lists] for examples of how to import and combine multiple files, or multiple Excel workbook files. That page also has examples on how to split a data frame into parts and export each one separately, or as named sheets in an Excel workbook.  
 
-
+有关如何导入和组合多个文件或多个Excel工作簿文件的示例，请参阅[Iteration, loops, and lists]页面。该页面还提供了一些示例，说明如何将数据框架分割成多个部分，然后分别导出每个部分，或者在Excel工作簿中导出指定的工作表。
 
 
 <!-- ======================================================= -->
@@ -486,14 +547,24 @@ See the page on [Iteration, loops, and lists] for examples of how to import and 
 
 Importing data directly from Github into R can be very easy or can require a few steps - depending on the file type. Below are some approaches:  
 
+直接从Github导入数据到R可能非常简单，也可能需要一些步骤——这取决于文件类型。以下是一些方法:
+
 ### CSV files {.unnumbered}  
 
 It can be easy to import a .csv file directly from Github into R with an R command.  
+
+使用R命令可以很容易地从Github直接导入.csv文件到R中。
 
 1) Go to the Github repo, locate the file of interest, and click on it  
 3) Click on the "Raw" button (you will then see the "raw" csv data, as shown below)  
 4) Copy the URL (web address)  
 5) Place the URL in quotes within the `import()` R command  
+
+1）到Github repo，找到感兴趣的文件，然后点击它
+2）点击“Raw”按钮(您将看到“Raw”csv数据，如下所示)
+3）复制网址(网址)
+4）将URL放在' import() ' R命令中的引号中
+
 
 ```{r, out.width=c('100%', '100%'), fig.align = "left", echo=F}
 knitr::include_graphics(here::here("images", "download_csv_raw.png"))
@@ -503,10 +574,15 @@ knitr::include_graphics(here::here("images", "download_csv_raw.png"))
 
 You may not be able to view the "Raw" data for some files (e.g. .xlsx, .rds, .nwk, .shp)  
 
+您可能无法查看某些文件的“原始”数据(例如.xlsx， .rds， .nwk， .shp)
+
 1) Go to the Github repo, locate the file of interest, and click on it  
 2) Click the "Download" button, as shown below  
 3) Save the file on your computer, and import it into R  
 
+1)去Github repo，找到感兴趣的文件，并点击它
+2)点击“下载”按钮，如下图所示
+3)将文件保存在电脑上，并导入R
 
 ```{r , out.width=c('100%', '100%'), fig.align = "left", echo=F}
 knitr::include_graphics(here::here("images", "download_xlsx.png"))
@@ -516,9 +592,15 @@ knitr::include_graphics(here::here("images", "download_xlsx.png"))
 
 Shapefiles have many sub-component files, each with a different file extention. One file will have the ".shp" extension, but others may have ".dbf", ".prj", etc.  To download a shapefile from Github, you will need to download each of the sub-component files individually, and save them in the *same* folder on your computer. In Github, click on each file individually and download them by clicking on the "Download" button.  
 
-Once saved to your computer you can import the shapefile as shown in the [GIS basics] page using `st_read()` from the **sf** package. You only need to provide the filepath and name of the ".shp" file - as long as the other related files are within the same folder on your computer.  
+Shapefiles有许多子组件文件，每个子组件文件都有不同的文件扩展名。一个文件将有。Shp“扩展，但别人可能有”。dbf”、“。撮合下”,等等。要从Github下载shapefile，你需要单独下载每个子组件文件，并将它们保存在电脑上的*相同*文件夹中。在Github中，分别点击每个文件并通过点击“下载”按钮下载它们。
 
-Below, you can see how the shapefile "sle_adm3" consists of many files - each of which must be downloaded from Github.  
+Once saved to your computer you can import the shapefile as shown in the [GIS basics] page using `st_read()` from the **sf** package. You only need to provide the filepath and name of the ".shp" file - as long as the other related files are within the same folder on your computer. 
+
+一旦保存到您的计算机，您可以从**sf**包中使用' st_read() '导入如图[GIS基础]页所示的shapefile。您只需要提供的文件路径和名称。Shp "文件-只要其他相关文件在您的计算机上的同一文件夹。
+
+Below, you can see how the shapefile "sle_adm3" consists of many files - each of which must be downloaded from Github.
+
+下面，你可以看到shapefile“sle_adm3”是如何由许多文件组成的——每个文件都必须从Github下载。
 
 ```{r , out.width=c('100%', '100%'), fig.align = "left", echo=F}
 knitr::include_graphics(here::here("images", "download_shp.png"))
@@ -534,8 +616,11 @@ knitr::include_graphics(here::here("images", "download_shp.png"))
 ### Entry by rows {.unnumbered}  
 
 Use the `tribble` function from the **tibble** package from the tidyverse ([online tibble reference](https://tibble.tidyverse.org/reference/tribble.html)).  
-  
+使用tidyverse ([online tibble reference](https://tibble.tidyverse.org/reference/tribble.html))中的**tibble**包中的`tribble`函数。
+
 Note how column headers start with a *tilde* (`~`).  Also note that each column must contain only one class of data (character, numeric, etc.). You can use tabs, spacing, and new rows to make the data entry more intuitive and readable. Spaces do not matter between values, but each row is represented by a new line of code. For example:  
+
+请注意，列头文件以*波浪号*(' ~ ')开头。还要注意，每一列必须只包含一类数据(字符、数字等)。您可以使用制表符、空格和新行来使数据条目更加直观和可读。值之间的空格不重要，但每一行都由一行新代码表示。例如:
 
 ```{r import_manual_row}
 # create the dataset manually by row
@@ -549,6 +634,8 @@ manual_entry_rows <- tibble::tribble(
 
 And now we display the new dataset:  
 
+现在我们显示新的数据集:
+
 ```{r, echo=F}
 # display the new dataset
 DT::datatable(manual_entry_rows)
@@ -559,6 +646,8 @@ DT::datatable(manual_entry_rows)
 
 Since a data frame consists of vectors (vertical columns), the **base** approach to manual dataframe creation in R expects you to define each column and then bind them together. This can be counter-intuitive in epidemiology, as we usually think about our data in rows (as above). 
 
+由于数据帧由向量(垂直列)组成，在R中手动创建数据帧的**base**方法要求您定义每一列，然后将它们绑定在一起。这在流行病学中可能是违反直觉的，因为我们通常认为我们的数据是成行的(如上所述)。
+
 ```{r import_manual_col}
 # define each vector (vertical column) separately, each with its own name
 PatientID <- c(235, 452, 778, 111)
@@ -568,7 +657,11 @@ Death     <- c(1, 0, 1, 0)
 
 <span style="color: orange;">**_CAUTION:_** All vectors must be the same length (same number of values).</span>
 
+<span style="color: orange;">**_CAUTION:_**所有向量必须是相同的长度(相同数量的值)。</span>
+
 The vectors can then be bound together using the function `data.frame()`:  
+
+然后可以使用函数`data.frame()`将这些向量绑定在一起:
 
 ```{r}
 # combine the columns into a data frame, by referencing the vector names
@@ -576,6 +669,8 @@ manual_entry_cols <- data.frame(PatientID, Treatment, Death)
 ```
 
 And now we display the new dataset:  
+
+现在我们显示新的数据集:
 
 ```{r, echo=F}
 # display the new dataset
@@ -589,7 +684,11 @@ DT::datatable(manual_entry_cols)
 
 If you copy data from elsewhere and have it on your clipboard, you can try one of the two ways below:  
 
-From the **clipr** package, you can use `read_clip_tbl()` to import as a data frame, or just just `read_clip()` to import as a character vector. In both cases, leave the parentheses empty.    
+如果你从别处复制数据并把它放在剪贴板上，你可以尝试以下两种方法之一:
+
+From the **clipr** package, you can use `read_clip_tbl()` to import as a data frame, or just just `read_clip()` to import as a character vector. In both cases, leave the parentheses empty.
+
+在**clipr**包中，你可以使用' read_clip_tbl() '作为数据帧导入，或者直接使用' read_clip() '作为字符向量导入。在这两种情况下，括号都为空。
 
 ```{r, eval=F}
 linelist <- clipr::read_clip_tbl()  # imports current clipboard as data frame
@@ -597,8 +696,11 @@ linelist <- clipr::read_clip()      # imports as character vector
 ```
 You can also easily export to your system's clipboard with **clipr**. See the section below on Export.  
 
+您还可以轻松地导出到您的系统的剪贴板与**clipr**。请参阅下面关于导出的部分。
+
 
 Alternatively, you can use the the `read.table()` function from **base** R with `file = "clipboard")` to import as a data frame:  
+或者，你可以使用**base** R中的' read.table() '函数和' file = "clipboard") '来导入数据帧:
 
 ```{r, eval=F}
 df_from_clipboard <- read.table(
@@ -614,23 +716,37 @@ df_from_clipboard <- read.table(
 
 ## Import most recent file  
 
-Often you may receive daily updates to your datasets. In this case you will want to write code that imports the most recent file. Below we present two ways to approach this:  
+Often you may receive daily updates to your datasets. In this case you will want to write code that imports the most recent file. Below we present two ways to approach this: 
+
+通常情况下，您可能会收到您的数据集的每日更新。在这种情况下，您将希望编写代码来导入最近的文件。下面我们介绍两种方法:
 
 * Selecting the file based on the date in the file name  
 * Selecting the file based on file metadata (last modification)  
 
+*根据文件名中的日期选择文件
+*根据文件元数据(最后一次修改)选择文件
 
 ### Dates in file name {.unnumbered}  
 
 This approach depends on three premises:  
 
+这种方法依赖于三个前提:
+
 1) You trust the dates in the file names  
 2) The dates are numeric and appear in *generally* the same format (e.g. year then month then day)  
 3) There are no other numbers in the file name  
 
+1)你信任文件名中的日期
+2)日期是数字的，并且以*一般*相同的格式出现(例如年，月，日)
+3)文件名中没有其他数字
+
 We will explain each step, and then show you them combined at the end.  
 
+我们将解释每个步骤，然后在最后向您展示它们的组合。
+
 First, use `dir()` from **base** R to extract just the file names for each file in the folder of interest. See the page on [Directory interactions] for more details about `dir()`. In this example, the folder of interest is the folder "linelists" within the folder "example" within "data" within the R project. 
+
+首先，使用`dir()` from **base** R来提取文件夹中每个文件的文件名。有关' dir() '的详细信息，请参阅[目录交互]页面。在本例中，感兴趣的文件夹是R项目“data”中的“example”文件夹中的“linelists”文件夹。
 
 ```{r}
 linelist_filenames <- dir(here("data", "example", "linelists")) # get file names from folder
@@ -639,12 +755,16 @@ linelist_filenames                                              # print
 
 Once you have this vector of names, you can extract the dates from them by applying `str_extract()` from **stringr** using this regular expression. It extracts any numbers in the file name (including any other characters in the middle such as dashes or slashes). You can read more about **stringr** in the [Strings and characters] page.  
 
+一旦你有了这个名称向量，你就可以通过使用这个正则表达式从**stringr**应用' str_extract() '从它们中提取日期。它提取文件名中的任何数字(包括中间的任何其他字符，如破折号或斜杠)。您可以在[字符串和字符]页中阅读关于**stringr**的更多信息。
+
 ```{r}
 linelist_dates_raw <- stringr::str_extract(linelist_filenames, "[0-9].*[0-9]") # extract numbers and any characters in between
 linelist_dates_raw  # print
 ```
 
-Assuming the dates are written in generally the same date format (e.g. Year then Month then Day) and the years are 4-digits, you can use **lubridate**'s flexible conversion functions (`ymd()`, `dmy()`, or `mdy()`) to convert them to dates. For these functions, the dashes, spaces, or slashes do not matter, only the order of the numbers. Read more in the [Working with dates] page.  
+Assuming the dates are written in generally the same date format (e.g. Year then Month then Day) and the years are 4-digits, you can use **lubridate**'s flexible conversion functions (`ymd()`, `dmy()`, or `mdy()`) to convert them to dates. For these functions, the dashes, spaces, or slashes do not matter, only the order of the numbers. Read more in the [Working with dates] page. 
+
+假设日期通常以相同的日期格式(例如，年，月，日)写，年份是4位数字，你可以使用**润滑**灵活的转换函数(' ymd() '， ' dmy() '，或' mdy() ')将它们转换为日期。对于这些函数，破折号、空格或斜杠都不重要，只有数字的顺序。更多信息请参阅[使用日期]一页。
 
 ```{r}
 linelist_dates_clean <- lubridate::ymd(linelist_dates_raw)
@@ -654,12 +774,16 @@ linelist_dates_clean
 
 The **base** R function `which.max()` can then be used to return the index position (e.g. 1st, 2nd, 3rd, ...) of the maximum date value. The latest file is correctly identified as the 6th file - "case_linelist_2020-10-08.xlsx".  
 
+然后，**base** R函数' which.max() '可用于返回最大日期值的索引位置(例如第1、2、3，…)。最新的文件被正确识别为第6个文件“case_linelist_2020-10-08.xlsx”。
+
 ```{r}
 index_latest_file <- which.max(linelist_dates_clean)
 index_latest_file
 ```
 
 If we condense all these commands, the complete code could look like below. Note that the `.` in the last line is a placeholder for the piped object at that point in the pipe sequence. At that point the value is simply the number 6. This is placed in double brackets to extract the 6th element of the vector of file names produced by `dir()`.    
+
+如果我们压缩所有这些命令，完整的代码如下所示。注意'。'是管道对象在管道序列中该点的占位符。在这一点上，数值就是数字6。它被放在双括号中以提取' dir() '生成的文件名向量的第6个元素。
 
 ```{r}
 # load packages
@@ -683,11 +807,14 @@ latest_file  # print name of latest file
 
 You can now use this name to finish the relative file path, with `here()`:  
 
+现在你可以使用这个名称来完成相对文件路径，使用`here()`:
 ```{r, eval=F}
 here("data", "example", "linelists", latest_file) 
 ```
 
 And you can now import the latest file:  
+
+现在你可以导入最新的文件:
 
 ```{r, eval=F}
 # import
@@ -702,9 +829,16 @@ import(here("data", "example", "linelists", latest_file)) # import
 
 If your files do not have dates in their names (or you do not trust those dates), you can try to extract the last modification date from the file metadata. Use functions from the package **fs** to examine the metadata information for each file, which includes the last modification time and the file path.  
 
+如果您的文件名称中没有日期(或者您不相信这些日期)，您可以尝试从文件元数据中提取最后一次修改日期。使用包**fs**中的函数检查每个文件的元数据信息，其中包括最后修改时间和文件路径。
+
 Below, we provide the folder of interest to **fs**'s `dir_info()`. In this case, the folder of interest is in the R project in the folder "data", the sub-folder "example", and its sub-folder "linelists".  The result is a data frame with one line per file and columns for `modification_time`, `path`, etc. You can see a visual example of this in the page on [Directory interactions].    
 
+下面，我们为**fs**'s ' dir_info() '提供感兴趣的文件夹。在本例中，感兴趣的文件夹位于R项目的文件夹“data”中，子文件夹“example”及其子文件夹“linelists”中。结果是一个数据帧，每个文件一行，列有' modification_time '， ' path '等。您可以在[目录交互]页面中看到一个可视化的示例。
+
+
 We can sort this data frame of files by the column `modification_time`, and then keep only the top/latest row (file) with **base** R's `head()`. Then we can extract the file path of this latest file only with the **dplyr** function `pull()` on the column `path`. Finally we can pass this file path to `import()`. The imported file is saved as `latest_file`.  
+
+我们可以通过' modification_time '列对文件的数据帧进行排序，然后使用**base** R的' head() '只保留最顶端/最近的行(文件)。然后，我们只能使用**dplyr**函数' pull() '对列' path '提取最新文件的文件路径。最后，我们可以将这个文件路径传递给' import() '。导入的文件保存为' latest_file '。
 
 ```{r, eval=F}
 latest_file <- dir_info(here("data", "example", "linelists")) %>%  # collect file info on all files in directory
@@ -722,32 +856,55 @@ latest_file <- dir_info(here("data", "example", "linelists")) %>%  # collect fil
 
 An "Automated Programming Interface" (API) can be used to directly request data from a website. APIs are a set of rules that allow one software application to interact with another. The client (you) sends a "request" and receives a "response" containing content. The R packages **httr** and **jsonlite** can facilitate this process. 
 
+“自动编程接口”(API)可以用来直接从网站请求数据。api是一组允许一个软件应用程序与另一个软件应用程序交互的规则。客户端(您)发送一个“请求”并接收一个包含内容的“响应”。R包**httr**和**jsonlite**可以促进这个过程。
+
 Each API-enabled website will have its own documentation and specifics to become familiar with. Some sites are publicly available and can be accessed by anyone. Others, such as platforms with user IDs and credentials, require authentication to access their data. 
+
+每个支持api的网站都有自己的文档和细节需要熟悉。有些网站是公开的，任何人都可以访问。其他平台，如具有用户id和凭据的平台，需要身份验证才能访问其数据。
 
 Needless to say, it is necessary to have an internet connection to import data via API. We will briefly give examples of use of APIs to import data, and link you to further resources.  
 
+不用说，通过API导入数据需要有一个互联网连接。我们将简要地给出使用api导入数据的示例，并将您链接到进一步的资源。
+
 *Note: recall that data may be *posted* on a website without an API, which may be easier to retrieve. For example a posted CSV file may be accessible simply by providing the site URL to `import()` as described in the section on [importing from Github](#import_github).*  
+
+*注意:请记住，数据可能是在没有API的网站上发布的，这可能更容易检索。例如，一个发布的CSV文件可以通过简单地提供网站URL到' import() '来访问，这在[import from Github](#import_github)一节中描述
 
 
 ### HTTP request {.unnumbered}  
 
 The API exchange is most commonly done through an HTTP request. HTTP is Hypertext Transfer Protocol, and is the underlying format of a request/response between a client and a server. The exact input and output may vary depending on the type of API but the process is the same - a "Request" (often HTTP Request) from the user, often containing a query, followed by a "Response", containing status information about the request and possibly the requested content.  
 
-Here are a few components of an *HTTP request*:  
+API交换最常通过HTTP请求完成。HTTP是超文本传输协议，是客户端和服务器之间请求/响应的基本格式。确切的输入和输出可能取决于API的类型，但过程是相同的——来自用户的一个“请求”(通常是HTTP请求)，通常包含一个查询，后面是一个“响应”，包含关于请求的状态信息和可能被请求的内容。
+
+Here are a few components of an *HTTP request*: 
+
+下面是一个*HTTP请求的几个组件:
 
 * The URL of the API endpoint  
 * The "Method" (or "Verb")  
 * Headers  
 * Body  
 
+* API端点的URL
+*“方法”(或“动词”)
+*标题
+*身体
+
 The HTTP request "method" is the action your want to perform. The two most common HTTP methods are `GET` and `POST` but others could include `PUT`, `DELETE`, `PATCH`, etc. When importing data into R it is most likely that you will use `GET`.  
 
+：HTTP请求“方法”是您想要执行的操作。两个最常见的HTTP方法是' GET '和' POST '，但其他的可能包括`PUT`， `DELETE`， `PATCH`等。当将数据导入R时，您很可能会使用`GET`。
+
 After your request, your computer will receive a "response" in a format similar to what you sent, including URL, HTTP status (Status 200 is what you want!), file type, size, and the desired content. You will then need to parse this response and turn it into a workable data frame within your R environment.
+
+在您的请求之后，您的计算机将收到与您发送的格式相似的“响应”，包括URL、HTTP状态(状态200就是您想要的!)、文件类型、大小和想要的内容。然后需要解析这个响应，并将其转换为R环境中可行的数据帧。
 
 
 ### Packages {.unnumbered}  
 
 The **httr** package works well for handling HTTP requests in R. It requires little prior knowledge of Web APIs and can be used by people less familiar with software development terminology. In addition, if the HTTP response is .json, you can use **jsonlite** to parse the response.  
+
+** HTTP **包可以很好地处理r中的HTTP请求。它不需要太多的Web api知识，并且可以被不太熟悉软件开发术语的人使用。此外，如果HTTP响应是.json，您可以使用**jsonlite**来解析响应。
 
 ```{r, eval=F}
 # load packages
@@ -759,9 +916,15 @@ pacman::p_load(httr, jsonlite, tidyverse)
 
 Below is an example of an HTTP request, borrowed from a tutorial from [the Trafford Data Lab](https://www.trafforddatalab.io/open_data_companion/#A_quick_introduction_to_APIs). This site has several other resources to learn and API exercises.
 
+下面是一个HTTP请求的例子，借鉴自[特拉福德数据实验室](https://www.trafforddatalab.io/open_data_companion/#A_quick_introduction_to_APIs)的教程。这个站点有一些其他的学习资源和API练习
+
 Scenario: We want to import a list of fast food outlets in the city of Trafford, UK. The data can be accessed from the API of the Food Standards Agency, which provides food hygiene rating data for the United Kingdom.  
 
+场景:我们想要进口英国特拉福德市的快餐店列表。这些数据可以从英国食品标准局的API获取，该机构为英国提供食品卫生评级数据。
+
 Here are the parameters for our request:  
+
+以下是我们要求的参数:
 
 * HTTP verb: GET  
 * API endpoint URL: http://api.ratings.food.gov.uk/Establishments  
@@ -770,7 +933,16 @@ Here are the parameters for our request:
 * Data format(s): JSON, XML  
 * Documentation: http://api.ratings.food.gov.uk/help  
 
+* HTTP动词:GET
+* API端点URL: http://api.ratings.food.gov.uk/Establishments
+* 可选参数:名称、地址、经度、纬度、businessstypeid、ratingKey、localAuthorityId
+* 报头:" x-api-version "， 2
+* 数据格式:JSON、XML
+* 文档:http://api.ratings.food.gov.uk/help进入翻译页面
+
 The R code would be as follows:  
+
+R代码如下:
 
 ```{r, eval=F, warning=F, message=F}
 # prepare the request
@@ -795,14 +967,22 @@ response <- content(request, as = "text", encoding = "UTF-8") %>%
 
 You can now clean and use the `response` data frame, which contains one row per fast food facility.  
 
+现在可以清理和使用`response`数据帧，每个快餐设施包含一行。
+
 
 ### Authentication required {.unnumbered}  
 
 Some APIs require authentication - for you to prove who you are, so you can access restricted data. To import these data, you may need to first use a POST method to provide a username, password, or code. This will return an access token, that can be used for subsequent GET method requests to retrieve the desired data.  
 
+有些api需要身份验证—以便您证明您是谁，以便您可以访问受限制的数据。要导入这些数据，您可能需要首先使用POST方法来提供用户名、密码或代码。这将返回一个访问令牌，该令牌可用于后续的GET方法请求，以检索所需的数据。
+
 Below is an example of querying data from *Go.Data*, which is an outbreak investigation tool. *Go.Data* uses an API for all interactions between the web front-end and smartphone applications used for data collection. *Go.Data* is used throughout the world. Because outbreak data are sensitive and you should only be able to access data for *your* outbreak, authentication is required.  
 
+下面是一个从*Go查询数据的示例。Data*，这是一个爆发调查工具。*去。Data*使用一个API，用于web前端和用于数据收集的智能手机应用程序之间的所有交互。*去。全世界都在使用Data*。由于爆发数据是敏感的，您应该只能访问*您的*爆发的数据，因此需要身份验证。
+
 Below is some sample R code using **httr** and **jsonlite** for connecting to the *Go.Data* API to import data on contact follow-up from your outbreak.  
+
+下面是一些示例R代码使用**httr**和**jsonlite**连接到*Go。数据* API用于从您的病毒爆发导入有关联系人跟踪的数据。
 
 
 ```{r, eval=F}
@@ -846,15 +1026,24 @@ contacts <- as_tibble(fromJSON(json_contacts, flatten = TRUE))   # flatten JSON 
 
 <span style="color: orange;">**_CAUTION:_** If you are importing large amounts of data from an API requiring authentication, it may time-out. To avoid this, retrieve access_token again before each API GET request and try using filters or limits in the query. </span> 
 
+<span style="color: orange;">** _warning:_**如果你从一个需要认证的API导入大量数据，它可能会超时。为了避免这种情况，请在每个API GET请求之前再次检索access_token，并尝试在查询中使用过滤器或限制。</span> 
+
 <span style="color: darkgreen;">**_TIP:_** The `fromJSON()` function in the **jsonlite** package does not fully un-nest the first time it's executed, so you will likely still have list items in your resulting tibble. You will need to further un-nest for certain variables; depending on how nested your .json is. To view more info on this, view the documentation for the **jsonlite** package, such as the [`flatten()` function](https://rdrr.io/cran/jsonlite/man/flatten.html). </span>
+
+<span style="color: darkgreen;"> **_TIP:_** ** *jsonlite**包中的' fromJSON() '函数在第一次执行时并没有完全解除嵌套，所以在生成的tibble中可能仍然有列表项。您需要进一步解除某些变量的嵌套;这取决于。json的嵌套程度。要查看更多信息，请查看**jsonlite**包的文档，比如[' flatten() ' function](https://rdrr.io/cran/jsonlite/man/flatten.html)。</span>
 
 
 For more details, View documentation on [LoopBack Explorer](https://loopback.io/doc/en/lb4/index.html), the [Contact Tracing] page or API tips on [Go.Data Github repository](https://worldhealthorganization.github.io/godata/api-docs)
 
-You can read more about the *httr* package [here](https://httr.r-lib.org/articles/quickstart.html)  
+欲了解更多详情，请查看[LoopBack Explorer](https://loopback.io/doc/en/lb4/index.html)的文档，[联系人跟踪]页面或[Go]的API提示。数据Github库)(https://worldhealthorganization.github.io/godata/api-docs)
+
+You can read more about the *httr* package [here](https://httr.r-lib.org/articles/quickstart.html) 
+
+你可以阅读更多关于*httr* 包[这里](https://httr.r-lib.org/articles/quickstart.html)
 
 This section was also informed by [this tutorial](https://www.dataquest.io/blog/r-api-tutorial/) and [this tutorial](https://medium.com/@traffordDataLab/querying-apis-in-r-39029b73d5f1). 
 
+本节也由[本教程](https://www.dataquest.io/blog/r-api-tutorial/)和[本教程](https://medium.com/@traffordDataLab/ query-api -in-r-39029b73d5f1)提供。
 
 
 
