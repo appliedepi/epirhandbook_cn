@@ -1,141 +1,132 @@
-# Editorial and technical notes { }
+# 编辑样式和技术规范
 
-In this page we describe the philosophical approach, style, and specific editorial decisions made during the creation of this handbook.  
+本页描述了在编辑整本指南时， 作者们所采用的方法， 样式和特殊的设定。
 
+## 方法和样式
 
-## Approach and style
+本指南拥有大量的潜在读者。它可以提供给第一次接触 R 语言的研究人员。 同时，对于拥有丰富 R 语言开发经验的研究人员， 他们也能从中获得经验和帮助。 本书容易理解且相对简洁。 其核心在于提供**充足**的解释性语句， 让初学者能够运行代码且理解代码的含义。
 
-The potential audience for this book is large. It will surely be used by people very new to R, and also by experienced R users looking for best practices and tips. So it must be both accessible and succinct. Therefore, our approach was to provide *just enough* text explanation that someone very new to R can apply the code and follow what the code is doing.  
+此外：
 
-A few other points:  
+-   这是一本代码参考指南，附带了相对简明的示例 ------ **不是**关于 R 或数据科学的教科书；\
+-   这是一本在"应用流行病学"领域中使用 **R 语言**的指南 ------ **不是**应用流行病学的指南或手册；\
+-   本指南旨在成为一份动态文本 ------ 用于特定任务的 R packages 经常更迭，我们欢迎大家加入关于本指南中应该强调的内容的讨论。
 
-* This is a code reference book accompanied by relatively brief examples - *not* a thorough textbook on R or data science  
-* This is a *R handbook* for use within applied epidemiology - not a manual on the methods or science of applied epidemiology  
-* This is intended to be a living document - optimal R packages for a given task change often and we welcome discussion about which to emphasize in this handbook  
+### R packages  {.unnumbered}
 
+**多样的 R packages**
 
+在学习 R 语言的过程中， 最具挑战的事情是了解哪一个 R package 可以用来实现特定的功能。 有时， 在手动编写完一项功能后， 研究人员会忽然意识到 ------ 嘿！ 有一个 R package 可以用一行代码实现此功能！
 
+在本指南中，我们试图为你提供至少两种方法来完成每项任务：一种是相对稳妥的方法 （可能基于 **base** R 或者 **tidyverse** ）；另一种是为该任务或功能定制的 R package。 我们希望你拥有多种选择，以防你无法下载某个 R package 或者 它不适合你的编码环境。
 
-### R packages {.unnumbered}
+在选择 R package 时， 我们优先考虑那些经过社区测试以及审核的 R package。 尽量减少在一个任务中使用的 R package 数量。 这些 R package 是相对稳定的， 并且能够简单干净的完成任务。
 
-**So many choices**  
+本指南一般优先考虑来自 **tidyverse** 的 R packages 和函数。 Tidyverse 是一个为数据科学设计的 R packages 的集合，其内部共享底层语法和数据结构。 所有 tidyverse packages 都可以通过 **tidyverse** 来安装或加载。 更多信息请参考 [tidyverse website](https://www.tidyverse.org/) 。
 
-One of the most challenging aspects of learning R is knowing which R package to use for a given task. It is a common occurrence to struggle through a task only later to realize - hey, there's an R package that does all that in one command line!  
+在适当情况下， 我们还提供基于 **base** R的代码。 **Base** R 是 R 语言在安装时附带的 packages 和函数。 这是由于我们意识到某些读者可能没有一个稳定的网络环境来下载格外的 R packages。
 
-In this handbook, we try to offer you at least two ways to complete each task: one tried-and-true method (probably in **base** R or **tidyverse**) and one special R package that is custom-built for that purpose. We want you to have a couple options in case you can't download a given package or it otherwise does not work for you.  
+**简明地链接函数与 packages**
 
-In choosing which packages to use, we prioritized R packages and approaches that have been tested and vetted by the community, minimize the number of packages used in a typical work session, that are stable (not changing very often), and that accomplish the task simply and cleanly  
+在部分 R 教程中，你经常会在代码中看到一个函数但却不知道它来自于哪个 R package 。 这是非常令人沮丧的， 我们会在本指南中避免这种情况的发生。
 
-This handbook generally prioritizes R packages and functions from the **tidyverse**. Tidyverse is a collection of R packages designed for data science that share underlying grammar and data structures. All tidyverse packages can be installed or loaded via the **tidyverse** package. Read more at the [tidyverse website](https://www.tidyverse.org/).  
+在说明文本中，package 名字会被加粗（例如 **dplyr** ）。而函数则被写成 `mutate()` 。我们通过在附近的文本中引用 package 或者在代码中明确指定package（例如 `dplyr::mutate()`），来描述函数来自于哪个 package 。看起来可能会有些重复，但这是作者们故意用来明确函数的来源。
 
-When applicable, we also offer code options using **base** R - the packages and functions that come with R at installation. This is because we recognize that some of this book's audience may not have reliable internet to download extra packages.  
+阅读 [ R 基础 ] 页面来了解更多关于 R packages 和函数的信息。
 
-**Linking functions to packages explicitly**
+### 代码样式 {.unnumbered}
 
-It is often frustrating in R tutorials when a function is shown in code, but you don't know which package it is from! We try to avoid this situation.  
+在本指南中，我们经常使用 "换行" ，这会显得我们的代码很 "长" 。 这样做有以下几个原因：
 
-In the narrative text, package names are written in bold (e.g. **dplyr**) and functions are written like this: `mutate()`. We strive to be explicit about which package a function comes from, either by referencing the package in nearby text or by specifying the package explicitly in the code like this: `dplyr::mutate()`. It may look redundant, but we are doing it on purpose.  
+-   我们可以用 \# 在代码的每个小部分旁边写解释性注释；\
+-   通常来说，垂直较长的代码更容易被理解；\
+-   在较窄屏幕上阅读代码更容易 （不需要横向滚动）；\
+-   通过缩进，可以更容易地知道哪个参数属于哪个函数。
 
-See the page on [R basics] to learn more about packages and functions.  
-
-
-### Code style {.unnumbered}
-
-In the handbook, we frequently utilize "new lines", making our code appear "long". We do this for a few reasons:  
-
-* We can write explanatory comments with `#` that are adjacent to each little part of the code  
-* Generally, longer (vertical) code is easier to read  
-* It is easier to read on a narrow screen (no sideways scrolling needed)  
-* From the indentations, it can be easier to know which arguments belong to which function  
-
-As a result, code that *could* be written like this:  
+因此，**最初**被编写成这种格式的代码：
 
 ```{r, eval=F}
 linelist %>% 
-  group_by(hospital) %>%  # group rows by hospital
-  slice_max(date, n = 1, with_ties = F) # if there's a tie (of date), take the first row
+  group_by(hospital) %>%  # 按照医院进行分组
+  slice_max(date, n = 1, with_ties = F) # 如果出现相同的行（基于日期），只返回一行
 ```
 
-...is written like this:  
+被编写成：
 
 ```{r, eval=F}
 linelist %>% 
-  group_by(hospital) %>% # group rows by hospital
+  group_by(hospital) %>% # 按照医院进行分组
   slice_max(
-    date,                # keep row per group with maximum date value 
-    n = 1,               # keep only the single highest row 
-    with_ties = F)       # if there's a tie (of date), take the first row
+    date,                # 基于最大日期来排列组
+    n = 1,               # 只保留第一行
+    with_ties = F)       # 如果出现相同的行（基于日期），只返回一行
 ```
 
-R code is generally not affected by new lines or indentations. When writing code, if you initiate a new line after a comma it will apply automatic indentation patterns. 
+R 代码通常不受换行或缩进的影响。 编写代码时， 如果你在逗号后开始新的一行， R 将开始自动缩进模式。
 
-We also use lots of spaces (e.g. `n = 1` instead of `n=1`) because it is easier to read. Be kind to the people reading your code!  
+我们还使用了很多空格（例如 `n = 1` 而不是 `n=1`），因为它更容易被阅读。 善待阅读代码的人！
 
+### 术语 {.unnumbered}
 
+在本指南中，我们一般用 "列 "和 "行 "来代替 "变量 "和 "观测结果"。正如这篇关于 "[tidy data](https://tidyr.tidyverse.org/articles/tidy-data.html) "的入门文章中所解释的，大多数流行病学的统计数据集的结构由行、列和数值组成。
 
-### Nomenclature {.unnumbered}  
+**变量**包含同一属性的值（例如基于年龄组，结果或发病日期）。 **观测结果**包含在同一单位上测量的所有值（例如一个人、地点或实验室样本）。 这些可能很难被明确地定义。
 
-In this handbook, we generally reference "columns" and "rows" instead of "variables" and "observations". As explained in this primer on ["tidy data"](https://tidyr.tidyverse.org/articles/tidy-data.html), most epidemiological statistical datasets consist structurally of rows, columns, and values.  
+在 "tidy 整洁 "的数据集中，每一列是一个变量，每一行是一个观察结果，每一个单元格是一个单一的值。然而，一些数据集并不符合这种模式 ------ 一个 "wide 宽 "的数据集中可能有一个变量被分割成几列（如 [数据透视] 页面中的一个例子）。同样地，观测结果也可能被分割成几行。
 
-*Variables* contain the values that measure the same underlying attribute (like age group, outcome, or date of onset). *Observations* contain all values measured on the same unit (e.g. a person, site, or lab sample). So these aspects can be more difficult to tangibly define.  
+这本指南的大部分内容是关于数据管理和数据转换的。因此，将数据集看作行列结构更有意义。例外情况主要出现在有关数据分析的页面中。在这些页面你会看到更多关于变量和观测结果的使用。
 
-In "tidy" datasets, each column is a variable, each row is an observation, and each cell is a single value. However some datasets you encounter will not fit this mold - a "wide" format dataset may have a variable split across several columns (see an example in the [Pivoting data] page). Likewise, observations could be split across several rows.  
+### 注释 {.unnumbered}
 
-Most of this handbook is about managing and transforming data, so referring to the concrete data structures of rows and columns is more relevant than the more abstract observations and variables. Exceptions occur primarily in pages on data analysis, where you will see more references to variables and observations.  
+以下是你在指南中可能遇到的注释类型：
 
+[**注释：**这是一个注释。]{style="color: black;"}\
+[**提示：**这是一个提示。]{style="color: darkgreen;"}\
+[**警示：**这是一个警示。]{style="color: orange;"}\
+[**警告 :** 这是一个警告。]{style="color: red;"}
 
+## 设定
 
-### Notes {.unnumbered} 
+下表是我们对于 package 和函数选择的主要设定。如果你有不同意见或者想提供一个新的工具，请在我们的 [Github page](https://github.com/appliedepi/epirhandbook_eng) 联系我们。
 
-Here are the types of notes you may encounter in the handbook:  
+**表：Package，函数和其他设定**
 
-<span style="color: black;">**_NOTE:_** This is a note</span>  
-<span style="color: darkgreen;">**_TIP:_** This is a tip.</span>  
-<span style="color: orange;">**_CAUTION:_** This is a cautionary note.</span>  
-<span style="color: red;">**_DANGER:_** This is a warning.</span>  
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 对象         | 待选                                                                             | 最终结果                                                                               | 主要理由                                                       |
++==============+==================================================================================+========================================================================================+================================================================+
+| 通用编码方式 | **tidyverse**, **data.table**, **base**                                          | **tidyverse**，有一个页面用 **data.table**。 **base** 作为替代，对于那些没有网络的读者 | **tidyverse** 可读性、普遍性、最多人使用                       |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| Package 加载 | `library()`,`install.packages()`, `require()`, **pacman**                        | **pacman**                                                                             | 为大多数 Package 的安装或加载提供简化代码                      |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 导入和导出   | **rio**, many other packages                                                     | **rio**                                                                                | 可轻松处理多种文件类型                                         |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 统计数据分组 | **dplyr** `group_by()`, **stats** `aggregate()`                                  | **dplyr** `group_by()`                                                                 | 与 **tidyverse** 的特点一致                                    |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 表格透视     | **tidyr** (pivot functions), **reshape2** (melt/cast), **tidyr** (spread/gather) | **tidyr** (pivot functions)                                                            | **reshape2** 已不再更新, **tidyr** 可用 pivot functions v1.0.0 |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 清理列名     | **linelist**, **janitor**                                                        | **janitor**                                                                            | 强调合并 packages                                              |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 流行病学周   | **lubridate**, **aweek**, **tsibble**, **zoo**                                   | **lubridate** 比较普遍，其他的针对具体情况                                             | **lubridate's** 灵活性、一致性、维护较好                       |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| ggplot 标签  | `labs()`, `ggtitle()`/`ylab()`/`xlab()`                                          | `labs()`                                                                               | 所有标签在一个地方、简单                                       |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 转换为因子   | `factor()`, **forcats**                                                          | **forcats**                                                                            | 它的函数也会被转换为因子在同一命令下                           |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 流行曲线     | **incidence**, **ggplot2**, **EpiCurve**                                         | **incidence2** 更快速, **ggplot2** 更细节                                              | 可靠性                                                         |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
+| 串联         | `paste()`, `paste0()`, `str_glue()`, `glue()`                                    | `str_glue()`                                                                           | 和 **stringr** 一起是一种比粘贴函数更简单的语法                |
++--------------+----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+----------------------------------------------------------------+
 
+## 主要修订
 
+| 日期         | 主要变动      |
+|--------------|---------------|
+| 10 五月 2021 |  发布版本1.0.0|
 
-## Editorial decisions  
+## 版本信息 (R, RStudio, packages)
 
-Below, we track significant editorial decisions around package and function choice. If you disagree or want to offer a new tool for consideration, please join/start a conversation on our [Github page](https://github.com/appliedepi/epirhandbook_eng).    
-
-
-**Table of package, function, and other editorial decisions**  
-
-
-Subject           |     Considered      |   Outcome              |    Brief rationale   
------------------ | --------------------|------------------------|-----------------------------------------------
-General coding approach|**tidyverse**, **data.table**, **base**|**tidyverse**, with a page on **data.table**, and mentions of **base** alternatives for readers with no internet|**tidyverse** readability, universality, most-taught  
-Package loading|`library()`,`install.packages()`, `require()`, **pacman**|**pacman**|Shortens and simplifies code for most multi-package install/load use-cases
-Import and export|**rio**, many other packages|**rio**|Ease for many file types
-Grouping for summary statistics|**dplyr** `group_by()`, **stats** `aggregate()`|**dplyr** `group_by()`|Consistent with **tidyverse** emphasis
-Pivoting|**tidyr** (pivot functions), **reshape2** (melt/cast), **tidyr** (spread/gather)|**tidyr** (pivot functions)|**reshape2** is retired, **tidyr** uses pivot functions as of v1.0.0
-Clean column names|**linelist**, **janitor**|**janitor**|Consolidation of packages emphasized
-Epiweeks |**lubridate**, **aweek**, **tsibble**, **zoo**|**lubridate** generally, the others for specific cases| **lubridate's** flexibility, consistency, package maintenance prospects  
-ggplot labels |`labs()`, `ggtitle()`/`ylab()`/`xlab()` |`labs()` |all labels in one place, simplicity  
-Convert to factor |`factor()`, **forcats**|**forcats**|its various functions also convert to factor in same command
-Epidemic curves|**incidence**, **ggplot2**, **EpiCurve**|**incidence2** as quick, **ggplot2** as detailed|dependability
-Concatenation|`paste()`, `paste0()`, `str_glue()`, `glue()`|`str_glue()`|More simple syntax than paste functions; within **stringr**
-
-
-## Major revisions  
-
-
-Date           |Major changes        
----------------| ------------------------------------------    
-10 May 2021    |Release of version 1.0.0    
-
-
-## Session info (R, RStudio, packages)  
-
-Below is the information on the versions of R, RStudio, and R packages used during this rendering of the Handbook.  
-
+以下是有关本指南使用过程中使用的 R、RStudio 和 R packages 的版本信息。
 
 ```{r}
 sessioninfo::session_info()
 ```
-
-
-
-
