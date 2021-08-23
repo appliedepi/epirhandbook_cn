@@ -1051,15 +1051,21 @@ This section was also informed by [this tutorial](https://www.dataquest.io/blog/
 ## Export {}  
 
 ### With **rio** package {.unnumbered}
-With **rio**, you can use the `export()` function in a very similar way to `import()`. First give the name of the R object you want to save (e.g. `linelist`) and then in quotes put the file path where you want to save the file, including the desired file name and file extension. For example:  
+With **rio**, you can use the `export()` function in a very similar way to `import()`. First give the name of the R object you want to save (e.g. `linelist`) and then in quotes put the file path where you want to save the file, including the desired file name and file extension. For example:
+
+使用**rio**，您可以以非常类似的方式使用' export() '函数。首先给出要保存的R对象的名称(例如。' linelist ')，然后在引号中放置你想保存文件的文件路径，包括所需的文件名和文件扩展名。例如:
 
 This saves the data frame `linelist` as an Excel workbook to the working directory/R project root folder:  
+
+这将数据框架`lineelist` 作为Excel工作簿保存到工作目录/R项目根文件夹:
 
 ```{r, eval=F}
 export(linelist, "my_linelist.xlsx") # will save to working directory
 ```
 
 You could save the same data frame as a csv file by changing the extension. For example, we also save it to a file path constructed with `here()`:  
+
+您可以通过更改扩展名将相同的数据帧保存为csv文件。例如，我们也将它保存到用' here() '构造的文件路径中:
 
 ```{r, eval=F}
 export(linelist, here("data", "clean", "my_linelist.csv"))
@@ -1069,6 +1075,8 @@ export(linelist, here("data", "clean", "my_linelist.csv"))
 ### To clipboard {.unnumbered}
 
 To export a data frame to your computer's "clipboard" (to then paste into another software like Excel, Google Spreadsheets, etc.) you can use `write_clip()` from the **clipr** package. 
+
+要将数据帧导出到计算机的“剪贴板”(然后粘贴到Excel、谷歌Spreadsheets等其他软件中)，可以使用**clipr**包中的' write_clip() '。
 
 ```{r, eval=F}
 # export the linelist data frame to your system's clipboard
@@ -1082,9 +1090,15 @@ clipr::write_clip(linelist)
 
 Along with .csv, .xlsx, etc, you can also export/save R data frames as .rds files. This is a file format specific to R, and is very useful if you know you will work with the exported data again in R. 
 
+除了.csv、.xlsx等，您还可以将R数据帧导出/保存为.rds文件。这是R特有的一种文件格式，如果您知道将在R中再次使用导出的数据，这将非常有用。
+
 The classes of columns are stored, so you don't have do to cleaning again when it is imported (with an Excel or even a CSV file this can be a headache!). It is also a smaller file, which is useful for export and import if your dataset is large.  
 
+列的类是存储的，所以在导入时不需要再次进行清理(对于Excel甚至是CSV文件，这可能是一个令人头痛的问题!)它也是一个较小的文件，如果您的数据集较大，这对于导出和导入非常有用。
+
 For example, if you work in an Epidemiology team and need to send files to a GIS team for mapping, and they use R as well, just send them the .rds file! Then all the column classes are retained and they have less work to do.  
+
+例如，如果你在一个流行病学小组工作，需要向一个GIS小组发送文件来绘制地图，而他们也使用R，那么就给他们发送。rds文件!然后保留所有的列类，它们需要做的工作更少。
 
 ```{r, eval=F}
 export(linelist, here("data", "clean", "my_linelist.rds"))
@@ -1097,13 +1111,20 @@ export(linelist, here("data", "clean", "my_linelist.rds"))
 
 `.Rdata` files can store multiple R objects - for example multiple data frames, model results, lists, etc. This can be very useful to consolidate or share a lot of your data for a given project.  
 
+
+`.Rdata` 的文件可以存储多个R对象，例如多个数据帧、模型结果、列表等。这对于整合或共享给定项目的大量数据非常有用。
+
 In the below example, multiple R objects are stored within the exported file "my_objects.Rdata":  
+
+在下面的示例中，多个R对象存储在导出的文件“my_objects”中。Rdata”:
 
 ```{r, eval=F}
 rio::export(my_list, my_dataframe, my_vector, "my_objects.Rdata")
 ```
 
 Note: if you are trying to *import* a list, use `import_list()` from **rio** to import it with the complete original structure and contents.  
+
+注意:如果你试图*导入*一个列表，使用' import_list() ' from **里约热内卢**来导入完整的原始结构和内容。
 
 ```{r, eval=F}
 rio::import_list("my_list.Rdata")
@@ -1120,21 +1141,33 @@ rio::import_list("my_list.Rdata")
 
 Instructions on how to save plots, such as those created by `ggplot()`, are discussed in depth in the [ggplot basics] page.  
 
+关于如何保存图形(例如由' ggplot() '创建的图形)的说明，将在[ggplot basics]页面中进行深入讨论。
+
 In brief, run `ggsave("my_plot_filepath_and_name.png")` after printing your plot. You can either provide a saved plot object to the `plot = ` argument, or only specify the destination file path (with file extension) to save the most recently-displayed plot. You can also control the `width = `, `height = `, `units = `, and `dpi = `.  
 
+简单地说，在打印你的图形之后，运行' ggsave("my_plot_filepath_and_name.png") '。您可以为' plot = '参数提供一个已保存的plot对象，或者只指定保存最近显示的plot的目标文件路径(使用文件扩展名)。您还可以控制' width = '， ' height = '， ' units = '和' dpi = '。
+
 How to save a network graph, such as a transmission tree, is addressed in the page on [Transmission chains]. 
+
+如何保存网络图，如传输树，在[传输链]的页面中进行了说明。
 
 
 <!-- ======================================================= -->
 ## Resources {} 
 
 The [R Data Import/Export Manual](https://cran.r-project.org/doc/manuals/r-release/R-data.html)  
+
+R数据导入/导出手册](https://cran.r-project.org/doc/manuals/r-release/R-data.html)
+
 [R 4 Data Science chapter on data import](https://r4ds.had.co.nz/data-import.html#data-import)  
 [ggsave() documentation](https://ggplot2.tidyverse.org/reference/ggsave.html)  
 
+[R 4数据科学关于数据导入的章节](https://r4ds.had.co.nz/data-import.html#data-import)
+[ggsave()的文档)(https://ggplot2.tidyverse.org/reference/ggsave.html)
 
 Below is a table, taken from the **rio** online [vignette](https://cran.r-project.org/web/packages/rio/vignettes/rio.html). For each type of data it shows: the expected file extension, the package **rio** uses to import or export the data, and whether this functionality is included in the default installed version of **rio**.  
 
+下面是一个表格，取自 **rio** online [vignette](https://cran.r-project.org/web/packages/rio/vignettes/rio.html)。对于每种类型的数据，它显示:预期的文件扩展名，包**rio**用于导入或导出数据，以及该功能是否包含在**rio**的默认安装版本中。
 
 
 Format                     | Typical Extension | Import Package    | Export Package     | Installed by Default
