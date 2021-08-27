@@ -1,14 +1,14 @@
 
-# R projects {}  
+# R 项目 {}  
 
-R项目可以将您的工作打包到一个可移植的、自包含的文件夹中。在项目中，所有相关的脚本、数据文件、图形/输出和历史都存储在子文件夹中，重要的是，*工作目录*是项目的根文件夹。
+R项目可以将您的工作打包到一个可移植的、独立的文件夹中。在项目中，所有相关的脚本、数据文件、图形/输出和历史都存储在子文件夹中。重要的是，*工作目录*是项目的根文件夹。
 
 An R project enables your work to be bundled in a portable, self-contained folder. Within the project, all the relevant scripts, data files, figures/outputs, and history are stored in sub-folders and importantly - the *working directory* is the project's root folder.  
 
 
 ## Suggested use  
 
-使用R的一种常见、有效且无故障的方法是将这三个元素组合起来。一个离散的工作项目托管在一个R项目中。每个元素在下面的章节中进行描述。
+使用R的一种常见、有效且可靠的方法是将以下三个元素组合起来： 一个独立的工作项目托管在一个R项目中。每个元素在下面的章节中进行描述。
 
 A common, efficient, and trouble-free way to use R is to combine these 3 elements. One discrete work project is hosted within one R project. Each element is described in the sections below.  
 
@@ -16,7 +16,7 @@ A common, efficient, and trouble-free way to use R is to combine these 3 element
 -一个独立的工作环境，包含数据、脚本、输出等文件夹。
 2) **here**包的相对文件路径
 -文件路径是相对于R项目的根文件夹写入的-更多信息请参见[Import and export]
-3)进口/出口的**里约热内卢**包装
+3)**rio**包用于(文件）导入/导出
 - `import()`和`export()`通过扩展名处理任何文件类型(例如.csv， .xlsx， .png)
 
 1) An **R project**  
@@ -32,7 +32,8 @@ A common, efficient, and trouble-free way to use R is to combine these 3 element
 <!-- ======================================================= -->
 ## Creating an R project {}
 
-要创建一个R项目，从“文件”菜单中选择“新建项目”。
+从“文件”菜单中选择“新建项目”来创建一个R项目。
+
 *如果你想为项目创建一个新文件夹，选择“新目录”并指明创建的位置。
 *如果您想在现有文件夹中创建项目，请单击“现有目录”并指明该文件夹。
 *如果你想克隆一个Github库，选择第三个选项“版本控制”，然后选择“Git”。详情请参阅[版本控制和与Git和Github的协作]页面。
