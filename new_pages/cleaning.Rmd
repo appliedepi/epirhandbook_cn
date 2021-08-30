@@ -368,7 +368,7 @@ names(linelist)
 
 
 ### Manual name cleaning {.unnumbered}  
-### 手动清洗列名
+### 手动清洗列名 {#manual_name}
 
 Re-naming columns manually is often necessary, even after the standardization step above. Below, re-naming is performed using the `rename()` function from the **dplyr** package, as part of a pipe chain. `rename()` uses the style `NEW = OLD` - the new column name is given before the old column name.  
 
@@ -418,7 +418,7 @@ names(linelist)
 
 
 #### Rename by column position {.unnumbered} 
-#### 按列位置重命名
+#### 按列位置重命名 {#rename_column}
 
 You can also rename by column position, instead of column name, for example:  
 
@@ -432,7 +432,7 @@ rename(newNameForFirstColumn  = 1,
 
 
 #### Rename via `select()` and `summarise()` {.unnumbered} 
-#### 通过`select()` 和 `summarise()`重命名
+#### 通过`select()` 和 `summarise()`重命名 {#rename_select}
 
 As a shortcut, you can also rename columns within the **dplyr** `select()` and `summarise()` functions. `select()` is used to keep only certain columns (and is covered later in this page). `summarise()` is covered in the [Grouping data] and [Descriptive tables] pages. These functions also uses the format `new_name = old_name`. Here is an example:  
 
@@ -457,11 +457,11 @@ linelist_raw %>%
 
 
 ### Other challenges {.unnumbered}  
-### 其他难题
+### 其他难题 {#other_challenges}
 
 
 #### Empty Excel column names {.unnumbered} 
-#### Excel表格空列名
+#### Excel表格空列名 {#empty_column}
 
 R cannot have dataset columns that do not have column names (headers). So, if you import an Excel dataset with data but no column headers, R will fill-in the headers with names like "...1" or "...2". The number represents the column number (e.g. if the 4th column in the dataset has no header, then R will name it "...4").  
 
@@ -472,7 +472,7 @@ R语言数据集不能包含无列名（列标题）的列。因此，如果您�
 您可以通过引用它们的位置编号（参见上面的示例）或分配的名称 ( `linelist_raw$...1`) 来手动清理这些名称。
 
 #### Merged Excel column names and cells {.unnumbered}  
-#### 合并的Excel列名和单元格
+#### 合并的Excel列名和单元格{#merged_column}
 
 Merged cells in an Excel file are a common occurrence when receiving data. As explained in [Transition to R], merged cells can be nice for human reading of data, but are not "tidy data" and cause many problems for machine reading of data. R cannot accommodate merged cells.  
 
@@ -506,7 +506,7 @@ linelist_raw <- openxlsx::readWorkbook("linelist_raw.xlsx", fillMergedCells = TR
 
 <span style="color: red;">**_DANGER:_** If column names are merged with `readWorkbook()`, you will end up with duplicate column names, which you will need to fix manually - R does not work well with duplicate column names! You can re-name them by referencing their position (e.g. column 5), as explained in the section on manual column name cleaning.</span>
 
-<span style="color: red;">**_危险：_** 如果用`readWorkbook()`导入合并单元格数据，您最终会得到重复的列名，您需要手动修复 - R 不能很好地处理重复的列名！您可以通过引用其位置（例如第5列）来重命名列，如手动列名清洗部分所述。</span>
+<span style="color: red;">**_危险：_** 如果用`readWorkbook()`导入合并单元格数据，您最终会得到重复的列名，那就需要手动修复。R 不能很好地处理重复的列名！您可以按手动列名清洗章节介绍的那样通过引用位置（例如第5列）来重命名列。</span>
 
 
 
@@ -517,22 +517,34 @@ linelist_raw <- openxlsx::readWorkbook("linelist_raw.xlsx", fillMergedCells = TR
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Select or re-order columns {} 
+## 列选择或重排序 {#select_reorder}
 
 Use `select()` from **dplyr** to select the columns you want to retain, and to specify their order in the data frame. 
+
+使用**dplyr**包的`select()`函数可以选择要保留的列，并能指定保列在数据框中的顺序。
 
 <span style="color: orange;">**_CAUTION:_** In the examples below, the `linelist` data frame is modified with `select()` and displayed, but not saved. This is for demonstration purposes. The modified column names are printed by piping the data frame to `names()`.</span>
 
 **Here are ALL the column names in the linelist at this point in the cleaning pipe chain:**
+
+<span style="color: orange;">**_注意：_** 在下面的示例中，`linelist`数据框被`select()`修改并显示，但并未保存。这样是为了便于演示。修改后的列名通过将数据框传递到`names()`打印出来。</span>
+
+**以下是linelist数据框进入数据清洗管道链时的所有列名称：**
 
 ```{r}
 names(linelist)
 ```
 
 ### Keep columns {.unnumbered}  
+### 保留列 {#keep_columns}
 
 **Select only the columns you want to remain**  
+**仅选择要保留的列**
 
 Put their names in the `select()` command, with no quotation marks. They will appear in the data frame in the order you provide. Note that if you include a column that does not exist, R will return an error (see use of `any_of()` below if you want no error in this situation).  
+
+
+将不带引号的列名放在`select()`命令中，指定的列名将按照提供的顺序出现在数据框中。请注意，如果包含一个不存在的列，R将返回一个错误提示。（这种情况下如果不想出现错误提示，请参见`any_of()`的用法。
 
 ```{r}
 # linelist dataset is piped through select() command, and names() prints just the column names
@@ -542,16 +554,36 @@ linelist %>%
 ```
 
 
+```{r}
+# linelist数据集被传递给select()命令，然后names()命令将列名打印出来。
+linelist %>% 
+  select(case_id, date_onset, date_hospitalisation, fever) %>% 
+  names()  # 显示列名
+```
 
 
-### "tidyselect" helper functions {#clean_tidyselect .unnumbered}  
+
+
+### "tidyselect" helper functions {#clean_tidyselect .unnumbered}
+### “tidyselcet”辅助函数 {#tidyselect_helper}
 
 These helper functions exist to make it easy to specify columns to keep, discard, or transform. They are from the package **tidyselect**, which is included in **tidyverse** and underlies how columns are selected in **dplyr** functions.  
 
-For example, if you want to re-order the columns, `everything()` is a useful function to signify "all other columns not yet mentioned". The command below moves columns `date_onset` and `date_hospitalisation` to the beginning (left) of the dataset, but keeps all the other columns afterward. Note that `everything()` is written with empty parentheses:  
+For example, if you want to re-order the columns, `everything()` is a useful function to signify "all other columns not yet mentioned". The command below moves columns `date_onset` and `date_hospitalisation` to the beginning (left) of the dataset, but keeps all the other columns afterward. Note that `everything()` is written with empty parentheses: 
+
+这些辅助函数就是用来帮助指定要保留、删除或转换的列。这些函数来自**tidyselect**包，并被纳入**tidyverse**中，并作为**dplyr**包系列函数选择列的基础方法。
+
+例如，如果要对列重新排序，`everything()`则是一个有用的函数来表示“尚未提及的所有其他列”。下面命令将`date_onset`和`date_hospitalisation`移动到数据集的开头（左侧），并在其后保留其他所有列。请注意，`everything()`中是空括号：
 
 ```{r}
 # move date_onset and date_hospitalisation to beginning
+linelist %>% 
+  select(date_onset, date_hospitalisation, everything()) %>% 
+  names()
+```
+
+```{r}
+# 移动date_onset和date_hospitalisation到开头
 linelist %>% 
   select(date_onset, date_hospitalisation, everything()) %>% 
   names()
@@ -573,11 +605,34 @@ Here are other "tidyselect" helper functions that also work *within* **dplyr** f
 * `num_range()`   - a numerical range like x01, x02, x03  
 * `any_of()`      - matches IF column exists but returns no error if it is not found  
   * example: `select(any_of(date_onset, date_death, cardiac_arrest))`  
+  
+Here are other "tidyselect" helper functions that also work *within* **dplyr** functions like `select()`, `across()`, and `summarise()`:
+以下是也可以在**dplyr**系列函数内使用的其他“tidyselect”辅助函数，如`select()`，`across()`和`summarise()`:
+
+* `everything()`  - 未提及的其他所有列
+* `last_col()`    - 最后一列  
+* `where()`       - 将函数应用于所有列并选择那些条件为TRUE的列
+* `contains()`    - 包含某字符串的列  
+  * 示例: `select(contains("time"))`  
+* `starts_with()` - 匹配指定前缀 
+  * 示例: `select(starts_with("date_"))`  
+* `ends_with()`   - 匹配指定后缀 
+  * 示例: `select(ends_with("_post"))`  
+* `matches()`     - 应用正则表达式(regex)  
+  * 示例: `select(matches("[pt]al"))`  
+* `num_range()`   - 数值范围，如x01, x02, x03  
+* `any_of()`      - 匹配存在的列但如果不存在也不返回错误  
+  * 示例: `select(any_of(date_onset, date_death, cardiac_arrest))`  
 
 In addition, use normal operators such as `c()` to list several columns, `:` for consecutive columns, `!` for opposite, `&` for AND, and `|` for OR.  
 
 
 Use `where()` to specify logical criteria for columns. If providing a function inside `where()`, do not include the function's empty parentheses. The command below selects columns that are class Numeric.
+
+
+此外，还可以运用普通操作符，如`C()`选择多列，`:`选择连续列，`!`选择指定 条件逻辑非列，`&` 选择指定条件逻辑与列，`|`选择指定条件逻辑或列。
+
+使用`where()`为列指定逻辑条件。如果在`where()` 内提供一个函数的话，请不要为这个函数添加空括号。下面的命令将选择数值类的列。
 
 ```{r}
 # select columns that are class Numeric
@@ -585,8 +640,16 @@ linelist %>%
   select(where(is.numeric)) %>% 
   names()
 ```
+```{r}
+# 选择数值的列
+linelist %>% 
+  select(where(is.numeric)) %>% 
+  names()
+```
 
 Use `contains()` to select only columns in which the column name contains a specified character string. `ends_with()` and `starts_with()` provide more nuance.  
+
+用`contains()`函数仅选择列名中包含指定字符串的列。`ends_with()`和`starts_with()`提供更多细微差别，属于特例。
 
 ```{r}
 # select columns containing certain characters
@@ -595,7 +658,17 @@ linelist %>%
   names()
 ```
 
+
+```{r}
+# 选择包含某些字符串的列
+linelist %>% 
+  select(contains("date")) %>% 
+  names()
+```
+
 The function `matches()` works similarly to `contains()` but can be provided a regular expression (see page on [Characters and strings]), such as multiple strings separated by OR bars within the parentheses:  
+
+`matches()`工作方式与`contains()`类似，但前者可以接受正则表达式，（请参阅[字符与字符串]章节），例如在括号内由 OR 条分隔的多个字符串：
 
 ```{r}
 # searched for multiple character matches
@@ -603,10 +676,20 @@ linelist %>%
   select(matches("onset|hosp|fev")) %>%   # note the OR symbol "|"
   names()
 ```
+```{r}
+# 多字符匹配检索
+linelist %>% 
+  select(matches("onset|hosp|fev")) %>%   # 注意逻辑或符号 "|"
+  names()
+```
 
 <span style="color: orange;">**_CAUTION:_** If a column name that you specifically provide does not exist in the data, it can return an error and stop your code. Consider using `any_of()` to cite columns that may or may not exist, especially useful in negative (remove) selections.</span>
 
+<span style="color: orange;">**_注意：_** 如果指定的列名没在数据集中，则可能会返回错误并停止运行代码。这时请考虑使用`any_of()`来引用可能存在或可能不存在的列，这在否定（删除）选择中特别有用。</span>
+
 Only one of these columns exists, but no error is produced and the code continues without stopping your cleaning chain.  
+
+指定列名中只有一列存在，但不会产生错误，代码继续运行，不会中断清洗工作。
 
 ```{r}
 linelist %>% 
@@ -617,8 +700,11 @@ linelist %>%
 
 
 ### Remove columns {.unnumbered} 
+### 删除列 {#remove_columns}
 
 **Indicate which columns to remove** by placing a minus symbol "-" in front of the column name (e.g. `select(-outcome)`), or a vector of column names (as below). All other columns will be retained. 
+
+**索引要删除的列**的方法是在该列名或列名向量（如下）前加一个负号"-"。其他所有列将被保留。
 
 ```{r}
 linelist %>% 
@@ -626,17 +712,31 @@ linelist %>%
   names()
 ```
 
+```{r}
+linelist %>% 
+  select(-c(date_onset, fever:vomit)) %>% # 删除date_onset和从fever到vomit间的所有列
+  names()
+```
+
 You can also remove a column using **base** R syntax, by defining it as `NULL`. For example:  
+
+还可以用**base**R语法把相应列定义为`NULL`的方法来删除该列。例如：
 
 ```{r, eval=F}
 linelist$date_onset <- NULL   # deletes column with base R syntax 
+```
+```{r, eval=F}
+linelist$date_onset <- NULL   # 用base R语法删除列
 ```
 
 
 
 ### Standalone {.unnumbered}
+### 
 
 `select()` can also be used as an independent command (not in a pipe chain). In this case, the first argument is the original dataframe to be operated upon.  
+
+`select()`也可以作为一个独立命令（不在管道链中）使用。此时，函数的第一个参数是需操作的原始数据框。
 
 ```{r}
 # Create a new linelist with id and age-related columns
@@ -645,12 +745,22 @@ linelist_age <- select(linelist, case_id, contains("age"))
 # display the column names
 names(linelist_age)
 ```
+```{r}
+# 用id和age相关列创建一个新的一览表数据
+linelist_age <- select(linelist, case_id, contains("age"))
+
+# 显示列名
+names(linelist_age)
+```
 
 
 
 #### Add to the pipe chain {.unnumbered}  
+#### 添加到管道链 {#add_pipe}
 
 In the `linelist_raw`, there are a few columns we do not need: `row_num`, `merged_header`, and `x28`. We remove them with a `select()` command in the cleaning pipe chain:  
+
+在`linelist_raw`数据集中，有几列我们不需要：`row_num`，`merged_header`和`x28`。可以用 `select()` 命令在数据清洗管道链中将其删除：  
 
 ```{r}
 # CLEANING 'PIPE' CHAIN (starts with raw data and pipes it through cleaning steps)
@@ -676,6 +786,30 @@ linelist <- linelist_raw %>%
     select(-c(row_num, merged_header, x28))
 ```
 
+```{r}
+# 数据清洗“管道”链（以原始数据开始，然后将其传递给数据清洗步骤）
+##################################################################################
+
+# 数据清洗管道链开始
+###########################
+linelist <- linelist_raw %>%
+    
+    # 标准化列名语法
+    janitor::clean_names() %>% 
+    
+    # 手动重命名列
+           # 新名               # 原名
+    rename(date_infection       = infection_date,
+           date_hospitalisation = hosp_date,
+           date_outcome         = date_of_outcome) %>% 
+    
+    # 以上是上游清洗步骤已经讨论过了
+    #####################################################
+
+    # 删除列
+    select(-c(row_num, merged_header, x28))
+```
+
 
 
 
@@ -683,6 +817,7 @@ linelist <- linelist_raw %>%
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Deduplication
+## 数据去重
 
 
 See the handbook page on [De-duplication] for extensive options on how to de-duplicate data. Only a very simple row de-duplication example is presented here.  
@@ -693,16 +828,30 @@ When evaluating duplicate rows, it takes into account a range of columns - by de
 
 In this simple example, we just add the empty command `distinct()` to the pipe chain. This ensures there are no rows that are 100% duplicates of other rows (evaluated across all columns).  
 
-We begin with ` nrow(linelist)` rows in `linelist`. 
+We begin with `nrow(linelist)` rows in `linelist`. 
+
+有关如何删除重复数据的更多选项，请参阅手册的[数据去重]章节。这里只提供了一个非常简单的行重复数据去重示例。
+
+`dplyr`包提供了`distinct()`函数。此函数检查每一行并将数据框精简到只包含独特行。也就是说，它会删除100%重复的行。
+
+在评估重复行时，会考察多列。默认情况下，会考察所有列。如数据去重章节介绍的，可以调整指定列范围，以便仅针对某些列评估行的唯一性。
+
+在这个简单的例子中，只将`distinct()`空命令添加到管道链中，这可确保没有与其他行100% 重复的行（跨所有列评估）。
+
+开始时，`linelist`数据集中有`r nrow(linelist)`行数据。
 
 ```{r}
 linelist <- linelist %>% 
   distinct()
 ```
 
-After de-duplication there are ` nrow(linelist)` rows. Any removed rows would have been 100% duplicates of other rows.  
+After de-duplication there are `r nrow(linelist)` rows. Any removed rows would have been 100% duplicates of other rows.  
 
 Below, the `distinct()` command is added to the cleaning pipe chain:
+
+数据去重后只剩`r nrow(linelist)`行。任何删除的行都与其他行100%重复。
+
+下面，将`distinct()`命令添加到数据清洗管道链中：
 
 ```{r}
 # CLEANING 'PIPE' CHAIN (starts with raw data and pipes it through cleaning steps)
@@ -731,6 +880,29 @@ linelist <- linelist_raw %>%
     distinct()
 ```
 
+```{r}
+# 数据清洗“管道”链（以原始数据开始，然后将其传递给数据清洗步骤）
+##################################################################################
+
+# 数据清洗管道链开始
+###########################
+linelist <- linelist_raw %>%
+    
+    # 标准化列名语法
+    janitor::clean_names() %>% 
+    
+    # 手动重命名列
+           # 新名               # 原名
+    rename(date_infection       = infection_date,
+           date_hospitalisation = hosp_date,
+           date_outcome         = date_of_outcome) %>% 
+    
+    # 以上是上游清洗步骤已经讨论过了
+    #####################################################
+    
+    # 数据去重
+    distinct()
+```
 
 
 
@@ -739,6 +911,7 @@ linelist <- linelist_raw %>%
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Column creation and transformation { }
+## 创建和转换列
 
 
 **We recommend using the dplyr function `mutate()` to add a new column, or to modify an existing one.**  
@@ -748,9 +921,18 @@ Below is an example of creating a new column with `mutate()`. The syntax is: `mu
 In Stata, this is similar to the command `generate`, but R's `mutate()` can also be used to modify an existing column.  
 
 
+**建议使用dply包的mutate()函数添加新列或修改现有列。**
+
+下面有一个使用`mutate()`创建新列的示例。语法是：`mutate(new_column_name = value or transformation)`。
+
+在Stata中，这类似于命令`generate`，但R的`mutate()`也可用于修改现有列。
+
 ### New columns {.unnumbered}
+### 新列 {#new_columns}
 
 The most basic `mutate()` command to create a new column might look like this. It creates a new column `new_col` where the value in every row is 10.  
+
+`mutate()`创建新列的最基本命令可能如下所示。创建一个新列`new_col`，其每一行的值都是 10。
 
 ```{r, eval=F}
 linelist <- linelist %>% 
@@ -759,12 +941,18 @@ linelist <- linelist %>%
 
 You can also reference values in other columns, to perform calculations. Below, a new column `bmi` is created to hold the Body Mass Index (BMI) for each case - as calculated using the formula BMI = kg/m^2, using column `ht_cm` and column `wt_kg`.  
 
+还可以引用其他列中的值来换算。下面，创建了一个新列`bmi`来保存每个病例的体重指数 (BMI) - 使用`ht_cm`和`wt_kg`两列数据和公式BMI = kg/m^2计算。
+
 ```{r}
 linelist <- linelist %>% 
   mutate(bmi = wt_kg / (ht_cm/100)^2)
 ```
 
 If creating multiple new columns, separate each with a comma and new line. Below are examples of new columns, including ones that consist of values from other columns combined using `str_glue()` from the **stringr** package (see page on [Characters and strings].  
+
+如果创建多个新列，请用逗号和新行分隔每一列。下面是新列的例子，包括那些由使用其他列组合值str_glue()从stringr包（见网页上的字符和字符串。
+
+
 
 ```{r}
 new_col_demo <- linelist %>%                       
