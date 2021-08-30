@@ -1,4 +1,5 @@
 # Cleaning data and core functions {}
+# 清洗数据及其主要函数 {#cleaning_data}
 
 
 ```{r, out.height = "10%", fig.align = "center", echo=F}
@@ -8,14 +9,25 @@ knitr::include_graphics(here::here("images", "cleaning.png"))
 
 This page demonstrates common steps used in the process of "cleaning" a dataset, and also explains the use of many essential R data management functions.  
 
+本节阐述了“清洗”数据集的常用步骤，并演示了一些必要的R语言数据管理函数的使用。
+
+
+
 To demonstrate data cleaning, this page begins by importing a raw case linelist dataset, and proceeds step-by-step through the cleaning process. In the R code, this manifests as a "pipe" chain, which references the "pipe" operator ` %>%` that passes a dataset from one operation to the next.  
 
+为阐述数据清洗，本节首先导入原始病例一览表数据集，然后逐步演示清理过程。在 R 代码中，这个过程可以用一个“管道”链完成：应用管道操作符“%>%”将数据从一个操作传递到下一个操作。
 
 ### Core functions {.unnumbered}  
+### 主要函数 {#core_functions}
 
 This handbook emphasizes use of the functions from the [**tidyverse**](https://www.tidyverse.org/) family of R packages. The essential R functions demonstrated in this page are listed below.  
 
+本手册强调使用[**tidyverse**](https://www.tidyverse.org/)系列 R 包中的函数。下面列出了本节中演示的基本 R 函数。
+
+
 Many of these functions belong to the [**dplyr**](https://dplyr.tidyverse.org/) R package, which provides "verb" functions to solve data manipulation challenges (the name is a reference to a "data frame-[plier](https://www.thefreedictionary.com/plier#:~:text=also%20ply%C2%B7er%20(pl%C4%AB%E2%80%B2,holding%2C%20bending%2C%20or%20cutting.)"). **dplyr** is part of the **tidyverse** family of R packages (which also includes **ggplot2**, **tidyr**, **stringr**, **tibble**, **purrr**, **magrittr**, and **forcats** among others).  
+
+这些函数大多属于[**dplyr**](https://dplyr.tidyverse.org/)R包，它提供“动词”函数来解决数据操作任务（名称是“数据框-[钳](https://www.thefreedictionary.com/plier#:~:text=also%20ply%C2%B7er%20(pl%C4%AB%E2%80%B2,holding%2C%20bending%2C%20or%20cutting.)”)）。**dplyr**是**tidyverse**系列R包之一（其中还包括**ggplot2**、**tidyr**、**stringr**、**tibble**、**purrr**、**magrittr**和**forcats**等）。
 
 
 Function       | Utility                               | Package
@@ -40,32 +52,81 @@ Function       | Utility                               | Package
 `clean_variable_spelling()`|re-code/clean values using a data dictionary|**linelist**
 `which()`|apply logical criteria; return indices|**base** R
 
-If you want to see how these functions compare to Stata or SAS commands, see the page on [Transition to R].  
 
-You may encounter an alternative data management framework from the **data.table** R package with operators like `:=` and frequent use of brackets `[ ]`. This approach and syntax is briefly explained in the [Data Table] page.  
+函数       | 用途                               | 包
+---------------|---------------------------------------|------------------------------
+` %>% `|"管道" （传递）数据从一个函数到下一个函数|**magrittr** 
+`mutate()`|创建、转换和重新定义列|**dplyr**  
+`select()`|保留、删除、选择或重命名列|**dplyr**
+`rename()`|重命名列|**dplyr** 
+`clean_names()`|标准化列名的语法|**janitor**
+`as.character()`, `as.numeric()`, `as.Date()`, etc.|转换列的类|**base** R
+`across()`|一次转换多列|**dplyr** 
+**tidyselect** 族函数|使用逻辑判断选择列|**tidyselect**   
+`filter()`|保留某些行|**dplyr** 
+`distinct()`|去重行|**dplyr** 
+`rowwise()`|按行操作|**dplyr**  
+`add_row()`|手动添加行|**tibble** 
+`arrange()`|行排序|**dplyr**
+`recode()`|重新编码列中的值|**dplyr** 
+`case_when()`|使用更复杂的逻辑条件重新编码列中的值|**dplyr** 
+`replace_na()`, `na_if()`, `coalesce()`|用来重新编码的特殊函数|**tidyr**  
+`age_categories()` and `cut()`|从数值型列创建分类变量分组|**epikit** and **base** R
+`clean_variable_spelling()`|用数据字典重新编码或清洗数据|**linelist**
+`which()`|应用逻辑条件；返回索引号|**base** R
+
+
+
+
+If you want to see how these functions compare to Stata or SAS commands, see the page on [Transition to R].
+
+如果您想了解这些函数与 Stata 或 SAS 命令行的比较，请参阅 [过渡到R](#transition_to_R) 章节。
+
+
+
+You may encounter an alternative data management framework from the **data.table** R package with operators like `:=` and frequent use of brackets `[ ]`. This approach and syntax is briefly explained in the [Data Table] page. 
+
+您可能会遇到来自data.table R 包的另一种数据管理工具，它将使用诸如`:=`和频繁使用括号的运算符`[  ]`。这种方式和语法将在[数据表](#Data_table) 章节中简要说明。
 
 ### Nomenclature {.unnumbered}  
+### 命名法则 {#nomenclature}
 
 In this handbook, we generally reference "columns" and "rows" instead of "variables" and "observations". As explained in this primer on ["tidy data"](https://tidyr.tidyverse.org/articles/tidy-data.html), most epidemiological statistical datasets consist structurally of rows, columns, and values.  
 
+在本手册中，我们通常使用“列”和“行”而不是“变量”和“观测”。正如这本关于[“整洁数据”](https://tidyr.tidyverse.org/articles/tidy-data.html)的入门帖中所解释的，大多数流行病学统计数据集在结构上由行、列和值组成。
+
 *Variables* contain the values that measure the same underlying attribute (like age group, outcome, or date of onset). *Observations* contain all values measured on the same unit (e.g. a person, site, or lab sample). So these aspects can be more difficult to tangibly define.  
+
+`变量`包含同种基本属性（如年龄组、结局或发病日期）的测量值。`观察值`包含在同一单位（如人、地点或实验室样本）上测量的所有值。因此，这些方面可能难以形象地定义。
+
 
 In "tidy" datasets, each column is a variable, each row is an observation, and each cell is a single value. However some datasets you encounter will not fit this mold - a "wide" format dataset may have a variable split across several columns (see an example in the [Pivoting data] page). Likewise, observations could be split across several rows.  
 
+在“整洁”的数据集中，每一列是一个变量，每一行是一个观察值，每个单元格是一个值。但是，您遇到的某些数据集并不适合这种模式 - “宽”格式数据集可能会将变量拆分为多个列（请参阅 [数据透视](#data_piovting) 章节中的示例）。同样，观测可能被拆分为几行。
+
 Most of this handbook is about managing and transforming data, so referring to the concrete data structures of rows and columns is more relevant than the more abstract observations and variables. Exceptions occur primarily in pages on data analysis, where you will see more references to variables and observations.  
 
+这本手册的大部分内容是关于管理和转换数据的，因此使用行和列这种具体数据结构比使用更抽象的观测和变量更适合。但在数据分析章节中例外，您可能会看到更多地使用变量和观测。
 
 
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 <!-- ======================================================= -->
-## Cleaning pipeline
+## Cleaning pipeline {}
+## 数据清洗流水线 {#cleaning_pipeline}
 
 **This page proceeds through typical cleaning steps, adding them sequentially to a cleaning pipe chain.**
 
+
+**本节介绍典型的数据清洗步骤，如何逐步添加到清洗管道链中。**
+
 In epidemiological analysis and data processing, cleaning steps are often performed sequentially, linked together. In R, this often manifests as a cleaning "pipeline", where *the raw dataset is passed or "piped" from one cleaning step to another*.  
 
+在流行病学分析和数据处理中，清洗步骤通常是按顺序执行并相互关联。在 R 中，这通常表现为清洗“流水线”，使得*原始数据集从一个清理步骤传递或“管道化”到另一个清理步骤*。
+
 Such chains utilize **dplyr** "verb" functions and the **magrittr** pipe operator `%>%`. This pipe begins with the "raw" data ("linelist_raw.xlsx") and ends with a "clean" R data frame (`linelist`) that can be used, saved, exported, etc.  
+
+这样的链利用**dplyr** “动词”函数和**magrittr**管道运算符`%>%`。该管道以“原始”数据（“linelist_raw.xlsx”）开始，以“整洁”的 R 数据框（linelist）结束，数据得以使用、保存、导出等。
 
 In a cleaning pipeline the order of the steps is important. Cleaning steps might include:  
 
@@ -75,14 +136,24 @@ In a cleaning pipeline the order of the steps is important. Cleaning steps might
 * Column creation and transformation (e.g. re-coding or standardising values)  
 * Rows filtered or added  
 
+在清洗数据流水线中，每步的顺序很重要。清洗步骤可能包括：
 
+* 数据导入
+* 列名清洗或更改
+* 数据去重
+* 创建和转换列（例如重新编码或标准化值）
+* 筛选或添加行
 
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 <!-- ======================================================= -->
+
 ## Load packages  
+## 加载包
 
-This code chunk shows the loading of packages required for the analyses. In this handbook we emphasize `p_load()` from **pacman**, which installs the package if necessary *and* loads it for use. You can also load installed packages with  `library()` from **base** R. See the page on [R basics] for more information on R packages.  
+This code chunk shows the loading of packages required for the analyses. In this handbook we emphasize `p_load()` from **pacman**, which installs the package if necessary *and* loads it for use. You can also load installed packages with  `library()` from **base** R. See the page on [R basics] for more information on R packages. 
+
+此代码块显示了分析所需包的加载。在本手册中，我们调用**pacman**包的`p_load()`函数，其在必要时安装并加载相关包以供使用。您还可以调用**base**R包里的`library()`函数加载已安装的包。R包更多信息，请参阅 [R 基础] 章节。
 
 ```{r, message = F}
 pacman::p_load(
@@ -95,6 +166,17 @@ pacman::p_load(
 )
 ```
 
+```{r, message = F}
+pacman::p_load(
+  rio,        # 导入数据  
+  here,       # 文件相对路径  
+  janitor,    # 数据清洗和表格
+  lubridate,  # 处理日期型数据
+  epikit,     # 使用其age_categories()函数
+  tidyverse   # 数据管理和可视化
+)
+```
+
 
 
 
@@ -102,16 +184,26 @@ pacman::p_load(
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Import data  
+## 导入数据
 
-### Import {.unnumbered}  
+### Import  {.unnumbered}  
+### 导入 {#import}
 
-Here we import the "raw" case linelist Excel file using the `import()` function from the package **rio**. The **rio** package flexibly handles many types of files (e.g. .xlsx, .csv, .tsv, .rds. See the page on [Import and export] for more information and tips on unusual situations (e.g. skipping rows, setting missing values, importing Google sheets, etc).  
+Here we import the "raw" case linelist Excel file using the `import()` function from the package **rio**. The **rio** package flexibly handles many types of files (e.g. .xlsx, .csv, .tsv, .rds. See the page on [Import and export] for more information and tips on unusual situations (e.g. skipping rows, setting missing values, importing Google sheets, etc). 
+
+在这里，我们使用**rio**包的`import()`函数导入“原始”病例一览表Excel文件。**rio**包可灵活处理多种类型的文件（如.xlsx，.csv，.tsv和.rds等）。一些特殊情况（如忽略行，设置缺失值，导入Google sheet表等）的更多信息和技巧，请参阅[导入和导出]章节。
 
 If you want to follow along, <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_raw.xlsx' class='download-button'>click to download the "raw" linelist</a> (as .xlsx file).  
 
-If your dataset is large and takes a long time to import, it can be useful to have the import command be separate from the pipe chain and the "raw" saved as a distinct file. This also allows easy comparison between the original and cleaned versions.  
+如果您想继续，<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_raw.xlsx' class='download-button'>请单击下载“原始”一览表</a>（为.xlsx文件）。
+
+If your dataset is large and takes a long time to import, it can be useful to have the import command be separate from the pipe chain and the "raw" saved as a distinct file. This also allows easy comparison between the original and cleaned versions.
+
+如果您的数据集很大并且需要很长时间才能导入，那么将导入命令与管道链分开并将“原始数据”保存为不同的文件会很有用。这还可以轻松地比数据的较原始版本和整洁版本。
 
 Below we import the raw Excel file and save it as the data frame `linelist_raw`. We assume the file is located in your working directory or R project root, and so no sub-folders are specified in the file path.  
+
+下面我们导入原始 Excel 文件并将其保存为数据框`linelist_raw`。我们假设该文件位于您的工作目录或 R 项目根目录中，因此文件路径中未指定子文件夹。
 
 ```{r, echo=F, message=F}
 # HIDDEN FROM READER
@@ -119,20 +211,39 @@ Below we import the raw Excel file and save it as the data frame `linelist_raw`.
 linelist_raw <- rio::import(here::here("data", "case_linelists", "linelist_raw.xlsx"))
 ```
 
+
+```{r, echo=F, message=F}
+# 该代码块对读者不可见
+# 实际用here()加载数据
+linelist_raw <- rio::import(here::here("data", "case_linelists", "linelist_raw.xlsx"))
+```
+
+
 ```{r, eval=F}
 linelist_raw <- import("linelist_raw.xlsx")
 ```
 
 You can view the first 50 rows of the the data frame below. Note: the **base** R function `head(n)` allow you to view just the first `n` rows in the R console.  
 
+您可以查看下面数据框的前 50 行。注意：**base**R函数`head(n)`仅能使您在R控制台中查看数据框的前`n`行。
+
 ```{r message=FALSE, echo=F}
 # display the linelist data as a table
 DT::datatable(head(linelist_raw,50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
+```{r message=FALSE, echo=F}
+# 将一览表数据展示为一个表格
+DT::datatable(head(linelist_raw,50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
+```
+
+
 ### Review {.unnumbered}  
+
+### 概览 {#review}  
 
 You can use the function `skim()` from the package **skimr** to get an overview of the entire dataframe (see page on [Descriptive tables] for more info). Columns are summarised by class/type such as character, numeric. Note: "POSIXct" is a type of raw date class (see [Working with dates].  
 
+您可以使用**skimr**包的`skim()`函数来概览整个数据框（有关更多信息，请参见[描述性表格]章节）。列按类/类型（例如字符、数字）进行汇总。注意：“POSIXct”是一种原始日期类（请参阅[处理日期]。
 
 ```{r, eval=F}
 skimr::skim(linelist_raw)
@@ -155,19 +266,37 @@ skimr::skim_without_charts(linelist_raw)
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Column names {} 
+## 列名 {#column_names} 
 
 In R, column *names* are the "header" or "top" value of a column. They are used to refer to columns in the code, and serve as a default label in figures.  
+
+在 R 中，列*名*是列的“标题”或“顶部”值。在代码中它们被用来指代列，在图中用中默认标签。
 
 
 Other statistical software such as SAS and STATA use *"labels"* that co-exist as longer printed versions of the shorter column names. While R does offer the possibility of adding column labels to the data, this is not emphasized in most practice. To make column names "printer-friendly" for figures, one typically adjusts their display within the plotting commands that create the outputs (e.g. axis or legend titles of a plot, or column headers in a printed table - see the [scales section of the ggplot tips page](#ggplot_tips_scales) and [Tables for presentation] pages). If you want to assign column labels in the data, read more online [here](https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html) and [here](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html).  
 
 
+其他统计软件（例如 SAS 和 STATA）使用**“labels”**作为较长的显示文本与其较短的列名称共同显示。虽然 R 确实提供了向数据添加列标签的可能性，但在大多数实践中并没有强调这一点。为了使图表的列名称“打印友好”，通常会在创建输出的绘图命令中调整它们的显示（例如绘图的轴或图例标题，或打印表格中的列标题 - 请参阅[ggplot技巧之标度篇](#ggplot_tips_scales)和 [用于演示的表格]页面）。如果要在数据中分配列标签，请在[此处](https://cran.r-project.org/web/packages/expss/vignettes/labels-support.html)和[此处](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)在线阅读更多信息。
+
+
+
+
 As R column names are used very often, so they must have "clean" syntax. We suggest the following:  
+
+由于R列名经常使用，因此它们必须保持“干净”的语法。我们建议如下：
 
 * Short names
 * No spaces (replace with underscores _ ) 
 * No unusual characters (&, #, <, >, ...)  
 * Similar style nomenclature (e.g. all date columns named like **date_**onset, **date_**report, **date_**death...)  
+
+* 名称简短
+* 不用空格（用下划线 _ 替换）
+* 不用不常用字条（&、#、<、>、...）
+* 类似样式的命名法（例如：所有日期列都命名为**date_**onset、**date_**report、**date_**death ...）
+
+
+
 
 The columns names of `linelist_raw` are printed below using `names()` from **base** R. We can see that initially:  
 
@@ -175,14 +304,23 @@ The columns names of `linelist_raw` are printed below using `names()` from **bas
 * Different naming patterns are used for dates (`date onset` vs. `infection date`)  
 * There must have been a *merged header* across the two last columns in the .xlsx. We know this because the name of two merged columns ("merged_header") was assigned by R to the first column, and the second column was assigned a placeholder  name "...28" (as it was then empty and is the 28th column).  
 
+使用**base** R的names()函数把linelist_raw数据集的列名显示如下。我们可以看到原始数据中：
+
+* 一些名称包含空格（例如`infection date`）
+* 日期的命名方式不同（`date onset` vs. `infection date`）
+* 源数据.xlsx文件中的最后两列肯定含有一个合并的列标题。这可以从这儿看出来：两个合并列的名称（“merged_header”）由R识别分配给第一列，而第二列则只分配了一个占位符名称“…28”（因为表格的第28列的的这个位置是是空的）。
+
 ```{r}
 names(linelist_raw)
 ```
 
 <span style="color: black;">**_NOTE:_** To reference a column name that includes spaces, surround the name with back-ticks, for example: linelist$`` ` '\x60infection date\x60'` ``. note that on your keyboard, the back-tick (`) is different from the single quotation mark (').</span>
 
+<span style="color: black;">**_注意:_** 要引用包含空格的列名时，需要把该名用反引号括起来，比如：linelist$`` ` '\x60infection date\x60'` ``。注意在您的键盘上，反引号（`）与单引号（'）是不同的。</span>
+
 
 ### Automatic cleaning {.unnumbered}  
+### 自动清洗 {#automatic_cleaning}
 
 The function `clean_names()` from the package **janitor** standardizes column names and makes them unique by doing the following:  
 
@@ -194,6 +332,18 @@ The function `clean_names()` from the package **janitor** standardizes column na
 
 Below, the cleaning pipeline begins by using `clean_names()` on the raw linelist.  
 
+
+**janitor**包的clean_names()函数通过执行以下操作来使列名标准化和唯一化：
+
+* 将所有名称转换为仅包含下划线、数字和字母
+* 重音字符被转译为 ASCII码（例如：带有元音符号的德语 o变为“o”，西班牙语“enye”变为“n”）
+* 可以使用`case =`参数指定新列名称的大写首选项（“snake”是默认值，替代选项包括“sentence”、“title”、“small_camel”...）
+* 您可以通过为`replace =`参数提供一个向量来指定特定的名称替换（例如 replace = c(onset = "date_of_onset")）
+* 这是一个在线[函数使用指南](https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html#cleaning)  
+
+
+下面，数据清洗流水线从对原始的病例一览表数据使用clean_names()开始。
+
 ```{r clean_names}
 # pipe the raw dataset through the function clean_names(), assign result as "linelist"  
 linelist <- linelist_raw %>% 
@@ -203,14 +353,30 @@ linelist <- linelist_raw %>%
 names(linelist)
 ```
 
+```{r clean_names}
+# 将原始数据集通过管道符传递给clean_names()函数，并把结果赋值给“linelist”  
+linelist <- linelist_raw %>% 
+  janitor::clean_names()
+
+# 查看一下新列名
+names(linelist)
+```
+
 <span style="color: black;">**_NOTE:_** The last column name "...28" was changed to "x28".</span>
+
+<span style="color: black;">**_注意：_** 最后的列名 "...28" 已经变为 "x28"。</span>
 
 
 ### Manual name cleaning {.unnumbered}  
+### 手动清洗列名
 
 Re-naming columns manually is often necessary, even after the standardization step above. Below, re-naming is performed using the `rename()` function from the **dplyr** package, as part of a pipe chain. `rename()` uses the style `NEW = OLD` - the new column name is given before the old column name.  
 
 Below, a re-naming command is added to the cleaning pipeline. Spaces have been added strategically to align code for easier reading.  
+
+手动重命名列通常是必要的，即使在上述标准化步骤之后也是如此。下面，使用**dplyr**包中的`rename()`函数执行重命名，作为管道链的一部分。`rename()`函数使用`NEW = OLD`参数格式 - 新名放在原名前面。
+
+下面，将重命名命令添加到数据清洗流水线中。添加了一些空格以对齐代码便于阅读。
 
 ```{r}
 # CLEANING 'PIPE' CHAIN (starts with raw data and pipes it through cleaning steps)
@@ -227,8 +393,24 @@ linelist <- linelist_raw %>%
            date_outcome         = date_of_outcome)
 ```
 
+```{r}
+# 数据清洗“管道”链（以原始数据开始，然后将其传递给数据清洗步骤）
+##################################################################################
+linelist <- linelist_raw %>%
+    
+    # 列名标准化语法
+    janitor::clean_names() %>% 
+    
+    # 手动重命名列
+           # 新名               # 原名
+    rename(date_infection       = infection_date,
+           date_hospitalisation = hosp_date,
+           date_outcome         = date_of_outcome)
+```
+
 
 Now you can see that the columns names have been changed:  
+现在你可以发现列名已经被更改了：
 
 ```{r message=FALSE, echo=F}
 names(linelist)
@@ -236,8 +418,11 @@ names(linelist)
 
 
 #### Rename by column position {.unnumbered} 
+#### 按列位置重命名
 
 You can also rename by column position, instead of column name, for example:  
+
+你也可以不引用列名，而按列位置重命名相应列
 
 ```{r, eval=F}
 rename(newNameForFirstColumn  = 1,
@@ -246,9 +431,12 @@ rename(newNameForFirstColumn  = 1,
 
 
 
-#### Rename via `select()` and `summarise()` {.unnumbered}  
+#### Rename via `select()` and `summarise()` {.unnumbered} 
+#### 通过`select()` 和 `summarise()`重命名
 
 As a shortcut, you can also rename columns within the **dplyr** `select()` and `summarise()` functions. `select()` is used to keep only certain columns (and is covered later in this page). `summarise()` is covered in the [Grouping data] and [Descriptive tables] pages. These functions also uses the format `new_name = old_name`. Here is an example:  
+
+作为一种快捷方式，您还可以用**dplyr**包`select()`和`summarise()`函数重命名列。`select()`用于仅保留某些列（本节稍后将介绍）。`summarise()`在[分组数据]和[描述性表格]页面中进行了介绍。这些函数也使用`new_name = old_name`这种参数格式。下面是一个例子：
 
 ```{r, eval=F}
 linelist_raw %>% 
@@ -257,24 +445,39 @@ linelist_raw %>%
          date_hospitalisation = `hosp date`)
 ```
 
+```{r, eval=F}
+linelist_raw %>% 
+  select(# 新名             # 原名
+         date_infection       = `infection date`,    # 重命名并保留这些列
+         date_hospitalisation = `hosp date`)
+```
+
 
 
 
 
 ### Other challenges {.unnumbered}  
+### 其他难题
 
 
 #### Empty Excel column names {.unnumbered} 
+#### Excel表格空列名
 
 R cannot have dataset columns that do not have column names (headers). So, if you import an Excel dataset with data but no column headers, R will fill-in the headers with names like "...1" or "...2". The number represents the column number (e.g. if the 4th column in the dataset has no header, then R will name it "...4").  
 
 You can clean these names manually by referencing their position number (see example above), or their assigned name (`linelist_raw$...1`).  
 
+R语言数据集不能包含无列名（列标题）的列。因此，如果您导入包含数据但没有列标题的Excel数据集，R将使用“...1”或“...2”之类的名称填充标题。数字代表列号（例如：如果数据集中的第4列没有标题，则R将其命名为“...4”）。
 
+您可以通过引用它们的位置编号（参见上面的示例）或分配的名称 ( `linelist_raw$...1`) 来手动清理这些名称。
 
 #### Merged Excel column names and cells {.unnumbered}  
+#### 合并的Excel列名和单元格
 
 Merged cells in an Excel file are a common occurrence when receiving data. As explained in [Transition to R], merged cells can be nice for human reading of data, but are not "tidy data" and cause many problems for machine reading of data. R cannot accommodate merged cells.  
+
+获取数据时，Excel文件中的合并单元格很常见。正如[过渡到R]章节中所解释的，合并的单元格对于人类读取数据可能很友好，但因为不是“整洁数据”，而会给机器读取数据带来许多问题。R 不能兼容合并的单元格。
+
 
 Remind people doing data entry that **human-readable data is not the same as machine-readable data**. Strive to train users about the principles of [**tidy data**](https://r4ds.had.co.nz/tidy-data.html). If at all possible, try to change procedures so that data arrive in a tidy format without merged cells.  
 
@@ -282,15 +485,28 @@ Remind people doing data entry that **human-readable data is not the same as mac
 * Each observation must have its own row.  
 * Each value must have its own cell.  
 
+
+要提醒那些数据录入人员：**人类可读的数据与机器可读的数据不同**。要加大[**整洁数据**](https://r4ds.had.co.nz/tidy-data.html)原理的培训力度。如果可能，请尝试更改程序，数据中不出现合并单元格，使其符合整洁格式。
+
+* 每个变量都必须有自己的列。
+* 每个观测都必须有自己的行。
+* 每个值都必须有自己的单元格。
+
 When using **rio**'s `import()` function, the value in a merged cell will be assigned to the first cell and subsequent cells will be empty.  
 
 One solution to deal with merged cells is to import the data with the function `readWorkbook()` from the package **openxlsx**. Set the argument `fillMergedCells = TRUE`. This gives the value in a merged cell to all cells within the merge range.
+
+使用**rio**包的`import()`函数时，合并单元格中的值将分配给第一个单元格，后续单元格将为空。
+
+处理合并单元格的一种解决方案是使用**openxlsx**包的`readWorkbook()`函数导入数据。设置参数`fillMergedCells = TRUE`，这将合并单元格中的值赋给合并范围内的所有单元格。
 
 ```{r, eval=F}
 linelist_raw <- openxlsx::readWorkbook("linelist_raw.xlsx", fillMergedCells = TRUE)
 ```
 
 <span style="color: red;">**_DANGER:_** If column names are merged with `readWorkbook()`, you will end up with duplicate column names, which you will need to fix manually - R does not work well with duplicate column names! You can re-name them by referencing their position (e.g. column 5), as explained in the section on manual column name cleaning.</span>
+
+<span style="color: red;">**_危险：_** 如果用`readWorkbook()`导入合并单元格数据，您最终会得到重复的列名，您需要手动修复 - R 不能很好地处理重复的列名！您可以通过引用其位置（例如第5列）来重命名列，如手动列名清洗部分所述。</span>
 
 
 
