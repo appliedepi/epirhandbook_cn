@@ -1151,7 +1151,7 @@ linelist <- linelist %>%
 
 Below, an example of mutating the columns that are currently class POSIXct (a raw datetime class that shows timestamps) - in other words, where the function `is.POSIXct()` evaluates to `TRUE`. Then we want to apply the function `as.Date()` to these columns to convert them to a normal class Date.  
 
-下面是对当前属于 POSIXct 类（显示时间戳的原始日期时间类）的列, -也就是说，所有被`is.POSIXct()`函数计算为TRUE的列，进行换算的示例。  然后用`as.Date()`函数将这些列转换为普通的Date类。
+下面是对当前属于 POSIXct 类（显示时间戳的原始日期时间类）的列（也就是说，所有被`is.POSIXct()`函数计算为TRUE的列）进行换算的示例。用`as.Date()`函数将这些列转换为普通的Date类。
 
 ```{r, eval=F}
 linelist <- linelist %>% 
@@ -1289,9 +1289,12 @@ linelist$bmi = linelist$wt_kg / (linelist$ht_cm / 100) ^ 2)
 
 
 
-### Add to pipe chain {.unnumbered}  
+### Add to pipe chain {.unnumbered} 
+### 添加到管道链 {.unnumbered} 
 
 **Below, a new column is added to the pipe chain and some classes are converted.**  
+
+**下面，管道链中添加了一个新列，转换了一些列的类。**
 
 ```{r }
 # CLEANING 'PIPE' CHAIN (starts with raw data and pipes it through cleaning steps)
@@ -1327,11 +1330,38 @@ linelist <- linelist_raw %>%
            age        = as.numeric(age)) 
 ```
 
+```{r}
+# 数据清洗“管道”链（以原始数据开始，然后将其传递给数据清洗步骤）
+##################################################################################
 
+# 数据清洗管道链开始
+###########################
+linelist <- linelist_raw %>%
+    
+    # 标准化列名语法
+    janitor::clean_names() %>% 
+    
+    # 手动重命名列
+           # 新名               # 原名
+    rename(date_infection       = infection_date,
+           date_hospitalisation = hosp_date,
+           date_outcome         = date_of_outcome) %>% 
+    
+    # 以上是上游清洗步骤已经讨论过了
+    #####################################################
+    # 添加新列
+    mutate(bmi = wt_kg / (ht_cm/100)^2) %>% 
+  
+    # 转换一些列的类
+    mutate(across(contains("date"), as.Date), 
+           generation = as.numeric(generation),
+           age        = as.numeric(age)) 
+```
 
 
 
 ## Re-code values
+## 重编码值
 
 Here are a few scenarios where you need to re-code (change) values:  
 
@@ -1340,16 +1370,33 @@ Here are a few scenarios where you need to re-code (change) values:
 * to create a new column of categorical values  
 * to create a new column of numeric categories (e.g. age categories)  
 
+以下是需要重新编码（更改）值的几种情况：
+
+* 编辑一个特定的值（例如一个年份或格式不正确的日期）
+* 统一不同拼写的值
+* 创建一个新的分类值列
+* 创建一个新的数字组别列（例如年龄组别）
 
 
 ### Specific values {.unnumbered}  
+### 特定值 {.unnumbered}
 
 To change values manually you can use the `recode()` function within the `mutate()` function. 
 
 Imagine there is a nonsensical date in the data (e.g. "2014-14-15"): you could fix the date manually in the raw source data, or, you could write the change into the cleaning pipeline via `mutate()` and `recode()`. The latter is more transparent and reproducible to anyone else seeking to understand or repeat your analysis.  
 
+手动更改值，您可以在mutate()函数内使用recode()函数。
+
+假设数据中有一个无意义的日期（例如“2014-14-15”）：您可以在原始源数据中手动修复日期，或者，您可以通过`mutate()`和`recode()`的数据清洗流水线更改。后者对于想理解或重复您的分析的人来说更加透明和可重复。
+
 ```{r, eval=F}
 # fix incorrect values                   # old value       # new value
+linelist <- linelist %>% 
+  mutate(date_onset = recode(date_onset, "2014-14-15" = "2014-04-15"))
+```
+
+```{r, eval=F}
+# 修改不正确的值                         # 原值         # 新值
 linelist <- linelist %>% 
   mutate(date_onset = recode(date_onset, "2014-14-15" = "2014-04-15"))
 ```
@@ -1360,11 +1407,24 @@ The `mutate()` line above can be read as: "mutate the column `date_onset` to equ
 
 In `linelist` the values in the column "hospital" must be cleaned. There are several different spellings and many missing values.
 
+`mutate()`上面的行可以理解为：“将`date_onset`原位转换成`date_onset`，并把原值更改为新”。请注意，此recode()中的函数模式（旧 = 新）与大多数R模式（新 = 旧）相反。R 开发社区正在努力修正这一点。
+
+**这是重新编码一列中的多个值的另一个示例。**
+
+在`linelist`的"hostpital"列也必须清洗：其中有几种不同的拼写和许多缺省值。
+
+
 ```{r}
 table(linelist$hospital, useNA = "always")  # print table of all unique values, including missing  
 ```
 
+```{r}
+table(linelist$hospital, useNA = "always")  # 打印所有独特值的表格，包括缺省值
+```
+
 The `recode()` command below re-defines the column "hospital" as the current column "hospital", but with the specified recode changes. Don't forget commas after each!  
+
+`recode()`将“hospital”列原位重定义成新的“hospital”列，并仅修改指定的值。每行后不要忘记逗号。
 
 ```{r}
 linelist <- linelist %>% 
@@ -1381,7 +1441,23 @@ linelist <- linelist %>%
 ```
 
 
+```{r}
+linelist <- linelist %>% 
+  mutate(hospital = recode(hospital,
+                     # 仅参考:       原值 = 新值 
+                      "Mitylira Hopital"  = "Military Hospital",
+                      "Mitylira Hospital" = "Military Hospital",
+                      "Military Hopital"  = "Military Hospital",
+                      "Port Hopital"      = "Port Hospital",
+                      "Central Hopital"   = "Central Hospital",
+                      "other"             = "Other",
+                      "St. Marks Maternity Hopital (SMMH)" = "St. Mark's Maternity Hospital (SMMH)"
+                      ))
+```
+
 Now we see the spellings in the `hospital` column have been corrected and consolidated:  
+
+现在`hospital`的列已经被修正和统一。
 
 ```{r}
 table(linelist$hospital, useNA = "always")
