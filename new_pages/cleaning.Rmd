@@ -1054,7 +1054,7 @@ You must be careful when converting to class Date. Several methods are explained
 
 以类似的方式，您可以使用`as.character()`和`as.logical()`转换相应的类。要转换为 Factor 类，您可以使用**base R**里的`factor()`函数或**forcats**包里的`as_factor()`函数。请参阅[因子]章节里有关此内容的更多信息。
 
-转换为Dat类时必须要小心，[处理日期]章节已经介绍了几种方法。通常，原始日期值必须采用相同的格式才能正确转换（例如“MM/DD/YYYY”或“DD MM YYYY”）。转换为Date类后，要检查数据以确认每个值都已正确转换。
+转换为Date类时必须要小心，[处理日期]章节已经介绍了几种方法。通常，原始日期值必须采用相同的格式才能正确转换（例如“MM/DD/YYYY”或“DD MM YYYY”）。转换为Date类后，要检查数据以确认每个值都已正确转换。
 
 
 
@@ -1102,14 +1102,19 @@ Specify the columns to the argument `.cols = ` and the function(s) to apply to `
 
 经常要编写一些简洁的代码，以便一次将相同的转换应用于多个列。应用**dplyr**包的`across()`函数（同时也封装 在**tidyverse**包里）可以将一种转换操作一次性应用到多列。`across()`可以用在**dplyr**包的任何函数里，但比较常用的是`select()`，`mutate()`，`filter()`或`summarise()`。`summarise()`使用说明可参阅[描述性表格]章节。
 
-指定拟操作的列到`.cols =`参数和拟应用的函数到`.fns =`参数。提供给`.fns`函数的任何其他参数都可以放进`across()`函数，并以英文逗号与`.fns`分隔，置于其后。
+指定拟操作的列到`.cols =`参数和拟应用的函数到`.fns =`参数。提供给`.fns`函数的任何其他参数都可以放进`across()`函数，并以英文逗号与`.fns`项分隔，置于其后。
 
 
 #### `across()` column selection {.unnumbered}  
-
+#### `across()`列选择
 Specify the columns to the argument `.cols = `. You can name them individually, or use "tidyselect" helper functions. Specify the function to `.fns = `. Note that using the function mode demonstrated below, the function is written *without* its parentheses ( ).  
 
 Here the transformation `as.character()` is applied to specific columns named within `across()`. 
+
+将拟操作的列指定给`.cols =`参数，可以单独指定，也可以使"tidyselect"辅助函数批量指定。将拟应用的函数指定给`.fns =`参数。请注意使用下面演示的函数模式，函数名后*没有*括号"( )"。
+
+此处`as.character()`转换操作全部应用于`across()`指定的特定列。
+
 
 ```{r, eval=F}
 linelist <- linelist %>% 
@@ -1120,6 +1125,10 @@ The "tidyselect" helper functions are available to assist you in specifying colu
 
 Here is an example of how one would change **all columns** to character class:  
 
+"tidyselect"辅助函数可用来帮助指定列，细节已经在列选择和重排序部分介绍。这些函数包括：`everything()`, `last_col()`, `where()`, `starts_with()`, `ends_with()`, `contains()`, `matches()`, `num_range()` 和 `any_of()`。
+
+这里是一个如何一次把**所有列**更改成字符类的操作示例。
+
 ```{r, eval=F}
 #to change all columns to character class
 linelist <- linelist %>% 
@@ -1127,14 +1136,22 @@ linelist <- linelist %>%
 ```
 
 Convert to character all columns where the name contains the string "date" (note the placement of commas and parentheses):  
+将名称包含字符串“date”的所有列转换为字符（注意逗号和括号的位置）：
 
 ```{r, eval=F}
 #to change all columns to character class
 linelist <- linelist %>% 
   mutate(across(.cols = contains("date"), .fns = as.character))
 ```
+```{r, eval=F}
+#把所有列更改成字符类
+linelist <- linelist %>% 
+  mutate(across(.cols = contains("date"), .fns = as.character))
+```
 
 Below, an example of mutating the columns that are currently class POSIXct (a raw datetime class that shows timestamps) - in other words, where the function `is.POSIXct()` evaluates to `TRUE`. Then we want to apply the function `as.Date()` to these columns to convert them to a normal class Date.  
+
+下面是对当前属于 POSIXct 类（显示时间戳的原始日期时间类）的列, -也就是说，所有被`is.POSIXct()`函数计算为TRUE的列，进行换算的示例。  然后用`as.Date()`函数将这些列转换为普通的Date类。
 
 ```{r, eval=F}
 linelist <- linelist %>% 
@@ -1144,27 +1161,43 @@ linelist <- linelist %>%
 * Note that within `across()` we also use the function `where()` as `is.POSIXct` is evaluating to either TRUE or FALSE.  
 * Note that `is.POSIXct()` is from the package **lubridate**. Other similar "is" functions like `is.character()`, `is.numeric()`, and `is.logical()` are from **base R**  
 
+* 请注意在`across()`中也可以应用`where()`函数，此时`is.POSIXct`计算结果或为TRUE或为FALSE。  
+* 请注意`is.POSIXct()`来自**lubridate**包，而其他类似的"is"函数像 `is.character()`, `is.numeric()`和`is.logical()`均来自**base R**。  
+
 #### `across()` functions {.unnumbered}
+#### `across()`函数族
 
 You can read the documentation with `?across` for details on how to provide functions to `across()`. A few summary points: there are several ways to specify the function(s) to perform on a column and you can even define your own functions:  
+
 
 * You can provide the function name alone (e.g. `mean` or `as.character`)  
 * You can provide the function in **purrr**-style (e.g. `~ mean(.x, na.rm = TRUE)`) (see [this page][Iteration, loops, and lists])  
 * You can specify multiple functions by providing a list (e.g. `list(mean = mean, n_miss = ~ sum(is.na(.x))`).  
   * If you provide multiple functions, multiple transformed columns will be returned per input column, with unique names in the format `col_fn`. You can adjust how the new columns are named with the `.names =` argument using **glue** syntax (see page on [Characters and strings]) where `{.col}` and `{.fn}` are shorthand for the input column and function.  
-  
-  
+ 
 Here are a few online resources on using `across()`: [creator Hadley Wickham's thoughts/rationale](https://www.tidyverse.org/blog/2020/04/dplyr-1-0-0-colwise/)
+
+可以用`?across`阅读文档以了解有关如何向`across()`提供函数。一些总结点：可在某一列上运行的函数适用的多种指定方法均适用于`across()`，甚至可以自定义函数：
+* 可仅提供函数名称（例如`mean`或`as.character`）
+* 可提供`purrr`风格函数（例如`~ mean(.x, na.rm = TRUE)`）（请参阅[此章节](https://epirhandbook.com/iteration-loops-and-lists.html#iteration-loops-and-lists)）
+* 可以列表的形式提供多个函数（例如`list(mean = mean, n_miss = ~ sum(is.na(.x))`）。
+* 如果提供多个函数，则每个输入列将返回多个转换后的列，这些列具有独特名称，格式为`col_fn`。可调整`.names =`参数用**glue**语法（其中 `{.col}` 和 `{.fn}` 代表指定的列和函数）改变新列的命名方式（请参阅[字符和字符串]章节）。
+
+以下是一些有关`across()`使用的在线资源：[创作者Hadley Wickham 的想法/基本原理](https://www.tidyverse.org/blog/2020/04/dplyr-1-0-0-colwise/)
 
 
 
 
 ### `coalesce()` {.unnumbered}  
+### `coalesce()` {#coalesce}
 
 This **dplyr** function finds the first non-missing value at each position. It "fills-in" missing values with the first available value in an order you specify.
 
 Here is an example *outside the context of a data frame*: Let us say you have two vectors, one containing the patient's village of detection and another containing the patient's village of residence. You can use coalesce to pick the first non-missing value for each index:  
 
+此**dplyr**包中的函数查找每个位置的第一个非缺省值，然后按照指定的顺序使用第一个可用值“填充”缺省值。
+
+这是一个*数据框范围之外*的示例：假设有两个向量，一个包含患者的检测发现时所在的村庄，另一个包含患者居住的村庄。您可以使用coalesce为每个索引选取第一个非缺失值：
 ```{r}
 village_detection <- c("a", "b", NA,  NA)
 village_residence <- c("a", "c", "a", "d")
@@ -1175,6 +1208,8 @@ village    # print
 
 This works the same if you provide data frame columns: for each row, the function will assign the new column value with the first non-missing value in the columns you provided (in order provided).
 
+这对于数据框列同样有效：该函数将指定（或按顺序）列中的第一个非缺省值分配给同一行存在缺省值的其他列作为其新值。
+
 ```{r, eval=F}
 linelist <- linelist %>% 
   mutate(village = coalesce(village_detection, village_residence))
@@ -1182,28 +1217,47 @@ linelist <- linelist %>%
 
 This is an example of a "row-wise" operation. For more complicated row-wise calculations, see the section below on Row-wise calculations.  
 
+这是一个“逐行”操作示例。更复杂的逐行计算，请参阅逐行计算章节。
+
 
 
 ### Cumulative math {.unnumbered}
+### 累计数学 {#cumulative_math}
 
 If you want a column to reflect the cumulative sum/mean/min/max etc as assessed down the rows of a dataframe to that point, use the following functions:  
 
 `cumsum()` returns the cumulative sum, as shown below:  
 
+当核算数据框各列目前的累积总和/累积均数/累积最小值/累积最大值，并产生一个新列，请使用以下函数：
+
+`cumsum()` 返回累积总和，如下所示：
+
 ```{r}
 sum(c(2,4,15,10))     # returns only one number
 cumsum(c(2,4,15,10))  # returns the cumulative sum at each step
 ```
+```{r}
+sum(c(2,4,15,10))     # 仅返回一个数
+cumsum(c(2,4,15,10))  # 每一步返回一个累积总和
+```
 
 This can be used in a dataframe when making a new column. For example, to calculate the cumulative number of cases per day in an outbreak, consider code like this:  
+
+这可以为数据框创建新列。例如，要计算一起暴发疫情中每天累计病例数，可考虑如下代码：
 
 ```{r, warning=F, message=F}
 cumulative_case_counts <- linelist %>%  # begin with case linelist
   count(date_onset) %>%                 # count of rows per day, as column 'n'   
   mutate(cumulative_cases = cumsum(n))  # new column, of the cumulative sum at each row
 ```
+```{r, warning=F, message=F}
+cumulative_case_counts <- linelist %>%  # 以病例一览表开始
+  count(date_onset) %>%                 # 计算每天的行数，存放在列名为"n"的新列中   
+  mutate(cumulative_cases = cumsum(n))  # 创建新列，为每行计算累积总和
+```
 
 Below are the first 10 rows:  
+以下是前10行数据：
 
 ```{r}
 head(cumulative_case_counts, 10)
@@ -1214,13 +1268,19 @@ See the page on [Epidemic curves] for how to plot cumulative incidence with the 
 See also:  
 `cumsum()`, `cummean()`, `cummin()`, `cummax()`, `cumany()`, `cumall()`  
 
+See the page on [Epidemic curves] for how to plot cumulative incidence with the epicurve.  
+用累积发病数画流行曲线的方法请参阅[流行病学曲线]
+还可参阅: `cumsum()`, `cummean()`, `cummin()`, `cummax()`, `cumany()`, `cumall()`等函数。 
 
 
 
 
-### Using **base** R {.unnumbered}  
+### Using **base** R {.unnumbered} 
+### 使用**base** R
 
 To define a new column (or re-define a column) using **base** R, write the name of data frame, connected with `$`, to the *new* column (or the column to be modified). Use the assignment operator `<-` to define the new value(s). Remember that when using **base** R you must specify the data frame name before the column name every time (e.g. `dataframe$column`). Here is an example of creating the `bmi` column using **base** R:  
+
+要使用**base** R来定义新列（或重新定义列），一般是写出数据框名，然后用`$`将*新*列（或拟修改的列）名连接起来。建议使用赋值运算符`<-`来定义新值。请记住，在使用`base` R时，必须每次在列名之前明确数据框名称（例如`dataframe$column`）。以下是使用`base` R创建`bmi`列的示例：
 
 ```{r, eval=F}
 linelist$bmi = linelist$wt_kg / (linelist$ht_cm / 100) ^ 2)
