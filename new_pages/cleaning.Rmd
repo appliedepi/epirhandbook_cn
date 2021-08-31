@@ -974,13 +974,22 @@ new_col_demo <- linelist %>%
 
 Review the new columns. For demonstration purposes, only the new columns and the columns used to create them are shown:  
 
+查看新列，为方便演示，这里仅显示新列和用于创建新列所使用的列。
+
 
 ```{r message=FALSE, echo=F}
 # display the linelist data as a table
 DT::datatable(head(new_col_demo,50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
+```{r message=FALSE, echo=F}
+# 把一览表数据显示为表格
+DT::datatable(head(new_col_demo,50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
+```
 
 <span style="color: darkgreen;">**_TIP:_** A variation on `mutate()` is the function `transmute()`. This function adds a new column just like `mutate()`, but also drops/removes all other columns that you do not mention within its parentheses.</span>
+
+
+<span style="color: darkgreen;">**_提示：_** `mutate()` 函数 有一个变体`transmute()`。此函数可像`mutate()` 一样添加一个新列，但也会丢弃/删除括号中未提及的所有其他列。</span>
 
 
 ```{r, eval=F}
@@ -989,10 +998,17 @@ DT::datatable(head(new_col_demo,50), rownames = FALSE, options = list(pageLength
 # linelist <- linelist %>% 
 #   select(-contains("new_var"))
 ```
+```{r, eval=F}
+# 在表头中隐藏
+# 删除上面创建的新演示列
+# linelist <- linelist %>% 
+#   select(-contains("new_var"))
+```
 
 
 
 ### Convert column class {.unnumbered}
+### 转换列类 {#convert_column}
   
 Columns containing values that are dates, numbers, or logical values (TRUE/FALSE) will only behave as expected if they are correctly classified. There is a difference between "2" of class character and 2 of class numeric!  
 
@@ -1002,11 +1018,21 @@ First, let's run some checks on important columns to see if they are the correct
 
 Currently, the class of the `age` column is character. To perform quantitative analyses, we need these numbers to be recognized as numeric! 
 
+包含日期、数字或逻辑值 (TRUE/FALSE) 值的列只有在正确分类时才会按预期运行。字符类的“2”和数值类的“2”是有区别的！
+
+有一些方法可以在导入命令期间设置列类，但这通常很麻烦。请参阅[R语言基础]章节有关对象类部分以了解有关转换对象和列类的更多信息。
+
+首先，让我们对重要的列进行一些检查，看看它们是否是正确的类。我们在开始运行`skim()`时也可以查看到这些信息。
+
+目前，`age`列的类是字符。为了进行定量分析，我们需要将这些数字识别为数值！
+
 ```{r}
 class(linelist$age)
 ```
 
 The class of the `date_onset` column is also character! To perform analyses, these dates must be recognized as dates! 
+
+ `date_onset`列的类也是字符！如果开展分析，这些日期要被识别为日期类。
  
 ```{r}
 class(linelist$date_onset)
@@ -1015,6 +1041,8 @@ class(linelist$date_onset)
 
 To resolve this, use the ability of `mutate()` to re-define a column with a transformation. We define the column as itself, but converted to a different class. Here is a basic example, converting or ensuring that the column `age` is class Numeric:  
 
+要解决此问题，请使用`mutate()`来转换、重新定义列。可以引用拟转换的列本身，此列原位转换为不同的类。这里有一个简单示例，转换并使得`age`列为Numeric类：
+
 ```{r, eval=F}
 linelist <- linelist %>% 
   mutate(age = as.numeric(age))
@@ -1022,14 +1050,20 @@ linelist <- linelist %>%
 
 In a similar way, you can use `as.character()` and `as.logical()`. To convert to class Factor, you can use `factor()` from **base** R or `as_factor()` from **forcats**. Read more about this in the [Factors] page.  
 
-You must be careful when converting to class Date. Several methods are explained on the page [Working with dates]. Typically, the raw date values must all be in the same format for conversion to work correctly (e.g "MM/DD/YYYY", or "DD MM YYYY"). After converting to class Date, check your data to confirm that each value was converted correctly.  
+You must be careful when converting to class Date. Several methods are explained on the page [Working with dates]. Typically, the raw date values must all be in the same format for conversion to work correctly (e.g "MM/DD/YYYY", or "DD MM YYYY"). After converting to class Date, check your data to confirm that each value was converted correctly.
 
+以类似的方式，您可以使用`as.character()`和`as.logical()`转换相应的类。要转换为 Factor 类，您可以使用**base R**里的`factor()`函数或**forcats**包里的`as_factor()`函数。请参阅[因子]章节里有关此内容的更多信息。
+
+转换为Dat类时必须要小心，[处理日期]章节已经介绍了几种方法。通常，原始日期值必须采用相同的格式才能正确转换（例如“MM/DD/YYYY”或“DD MM YYYY”）。转换为Date类后，要检查数据以确认每个值都已正确转换。
 
 
 
 ### Grouped data {.unnumbered}  
+### 分组数据 {#grouped_data}
 
-If your data frame is already *grouped* (see page on [Grouping data]), `mutate()` may behave differently than if the data frame is not grouped. Any summarizing functions, like `mean()`, `median()`, `max()`, etc. will calculate by group, not by all the rows.     
+If your data frame is already *grouped* (see page on [Grouping data]), `mutate()` may behave differently than if the data frame is not grouped. Any summarizing functions, like `mean()`, `median()`, `max()`, etc. will calculate by group, not by all the rows.  
+
+如果数据框已经*分组*（参见[数据分组]章节），则使用`mutate()`时可能与在未分组数据框中运行方式不同。任何汇总函数，如`mean()`、`median()`、`max()`等将按组计算，而不是按所有行计算。
 
 ```{r, eval=F}
 # age normalized to mean of ALL rows
@@ -1042,16 +1076,34 @@ linelist %>%
   mutate(age_norm = age / mean(age, na.rm=T))
 ```
 
+```{r, eval=F}
+# 年龄相对于所有行的均值归一化
+linelist %>% 
+  mutate(age_norm = age / mean(age, na.rm=T))
+
+#  年龄相对于各医院组的均值归一化
+linelist %>% 
+  group_by(hospital) %>% 
+  mutate(age_norm = age / mean(age, na.rm=T))
+```
+
 Read more about using `mutate ()` on grouped dataframes in this [tidyverse mutate documentation](https://dplyr.tidyverse.org/reference/mutate.html).  
+
+关于`mutate ()`在分组数据框的更多应用信息可参阅[tidyverse mutate 文档](https://dplyr.tidyverse.org/reference/mutate.html)。 
 
 
 
 ### Transform multiple columns {#clean_across .unnumbered}
-
+### 转换多列 {#transform_multiple}
 
 Often to write concise code you want to apply the same transformation to multiple columns at once. A transformation can be applied to multiple columns at once using the `across()` function from the package **dplyr** (also contained within **tidyverse** package). `across()` can be used with any **dplyr** function, but is commonly used within `select()`, `mutate()`, `filter()`, or `summarise()`. See how it is applied to `summarise()` in the page on [Descriptive tables].  
 
-Specify the columns to the argument `.cols = ` and the function(s) to apply to `.fns = `. Any additional arguments to provide to the `.fns` function can be included after a comma, still within `across()`.   
+Specify the columns to the argument `.cols = ` and the function(s) to apply to `.fns = `. Any additional arguments to provide to the `.fns` function can be included after a comma, still within `across()`. 
+
+经常要编写一些简洁的代码，以便一次将相同的转换应用于多个列。应用**dplyr**包的`across()`函数（同时也封装 在**tidyverse**包里）可以将一种转换操作一次性应用到多列。`across()`可以用在**dplyr**包的任何函数里，但比较常用的是`select()`，`mutate()`，`filter()`或`summarise()`。`summarise()`使用说明可参阅[描述性表格]章节。
+
+指定拟操作的列到`.cols =`参数和拟应用的函数到`.fns =`参数。提供给`.fns`函数的任何其他参数都可以放进`across()`函数，并以英文逗号与`.fns`分隔，置于其后。
+
 
 #### `across()` column selection {.unnumbered}  
 
