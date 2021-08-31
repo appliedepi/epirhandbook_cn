@@ -1,368 +1,269 @@
-# Download handbook and data  
-
+# 指南和数据的下载
 
 <!-- Note to self: If you want to create a download link to Github, right-click the "View Raw" button on Github, copy the address, and use that in the HTML below. -->
 
+## 指南的离线下载
 
+你可以下载本指南的离线 HTML 版本。即使你之后无法访问互联网，也可以在浏览器中查看该指南。如果你将会使用离线Epi R 指南，请注意以下几点：
 
+-   当你离线打开指南的时候，图片和表格可能需要一到两分钟来加载\
+-   离线指南的布局与在线版略有不同 ------ 离线版页面较长且目录在左侧。 如果要搜索特定词语，请使用 Ctrl+f (Cmd-f)\
+-   请参阅 [建议的 packages ] 页面，以帮助你在失去互联网之前安装适当的R packages\
+-   安装包含所有示例数据的 R packages： **epirhandbook**（安装过程如下）
 
-## Download offline handbook  
+**下载此指南有两种方式：**
 
-You can download the offline version of this handbook as an HTML file so that you can view the file in your web browser even if you no longer have internet access. If you are considering offline use of the Epi R Handbook here are a few things to consider:  
+### 使用链接下载 {.unnumbered}
 
-* When you open the file it may take a minute or two for the images and the Table of Contents to load  
-* The offline handbook has a slightly different layout - one very long page with Table of Contents on the left. To search for specific terms use Ctrl+f (Cmd-f)  
-* See the [Suggested packages] page to assist you with installing appropriate R packages before you lose internet connectivity  
-* Install our R package **epirhandbook** that contains all the example data (install process described below)  
+**直接右键 [此链接](https://github.com/appliedepi/epirhandbook_eng/raw/master/offline_long/Epi_R_Handbook_offline.html)， 然后选择 "链接另存为" 。**
 
-**There are two ways you can download the handbook:**  
+如果在 Mac 上下载，请使用 Cmd + click 。 如果在手机上下载，请按住链接并选择"保存链接"。 指南将下载到你的设备。 如果出现带有原始 HTML 代码的屏幕，请确保你已遵循上述说明进行操作或尝试使用 R package 下载。
 
+### 使用R package 下载 {.unnumbered}
 
+我们提供了一个名为 **epirhandbook** 的 R package 。 它的一个函数 `download_book()` ，可用于将指南文件从我们的 Github 库下载到你的计算机。
 
-### Use download link {.unnumbered}  
+这个 package 还包含一个函数 `get_data()` ，可用于将所有示例数据下载到你的计算机。
 
-For quick access, **right-click** [this link](https://github.com/appliedepi/epirhandbook_eng/raw/master/offline_long/Epi_R_Handbook_offline.html) **and select "Save link as"**.  
-
-If on a Mac, use Cmd+click. If on a mobile, press and hold the link and select "Save link". The handbook will download to your device. If a screen with raw HTML code appears, ensure you have followed the above instructions or try Option 2.  
-
-
-
-
-### Use our R package {.unnumbered}  
-
-We offer an R package called **epirhandbook**. It includes a function `download_book()` that downloads the handbook file from our Github repository to your computer.  
-
-
-This package also contains a function `get_data()` that downloads all the example data to your computer.  
-
-Run the following code to install our R package **epirhandbook** from the [Github repository *appliedepi*](https://github.com/appliedepi/epirhandbook). This package is not on CRAN, so use the special function `p_install_gh()` to install it from Github.  
-
+运行以下代码从 [Github 库](https://github.com/appliedepi/epirhandbook) 安装我们的 R package： **epirhandbook** 。 这个 package 不在 CRAN 上，所以要使用特殊函数 `p_install_gh()` 从 Github 安装它。
 
 ```{r, eval=F}
-# install the latest version of the Epi R Handbook package
+# 安装最新版本的 epirhandbook package
 pacman::p_install_gh("appliedepi/epirhandbook")
 ```
 
-Now, load the package for use in your current R session:  
+之后，要加载在当前 R 环境中使用的 packages：
 
 ```{r, eval=F}
-# load the package for use
+# 加载即将使用的 packages
 pacman::p_load(epirhandbook)
 ```
 
-Next, run the package's function `download_book()` (with empty parentheses) to download the handbook to your computer. Assuming you are in RStudio, a window will appear allowing you to select a save location.  
+接下来，运行 函数 `download_book()`（带空括号）将指南下载到你的计算机。 如果你在使用 RStudio，RStudio 将会弹出一个窗口，允许你选择指南保存位置。
 
 ```{r, eval=F}
-# download the offline handbook to your computer
+# 下载离线指南到你的电脑
 download_book()
 ```
 
+## 数据的下载
 
+要完成指南每页的案例，你可以下载示例数据和结果。
 
+### 使用R package 下载 {.unnumbered}
 
+最简单的下载数据的方法是安装我们的 R package： **epirhandbook**。 它的一个函数 `get_data()` 可将所有示例数据保存到你计算机上指定的文件夹中。
 
-## Download data to follow along  
-
-To "follow along" with the handbook pages, you can download the example data and outputs.  
-
-### Use our R package {.unnumbered}  
-
-The easiest approach to download all the data is to install our R package **epirhandbook**. It contains a function `get_data()` that saves all the example data to a folder of your choice on your computer.  
-
-To install our R package **epirhandbook**, run the following code. This package is not on CRAN, so use the function `p_install_gh()` to install it. The input is referencing our Github organisation ("*appliedepi*") and the **epirhandbook** package.  
+运行以下代码安装R package： **epirhandbook** 。 这个 package 不在 CRAN 上，所以要使用特殊函数 `p_install_gh()` 从 Github 安装它。 代码引用了我们的 Github 组织 ("appliedepi") 和 epirhandbook package。
 
 ```{r, eval=F}
-# install the latest version of the Epi R Handbook package
+# 安装最新版本的 epirhandbook package
 pacman::p_install_gh("appliedepi/epirhandbook")
 ```
 
-
-Now, load the package for use in your current R session:  
+之后，要加载在当前 R 环境中使用的 packages：
 
 ```{r, eval=F}
-# load the package for use
+# 加载即将使用的 packages
 pacman::p_load(epirhandbook)
 ```
 
-Next, use the package's function `get_data()` to download the example data to your computer. Run `get_data("all")` to get *all* the example data, or provide a specific file name and extension within the quotes to retrieve only one file.  
+接下来，运行 函数 `get_data()`将示例数据下载到你的计算机。运行 `get_data("all")` 可以获取所有示例数据，或在引号内提供特定的文件名和扩展名用以仅检索一个文件。
 
-The data have already been downloaded with the package, and simply need to be transferred out to a folder on your computer. A pop-up window will appear, allowing you to select a save folder location. We suggest you create a new "data" folder as there are about 30 files (including example data and example outputs).  
+数据将会被下载，并且储存到到你计算机上的文件夹中。电脑将会弹出一个窗口，允许你选择保存数据的文件夹位置。 我们建议你创建一个新的"Data"文件夹，因为大约有 30 个文件（包括示例数据和示例结果）。
 
 ```{r, eval=F}
-# download all the example data into a folder on your computer
+# 将所有示例数据下载到你计算机上的文件夹中
 get_data("all")
 
-# download only the linelist example data into a folder on your computer
+# 仅将“线表”示例数据下载到你计算机上的文件夹
 get_data(file = "linelist_cleaned.rds")
 
 ```
 
-
 ```{r, eval=F}
-# download a specific file into a folder on your computer
+# 将特定数据下载到计算机上的文件夹中
 get_data("linelist_cleaned.rds")
 ```
 
-Once you have used `get_data()` to save a file to your computer, you will still need to import it into R. See the [Import and export] page for details.  
+使用 `get_data()` 将文件保存到计算机后，你仍需要将其导入 R。相关详细信息，请参阅 [ 导入和导出 ] 页面。
 
-If you wish, you can review all the data used in this handbook in the **["data" folder](https://github.com/appliedepi/epirhandbook_eng/tree/master/data)** of our Github repository.  
+你可以在我们 Github 库的 [**"data"**](https://github.com/appliedepi/epirhandbook_eng/tree/master/data)文件夹中查看指南中使用的所有数据。
 
+### 数据的依次下载 {.unnumbered}
 
+通过链接或 R 代码可以从我们的 Github 库中依次地下载示例数据。某些数据文件类型允许直接使用下载链接，而其他数据文件类型可以通过 R 代码下载。
 
-### Download one-by-one {.unnumbered}  
+####  案例线表数据 {.unnumbered}
 
-This option involves downloading the data file-by-file from our Github repository via either a link or an R command specific to the file. Some file types allow a download button, while others can be downloaded via an R command.  
+这是一个虚构的埃博拉病毒爆发案例，由指南团队从**outbreaks** package 中的 `ebola_sim` 实践数据集扩展而来。
 
+-   <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_raw.xlsx' class='download-button'>点击下载"原始"线表 (.xlsx)</span></a>. "原始"案例线表数据是一个包含杂乱数据的 Excel 电子表格。 它可被用在 [数据清理和核心功能] 页面。
 
-#### Case linelist {.unnumbered}
+-   <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_cleaned.rds' class='download-button'>点击下载"整洁"的线表 (.rds)</a>. 此文件用于指南中使用线表数据的所有其他页面。 rds 文件是一种拥有列的 R 语言文件类型。 这确保你在将数据导入 R 后只需要做最少的清理工作。
 
-This is a fictional Ebola outbreak, expanded by the handbook team from the `ebola_sim` practice dataset in the **outbreaks** package.  
+其他相关文件：
 
-* <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_raw.xlsx' class='download-button'>Click to download the "raw" linelist (.xlsx)</span></a>. The "raw" case linelist is an Excel spreadsheet with messy data. Use this to follow-along with the [Cleaning data and core functions] page.  
+-   <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_cleaned.xlsx' class='download-button'>点击下载"整洁"线表 (.xlsx)</a>
 
-* <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_cleaned.rds' class='download-button'>Click to download the "clean" linelist (.rds)</a>. Use this file for all other pages of this handbook that use the linelist. A .rds file is an R-specific file type that preserves column classes. This ensures you will have only minimal cleaning to do after importing the data into R.  
-
-*Other related files:*  
-
-* <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_cleaned.xlsx' class='download-button'>Click to download the "clean" linelist as an Excel file</a>
-
-* Part of the cleaning page uses a "cleaning dictionary" (.csv file). You can load it directly into R by running the following commands:   
+-   部分页面使用了" 清理字典" (.csv file)。 你可以通过运行以下命令将其直接加载到 R ：
 
 ```{r, eval=F}
-pacman::p_load(rio) # install/load the rio package
+pacman::p_load(rio) # 安装 rio package
 
-# import the file directly from Github
+# 直接从 Github 导入文件
 cleaning_dict <- import("https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/cleaning_dict.csv")
 ```
 
+#### 疟疾统计数据 {#data_malaria .unnumbered}
 
-#### Malaria count data {#data_malaria .unnumbered}  
+这些数据是按年龄组、医疗设施和日期划分的虚构疟疾病例数据集。rds 文件是一种拥有列的 R 语言文件类型。 这确保你在将数据导入 R 后只需要做最少的清理工作。
 
-These data are fictional counts of malaria cases by age group, facility, and day. A .rds file is an R-specific file type that preserves column classes. This ensures you will have only minimal cleaning to do after importing the data into R.  
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_facility_count_data.rds' class='download-button'> 点击下载疟疾统计数据 (.rds file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_facility_count_data.rds' class='download-button'>
-	Click to download
-	<span>the malaria count data (.rds file)</span>
-</a>
+#### 李克特量表数据 {.unnumbered}
 
-
-#### Likert-scale data {.unnumbered}  
-
-These are fictional data from a Likert-style survey, used in the page on [Demographic pyramids and Likert-scales]. You can load these data directly into R by running the following commands:    
+这些数据是基于李克特式调查问卷的虚构数据，用于 [人口金字塔和李克特量表] 页面。你可以通过运行以下命令将其直接加载到 R ：
 
 ```{r, eval=F}
-pacman::p_load(rio) # install/load the rio package
+pacman::p_load(rio) # 安装 rio package
 
-# import the file directly from Github
+# 直接从 Github 导入文件
 likert_data <- import("https://raw.githubusercontent.com/appliedepi/epirhandbook_eng/master/data/likert_data.csv")
 ```
 
+#### Flexdashboard {.unnumbered}
 
-#### Flexdashboard {.unnumbered}  
+以下是与 [ R Markdown的交互面板] 上的页面相关联的文件的链接：
 
-Below are links to the file associated with the page on [Dashboards with R Markdown]:  
+-   要下载 R Markdown，请右键单击此 [链接](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/flexdashboard/outbreak_dashboard.Rmd)（Mac 上为 Cmd+click）并选择"链接另存为"。\
+-   要下载 HTML 交互面板，请右键单击此 [链接](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/flexdashboard/outbreak_dashboard_test.html)（Mac 上为 Cmd+click）并选择"链接另存为"。
 
-* To download the R Markdown for the outbreak dashboard, right-click this [link](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/flexdashboard/outbreak_dashboard.Rmd) (Cmd+click for Mac) and select "Save link as".  
-* To download the HTML dashboard, right-click this [link](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/flexdashboard/outbreak_dashboard_test.html) (Cmd+click for Mac) and select "Save link as".  
+#### 接触者追踪 {.unnumbered}
 
-#### Contact Tracing {.unnumbered} 
+[接触者追踪] 页面演示了如何分析接触者追踪的数据，其使用了[Go.Data](https://github.com/WorldHealthOrganization/godata/tree/master/analytics/r-reporting) 的示例数据。页面中使用的数据可以通过单击以下链接来下载为 .rds 文件：
 
-The [Contact Tracing] page demonstrated analysis of contact tracing data, using example data from [Go.Data](https://github.com/WorldHealthOrganization/godata/tree/master/analytics/r-reporting). The data used in the page can be downloaded as .rds files by clicking the following links:  
+<a href='https://github.com/WorldHealthOrganization/godata/blob/master/analytics/r-reporting/data/cases_clean.rds?raw=true' class='download-button'>点击下载案例调查数据(.rds file) </a>
 
-<a href='https://github.com/WorldHealthOrganization/godata/blob/master/analytics/r-reporting/data/cases_clean.rds?raw=true' class='download-button'>
-	Click to download
-	<span>the case investigation data (.rds file)</span>
-</a>
+<a href='https://github.com/WorldHealthOrganization/godata/blob/master/analytics/r-reporting/data/contacts_clean.rds?raw=true' class='download-button'> 点击下载接触者注册数据(.rds file) </a>
 
-<a href='https://github.com/WorldHealthOrganization/godata/blob/master/analytics/r-reporting/data/contacts_clean.rds?raw=true' class='download-button'>
-	Click to download
-	<span>the contact registration data (.rds file)</span>
-</a>
+<a href='https://github.com/WorldHealthOrganization/godata/blob/master/analytics/r-reporting/data/followups_clean.rds?raw=true' class='download-button'> 点击下载接触者后续数据 (.rds file)</a>
 
-<a href='https://github.com/WorldHealthOrganization/godata/blob/master/analytics/r-reporting/data/followups_clean.rds?raw=true' class='download-button'>
-	Click to download
-	<span>the contact follow-up data (.rds file)</span>
-</a>
+[**注释：**来自其他软件（例如 KoBo, DHIS2 Tracker, CommCare) 的接触者追踪数据的结构可能是不同的。如果你想为此页面提供替代性的示例数据和内容，请[联系我们](#contact_us)]{style="color: black;"}。
 
+[**提示:** 如果你正在开发 Go.Data 并且希望连接到你自己示例的API， 请参考输入和输出页面的 [(API section)](#import_api)和 [Go.Data Community of Practice](https://community-godata.who.int/)。]{style="color: darkgreen;"}
 
+#### GIS 地理信息系统 {.unnumbered}
 
-<span style="color: black;">**_NOTE:_** Structured contact tracing data from other software (e.g. KoBo, DHIS2 Tracker, CommCare) may look different. If you would like to contribute alternative sample data or content for this page, please [contact us](#contact_us).</span> 
+Shapefile 有许多子文件，每个文件都有不同的后缀格式。 一些文件后缀是".shp"扩展名，其他文件可能是".dbf"、".prj"等。
 
-<span style="color: darkgreen;">**_TIP:_** If you are deploying Go.Data and want to connect to your instance's API, see the Import and export page [(API section)](#import_api) and the [Go.Data Community of Practice](https://community-godata.who.int/).</span>
+[GIS 基础] 页面提供了指向 *Humanitarian Data Exchange* 网站的链接，你可以在该网站上直接下载 shapefile 为压缩文件。
 
+例如，可以在[此处](https://data.humdata.org/dataset/hotosm_sierra_leone_health_facilities)下载医疗机构点的数据（下载"hotosm_sierra_leone_health_facilities_points_shp.zip"）。将数据保存到你的计算机后，解压缩其压缩文件夹。 你将看到几个具有不同扩展名的文件（例如 ".shp"、 ".prj"、 ".shx"）。所有这些文件都必须保存在你计算机上的同一文件夹中。之后要将数据导入到 R 中，用`st_read()`读取 ".shp"文件的路径和名称（如 [ GIS 基础 ] 页面中所述）。
 
-#### GIS {.unnumbered}  
+如果你按照第一种方式下载了所有示例数据（通过我们的 R package： **epirhandbook**），则下载数据中已包含所有的shapefile。
 
-Shapefiles have many sub-component files, each with a different file extention. One file will have the ".shp" extension, but others may have ".dbf", ".prj", etc.  
-
-The [GIS basics] page provides links to the *Humanitarian Data Exchange* website where you can download the shapefiles directly as zipped files.  
-
-For example, the health facility points data can be downloaded [here](https://data.humdata.org/dataset/hotosm_sierra_leone_health_facilities). Download "hotosm_sierra_leone_health_facilities_points_shp.zip". Once saved to your computer, "unzip" the folder. You will see several files with different extensions (e.g. ".shp", ".prj", ".shx") - all these must be saved to the same folder on your computer. Then to import into R, provide the file path and name of the ".shp" file to `st_read()` from the **sf** package (as described in the [GIS basics] page).  
-
-If you follow Option 1 to download all the example data (via our R package **epirhandbook**), all the shapefiles are included.  
-
-
-Alternatively, you can download the shapefiles from the R Handbook Github "data" folder (see the "gis" sub-folder). However, be aware that you will need to download *each* sub-file individually to your computer. In Github, click on each file individually and download them by clicking on the "Download" button. Below, you can see how the shapefile "sle_adm3" consists of many files - each of which would need to be downloaded from Github.  
+或者，你可以从 R 指南的 Github 的"data"文件夹（请参阅"gis"子文件夹）下载 shapefile。但是，用这种方法，你需要将每个子文件单独下载到你的计算机上。 在 Github 中，依次右键点击每个文件，然后单击"下载"按钮下载它们。用下面的代码，你可以看到 shapefile "sle_adm3" 由哪些文件组成， 每个文件都需要从 Github 单独下载。
 
 ```{r out.height = "50%", fig.align = "center", echo=F}
 knitr::include_graphics(here::here("images", "download_shp.png"))
 ```
 
+#### **系统发生树**
+ {.unnumbered}
 
-#### Phylogenetic trees {.unnumbered}  
+-   要下载 "Shigella_tree.txt" 系统发生树文件，请右键单击此[链接](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/phylo/Shigella_tree.txt)（Mac 上为 Cmd+click ）并选择"链接另存为"。\
+-   下载 "sample_data_Shigella_tree.csv" 以及每个样本的格外附加信息，请右键单击此[链接](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/phylo/sample_data_Shigella_tree.csv)（Mac 上为 Cmd+click ）并选择"链接另存为"。\
+-   要查看新创建的子集树，请右键单击此[链接](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/phylo/Shigella_subtree_2.txt)（Mac 上为 Cmd+click ）并选择"链接另存为"。txt 格式文件将会被下载到你的电脑。
 
-See the page on [Phylogenetic trees]. Newick file of phylogenetic tree constructed from whole genome sequencing of 299 Shigella sonnei samples and corresponding sample data (converted to a text file). The Belgian samples and resulting data are kindly provided by the Belgian NRC for Salmonella and Shigella in the scope of a project conducted by an ECDC EUPHEM Fellow, and will also be published in a manuscript. The international data are openly available on public databases (ncbi) and have been previously published.  
-
-* To download the "Shigella_tree.txt" phylogenetic tree file, right-click this [link](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/phylo/Shigella_tree.txt) (Cmd+click for Mac) and select "Save link as".  
-* To download the "sample_data_Shigella_tree.csv" with additional information on each sample, right-click this [link](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/phylo/sample_data_Shigella_tree.csv) (Cmd+click for Mac) and select "Save link as".  
-* To see the new, created subset-tree, right-click this [link](https://github.com/appliedepi/epirhandbook_eng/raw/master/data/phylo/Shigella_subtree_2.txt) (Cmd+click for Mac) and select "Save link as". The .txt file will download to your computer.  
-
-
-You can then import the .txt files with `read.tree()` from the **ape** package, as explained in the page.
+然后，你可以使用 **ape** package中的 `read.tree()` 导入 .txt 文件，如下：
 
 ```{r, eval=F}
 ape::read.tree("Shigella_tree.txt")
 ```
 
+#### 标准化 {.unnumbered}
 
-#### Standardization {.unnumbered}  
-
-See the page on [Standardised rates]. You can load the data directly from our Github repository on the internet into your R session with the following commands:  
-
+请参阅 [ 标准化率 ] 页面，你可以使用以下命令将数据直接从 Github 库加载到你的 R 中：
 
 ```{r, eval=F}
-# install/load the rio package
+# 安装/加载 rio package
 pacman::p_load(rio) 
 
 ##############
-# Country A
+# 国家 A
 ##############
-# import demographics for country A directly from Github
+# 从Github直接导入A国的人口统计数据
 A_demo <- import("https://github.com/appliedepi/epirhandbook_eng/raw/master/data/standardization/country_demographics.csv")
 
-# import deaths for country A directly from Github
+# 从Github直接导入A国的死亡病例数据
 A_deaths <- import("https://github.com/appliedepi/epirhandbook_eng/raw/master/data/standardization/deaths_countryA.csv")
 
 ##############
-# Country B
+# 国家 B
 ##############
-# import demographics for country B directly from Github
+# 从Github直接导入B国的人口统计数据
 B_demo <- import("https://github.com/appliedepi/epirhandbook_eng/raw/master/data/standardization/country_demographics_2.csv")
 
-# import deaths for country B directly from Github
+# 从Github直接导入B国的死亡数据
 B_deaths <- import("https://github.com/appliedepi/epirhandbook_eng/raw/master/data/standardization/deaths_countryB.csv")
 
 
 ###############
-# Reference Pop
+# 引用 Pop
 ###############
-# import demographics for country B directly from Github
+# 从Github直接导入B国的人口统计数据
 standard_pop_data <- import("https://github.com/appliedepi/epirhandbook_eng/raw/master/data/standardization/world_standard_population_by_sex.csv")
 ```
 
+#### 时间序列和爆发检测 {#data_outbreak .unnumbered}
 
+请参阅有关[时间序列和爆发检测](#data_outbreak)的页面。 我们使用了 2002-2011 年被报告于德国的弯曲杆菌病例，数据可从 **surveillance** R package 中获得。 （注：此数据仅作为演示，根据原始数据进行了改编并且删除了自 2011 年底起 3 个月的数据）
 
-#### Time series and outbreak detection {#data_outbreak .unnumbered}  
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/campylobacter_germany.xlsx' class='download-button'> 点击下载德国弯曲杆菌案例 (.xlsx) </a>
 
-See the page on [Time series and outbreak detection]. We use campylobacter cases reported in Germany 2002-2011, as available from the **surveillance** R package. (*nb.* this dataset has been adapted from the original, in that 3 months of data have been deleted from the end of 2011 for demonstration purposes)
+我们还使用了德国 2002-2011 年间的气候数据（温度以摄氏度为单位，降雨量以毫米为单位）。这些是使用 **ecmwfr** package 从欧盟哥白尼卫星的数据集中下载的。时间序列页面中有详细描述，你将需要下载所有上述数据并使用 `stars::read_stars()` 导入它们。
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/campylobacter_germany.xlsx' class='download-button'>
-	Click to download
-	<span> Campylobacter in Germany (.xlsx)</span>
-</a>
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2002.nc' class='download-button'> 点击下载2002年德国天气(.nc file) </a>
 
-We also use climate data from Germany 2002-2011 (temperature in degrees celsius and rain fail in millimetres) . These were downloaded from the EU Copernicus satellite reanalysis dataset using the **ecmwfr** package. You will need to download all of these and import them with `stars::read_stars()` as explained in the time series page.  
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2003.nc' class='download-button'> 点击下载2003年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2002.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2002 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2004.nc' class='download-button'> 点击下载2004年德国天气(.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2003.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2003 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2005.nc' class='download-button'> 点击下载2005年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2004.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2004 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2006.nc' class='download-button'> 点击下载2006年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2005.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2005 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2007.nc' class='download-button'>点击下载2007年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2006.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2006 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2008.nc' class='download-button'> 点击下载2008年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2007.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2007 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2009.nc' class='download-button'> 点击下载2009年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2008.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2008 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2010.nc' class='download-button'> 点击下载2010年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2009.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2009 (.nc file)</span>
-</a> 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2011.nc' class='download-button'> 点击下载2011年德国天气 (.nc file) </a>
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2010.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2010 (.nc file)</span>
-</a> 
+####  问卷调查分析 {#data_survey .unnumbered}
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/time_series/weather/germany_weather2011.nc' class='download-button'>
-	Click to download
-	<span> Germany weather 2011 (.nc file)</span>
-</a>
+在[问卷调查分析](https://epirhandbook.com/survey-analysis.html)页面，我们使用基于 MSF OCA 调查模板的虚构死亡率问卷调查数据。 这些虚构数据是 ["R4Epis"](https://r4epis.netlify.app/) 项目的一部分。
 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/surveys/survey_data.xlsx' class='download-button'>点击下载虚构的调查数据 (.xlsx) </a>
 
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/surveys/survey_dict.xlsx' class='download-button'> 点击下载虚构的调查数据字典 (.xlsx) </a>
 
-#### Survey analysis {#data_survey .unnumbered}  
+<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/surveys/population.xlsx' class='download-button'> 点击下载虚构的人口数据 (.xlsx) </a>
 
-For the [survey analysis](https://epirhandbook.com/survey-analysis.html) page we use fictional mortality survey data based off MSF OCA survey templates. This fictional data was generated as part of the ["R4Epis" project](https://r4epis.netlify.app/).
+#### Shiny {#data_shiny .unnumbered}
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/surveys/survey_data.xlsx' class='download-button'>
-	Click to download
-	<span> Fictional survey data (.xlsx)</span>
-</a>
+[Shiny 与交互面板 ] 上的页面演示了如何构建一个简单的应用程序来显示疟疾数据。
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/surveys/survey_dict.xlsx' class='download-button'>
-	Click to download
-	<span> Fictional survey data dictionary (.xlsx)</span>
-</a>
+要下载生成 Shiny 应用程序的 R 文件：
 
-<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/surveys/population.xlsx' class='download-button'>
-	Click to download
-	<span> Fictional survey population data (.xlsx)</span>
-</a>
+你可以 <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_app/app.R' class='download-button'> 点击此处下载应用于 Shiny 程序的 UI 和服务器代码的 app.R 文件。</a>
 
+你可以 <a href='https://github.com/appliedepi/epirhandbook_eng/blob/master/data/malaria_app/data/facility_count_data.rds' class='download-button'> 点击此处下载 factory_count_data.rds 文件<span></a> 。此文件包含 Shiny 应用程序的疟疾数据。 请注意，你可能需要将其存储在"data"文件夹中，才能使 here() 文件路径正常工作。
 
+你可以 <a href='https://github.com/appliedepi/epirhandbook_eng/blob/master/data/malaria_app/global.R' class='download-button'> 点击此处下载 global.R 文件<span></a> ，正如页面中所述，此文件应该在应用程序打开之前运行。
 
-
-#### Shiny {#data_shiny .unnumbered}  
-
-The page on [Dashboards with Shiny] demonstrates the construction of a simple app to display malaria data.  
-
-To download the R files that produce the Shiny app:  
-
-You can <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_app/app.R' class='download-button'>
-	click here to download the app.R file<span> that contains both the UI and Server code for the Shiny app.</span></a>
-
-You can <a href='https://github.com/appliedepi/epirhandbook_eng/blob/master/data/malaria_app/data/facility_count_data.rds' class='download-button'>
-	click here to download the facility_count_data.rds file<span></a> that contains malaria data for the Shiny app. Note that you may need to store it within a "data" folder for the here() file paths to work correctly.  
-
-You can <a href='https://github.com/appliedepi/epirhandbook_eng/blob/master/data/malaria_app/global.R' class='download-button'>
-	click here to download the global.R file<span></a> that should run prior to the app opening, as explained in the page.
-	
-You can <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_app/funcs/plot_epicurve.R' class='download-button'>
-	click here to download the plot_epicurve.R file<span></a> that is sourced by global.R. Note that you may need to store it within a "funcs" folder for the here() file paths to work correctly.
-
-
+你可以 <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_app/funcs/plot_epicurve.R' class='download-button'> 点击此处下载 plot_epicurve.R 文件<span></a> 此文件来自于 global.R. 请注意，你可能需要将其存储在"funcs"文件夹中，才能使 here() 文件路径正常工作。
