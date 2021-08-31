@@ -509,10 +509,6 @@ linelist_raw <- openxlsx::readWorkbook("linelist_raw.xlsx", fillMergedCells = TR
 <span style="color: red;">**_危险：_** 如果用`readWorkbook()`导入合并单元格数据，您最终会得到重复的列名，那就需要手动修复。R 不能很好地处理重复的列名！您可以按手动列名清洗章节介绍的那样通过引用位置（例如第5列）来重命名列。</span>
 
 
-
-
-
-
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 <!-- ======================================================= -->
@@ -941,7 +937,7 @@ linelist <- linelist %>%
 
 You can also reference values in other columns, to perform calculations. Below, a new column `bmi` is created to hold the Body Mass Index (BMI) for each case - as calculated using the formula BMI = kg/m^2, using column `ht_cm` and column `wt_kg`.  
 
-还可以引用其他列中的值来换算。下面，创建了一个新列`bmi`来保存每个病例的体重指数 (BMI) - 使用`ht_cm`和`wt_kg`两列数据和公式BMI = kg/m^2计算。
+还可以引用其他列中的值来换算。下面，创建了一个新列`bmi`来保存每个病例的体重指数 (BMI) - 使用`ht_cm`和`wt_kg`两列数据和公式BMI = kg/m^2换算。
 
 ```{r}
 linelist <- linelist %>% 
@@ -950,7 +946,7 @@ linelist <- linelist %>%
 
 If creating multiple new columns, separate each with a comma and new line. Below are examples of new columns, including ones that consist of values from other columns combined using `str_glue()` from the **stringr** package (see page on [Characters and strings].  
 
-如果创建多个新列，请用逗号和新行分隔每一列。下面是新列的例子，包括那些由使用其他列组合值str_glue()从stringr包（见网页上的字符和字符串。
+如果创建多个新列，请用逗号和新行分隔每一列。下面是换算新列的示例，包括那些用**stringr**包的 `str_glue()` 函数由其他列的值组合而成的新列（请参阅[字符和字符串]章节内容）。
 
 
 
@@ -963,6 +959,16 @@ new_col_demo <- linelist %>%
     new_var_paste  = stringr::str_glue("{hospital} on ({date_hospitalisation})") # new column = pasting together values from other columns
     ) %>% 
   select(case_id, hospital, date_hospitalisation, contains("new"))        # show only new columns, for demonstration purposes
+```
+```{r}
+new_col_demo <- linelist %>%                       
+  mutate(
+    new_var_dup    = case_id,             # 新列 = 重复/复制其他已有列
+    new_var_static = 7,                   # 新列 = 所有值都相同
+    new_var_static = new_var_static + 5,  # 可以直接改写一列，且可以用其他变量换算
+    new_var_paste  = stringr::str_glue("{hospital} on ({date_hospitalisation})") # 新列 = 与其他列的值粘贴在一起
+    ) %>% 
+  select(case_id, hospital, date_hospitalisation, contains("new"))        # 为演示方便，仅显示新列
 ```
 
 
