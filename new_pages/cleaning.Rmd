@@ -1346,8 +1346,14 @@ linelist <- linelist_raw %>%
     rename(date_infection       = infection_date,
            date_hospitalisation = hosp_date,
            date_outcome         = date_of_outcome) %>% 
-    
-    # 以上是上游清洗步骤已经讨论过了
+      
+    # 删除列
+    select(-c(row_num, merged_header, x28)) %>% 
+  
+    # 数据去重
+    distinct() %>% 
+
+      # 以上是上游清洗步骤已经讨论过了
     #####################################################
     # 添加新列
     mutate(bmi = wt_kg / (ht_cm/100)^2) %>% 
@@ -1467,21 +1473,30 @@ table(linelist$hospital, useNA = "always")
 
 <span style="color: darkgreen;">**_TIP:_** Sometimes a *blank* character value exists in a dataset (not recognized as R's value for missing - `NA`). You can reference this value with two quotation marks with no space inbetween ("").</span>  
 
+<span style="color: darkgreen;">**_提示：_** 等号前后的空格数无关紧要。通过对齐所有或大多数行的 = 使您的代码更易于阅读。另外，可以考虑添加一行对应位置的注释，注明哪一边是原值，哪一边是新值。</span>  
+
+<span style="color: darkgreen;">**_提示：_** 有时数据集中存在*空白*字符值（不被识别为R的缺省值 -`NA`）。可以使用中间没有空格的双引号 （""） 引用此值。</span>  
 
 
 
 ### By logic {.unnumbered}
+### 按逻辑 {.unnumbered}
 
 Below we demonstrate how to re-code values in a column using logic and conditions:  
 
 * Using `replace()`, `ifelse()` and `if_else()` for simple logic
 * Using `case_when()` for more complex logic  
 
+下面演示如何使用逻辑和条件重新编码列中的值：
 
+* 简单逻辑：使用`replace()`, `ifelse()`和`if_else()`
+* 复杂逻辑：使用`case_when()`
 
 ### Simple logic {.unnumbered}  
+### 简单逻辑 {.unnumbered}
 
 
+#### `replace()` {.unnumbered}  
 #### `replace()` {.unnumbered}  
 
 To re-code with simple logical criteria, you can use `replace()` within `mutate()`. `replace()` is a function from **base** R. Use a logic condition to specify the rows to change . The general syntax is:  
@@ -1490,13 +1505,29 @@ To re-code with simple logical criteria, you can use `replace()` within `mutate(
 
 One common situation to use `replace()` is **changing just one value in one row, using an unique row identifier**. Below, the gender is changed to "Female" in the row where the column `case_id` is "2195".  
 
+要使用简单逻辑条件重新编码，可以在`mutate()`内使用`replace()`。 `replace()`是**base** R的函数。使用逻辑条件指定要更改的行的一般语法是：
+
+`mutate(拟处理行 = replace(拟处理行, 行选取条件, 新值))`
+
+一种常见的使用`replace()`的情况是`使用唯一的行标识符仅更改一行中的一个值`。下面，将`case_id`列值为“2195”所在行的性别值更改为“女性”。
+
+
 ```{r, eval=F}
 # Example: change gender of one specific observation to "Female" 
 linelist <- linelist %>% 
   mutate(gender = replace(gender, case_id == "2195", "Female"))
 ```
 
+```{r, eval=F}
+# 示例：更改一个特定观测的性别为“女性” 
+linelist <- linelist %>% 
+  mutate(gender = replace(gender, case_id == "2195", "Female"))
+```
+
+
 The equivalent command using **base** R syntax and indexing brackets `[ ]` is below. It reads as "Change the value of the dataframe `linelist`'s column `gender` (for the rows where `linelist`'s column `case_id` has the value  '2195') to 'Female' ".   
+
+使用**base** R语法和索引括号`[ ]`的等效命令如下。它读作“将`linelist`数据框`case_id`值为'2195'所有行的`gender`列值更改为'女性'”。
 
 ```{r, eval=F}
 linelist$gender[linelist$case_id == "2195"] <- "Female"
@@ -1506,11 +1537,16 @@ linelist$gender[linelist$case_id == "2195"] <- "Female"
 
 
 #### `ifelse()` and `if_else()` {.unnumbered}  
+#### `ifelse()` 和 `if_else()` {.unnumbered}  
 
 Another tool for simple logic is `ifelse()` and its partner `if_else()`. However, in most cases for re-coding it is more clear to use `case_when()` (detailed below). These "if else" commands are simplified versions of an `if` and `else` programming statement. The general syntax is:  
 `ifelse(condition, value to return if condition evaluates to TRUE, value to return if condition evaluates to FALSE)` 
 
+另一个用于简单逻辑的工具是`ifelse()`及类似函数`if_else()`。但是，在大多数情况下，对于重新编码，`case_when()`使用起来更清晰（详情如下）。这些“if else”命令是`if`和`else`编程语句的简化版本。一般语法是：
+`ifelse(逻辑条件, 条件为真时应返回的值, 条件为假时应返回的值)`
+
 Below, the column `source_known` is defined. Its value in a given row is set to "known" if the row's value in column `source` is *not* missing. If the value in `source` *is* missing, then the value in `source_known` is set to "unknown".  
+下面，`source_known`被的换算出来，如果`source`列*不是*缺省值，则其值是“known”；否则为“unknown”。
 
 ```{r, eval=F}
 linelist <- linelist %>% 
@@ -1519,13 +1555,24 @@ linelist <- linelist %>%
 
 `if_else()` is a special version from **dplyr** that handles dates. Note that if the 'true' value is a date, the 'false' value must also qualify a date, hence using the special value `NA_real_` instead of just `NA`.
 
+`if_else()`则是`dplyr`包中用于处理日期的一个特殊版本。请注意，如果条件'TRUE' 时返回值是日期，则 'FALSE'返回值也必须限定为日期，如果要返回缺省值则应使用特殊值`NA_real_`而不是`NA`。
+
 ```{r, eval=F}
 # Create a date of death column, which is NA if patient has not died.
 linelist <- linelist %>% 
   mutate(date_death = if_else(outcome == "Death", date_outcome, NA_real_))
 ```
 
+```{r, eval=F}
+# 创建一个死亡日期列，如果病例未死亡则值为NA。
+linelist <- linelist %>% 
+  mutate(date_death = if_else(outcome == "Death", date_outcome, NA_real_))
+```
+
+
 **Avoid stringing together many ifelse commands... use `case_when()` instead!** `case_when()` is much easier to read and you'll make fewer errors.  
+
+**避免将很多ifelse命令行串在一起使用……请改用`case_when()`！** `case_when()` 更易阅读且少出错误。
 
 ```{r, fig.align = "center", out.width = "100%", echo=F}
 knitr::include_graphics(here::here("images", "ifelse bad.png"))
@@ -1533,10 +1580,12 @@ knitr::include_graphics(here::here("images", "ifelse bad.png"))
 
 Outside of the context of a data frame, if you want to have an object used in your code switch its value, consider using `switch()` from **base** R.  
 
-
+在数据框范围外，如果要让代码中使用的对象切换取值，请考虑使用**base** R的`switch()`。
 
 
 ### Complex logic {#clean_case_when .unnumbered}  
+### 复杂逻辑 {#clean_case_when .unnumbered}  
+
 
 Use **dplyr**'s `case_when()` if you are re-coding into many new groups, or if you need to use complex logic statements to re-code values. This function evaluates every row in the data frame, assess whether the rows meets specified criteria, and assigns the correct new value.  
 
@@ -1544,6 +1593,11 @@ Use **dplyr**'s `case_when()` if you are re-coding into many new groups, or if y
 
 For example, here we utilize the columns `age` and `age_unit` to create a column `age_years`:  
 
+如果要重新编码成很多新组，或者要使用复杂的逻辑语句重码值，请使用**dplyr**包的`case_when()`。此函数评估数据框中的每一行是否满足指定条件，并分配正确的新值。
+
+case_when()命令由以“波浪号”`~`分隔开来的右侧 (RHS) 和左侧 (LHS) 的语句组成，产生的新值在每个语句的右侧。语句用逗号分隔。
+
+例如，下面我们用列`age`和`age_unit`创建一个新列`age_years`：
 
 ```{r}
 linelist <- linelist %>% 
@@ -1554,27 +1608,48 @@ linelist <- linelist %>%
             TRUE                 ~ NA_real_)) # any other circumstance, assign missing
 ```
 
+```{r}
+linelist <- linelist %>% 
+  mutate(age_years = case_when(
+            age_unit == "years"  ~ age,       # 如果年龄单位是年
+            age_unit == "months" ~ age/12,    # 如果年龄单位是月
+            is.na(age_unit)      ~ age,       # 如果年龄单位缺省，则默认为年
+            TRUE                 ~ NA_real_)) # 其他情况赋值为缺省值
+```
+
 
 As each row in the data is evaluated, the criteria are applied/evaluated in the order the `case_when()` statements are written - from top-to-bottom. If the top criteria evaluates to `TRUE` for a given row, the RHS value is assigned, and the remaining criteria are not even tested for that row. Thus, it is best to write the most specific criteria first, and the most general last.  
 
+`case_when()`语句将按照逻辑条件编写顺序自上而下对数据框逐行应用/评估。如果某行用上位逻辑条件评估为`TRUE`的话，则会分配右侧值；其他余下的逻辑条件不会再去评估该行。因此，最好先编写最具体的条件，最后编写最通用的条件。
+
 Along those lines, in your final statement, place `TRUE` on the left-side, which will capture any row that did not meet any of the previous criteria. The right-side of this statement could be assigned a value like "check me!" or missing.  
+
+除了那些逻辑条件行之外，最后一行建议在左侧设置`TRUE`以框定那些未符合之前所有逻辑条件的行。那么这句的右侧应该赋值为“待核查”或缺省值。
 
 
 <span style="color: red;">**_DANGER:_** **Vvalues on the right-side must all be the same class** - either numeric, character, date, logical, etc. To assign missing (`NA`), you may need to use special variations of `NA` such as `NA_character_`, `NA_real_` (for numeric or POSIX), and `as.Date(NA)`. Read more in [Working with dates].</span>  
 
 
+<span style="color: red;">**_危险：_** **右侧的值必须是同一类型** - 数值、字符、日期、逻辑等任意一种。 要赋缺省值（`NA`），需用`NA`的变体，如`NA_character_`, `NA_real_` （用于数值或日期时间型）和 `as.Date(NA)`。更多信息参阅[处理日期]章节。</span>  
 
 
 ### Missing values {.unnumbered} 
+### 缺省值 {.unnumbered}
 
 Below are special functions for handling missing values in the context of data cleaning.  
 
 See the page on [Missing data] for more detailed tips on identifying and handling missing values. For example, the `is.na()` function which logically tests for missingness.  
 
+以下是在数据清洗中处理缺失值的特殊函数。
+
+有关识别和处理缺失值的更多技巧，请参阅[缺省数据]章节。例如，用于逻辑判断缺省值 的函数`is.na()`。
+
 
 **`replace_na()`**  
 
 To change missing values (`NA`) to a specific value, such as "Missing", use the **dplyr** function `replace_na()` within `mutate()`. Note that this is used in the same manner as `recode` above - the name of the variable must be repeated within `replace_na()`.  
+
+可以在`mutate()`函数里使用**dplyr**包的`replace_na()`函数，将诸如“Missing”一类的特定缺省值替换成缺省值（`NA`）。请注意，它的使用方式与上述的`recode`相同- 必须在`replace_na()`内重复提供拟处理的变量名称。
 
 ```{r}
 linelist <- linelist %>% 
@@ -1586,9 +1661,16 @@ linelist <- linelist %>%
 
 This is a function from the **forcats** package. The **forcats** package handles columns of class Factor. Factors are R's way to handle *ordered* values such as `c("First", "Second", "Third")` or to set the order that values (e.g. hospitals) appear in tables and plots. See the page on [Factors].  
 
+这是专门处理因子的**forcats**包中的一个函数。因子是 R 处理有序值，如`c("First", "Second", "Third")`或设置值（例如医院）在表格和图中的出现顺序的方式。请参阅[因子]章节。
+
+
 If your data are class Factor and you try to convert `NA` to "Missing" by using `replace_na()`, you will get this error: `invalid factor level, NA generated`. You have tried to add "Missing" as a value, when it was not defined as a possible level of the factor, and it was rejected.  
 
 The easiest way to solve this is to use the **forcats** function `fct_explicit_na()` which converts a column to class factor, and converts `NA` values to the character "(Missing)".  
+
+如果用`replace_na()`把数据中的因子类的`NA`值更改为“Missing”，会出现以下错误提示：`非法的因子水平，将产生缺省值（invalid factor level, NA generated）`。要为因子添加“Missing”值，但未将其定义成其因子水平的话，该操作将被拒绝。
+
+解决此问题的最简单方法是使用`forcats`包里的`fct_explicit_na()`函数。该函数可将列转换为因子，并将`NA`值转换为字符“(Missing)”。
 
 ```{r, eval=F}
 linelist %>% 
@@ -1596,10 +1678,13 @@ linelist %>%
 ```
 
 A slower alternative would be to add the factor level using `fct_expand()` and then convert the missing values.  
+较慢的替代方法是使用`fct_expand()`添加因子级别，并转换为缺省值。
 
 **`na_if()`**  
 
 To convert a *specific value to* `NA`, use **dplyr**'s `na_if()`. The command below performs the opposite operation of `replace_na()`. In the example below, any values of "Missing" in the column `hospital` are converted to `NA`.  
+
+要将*特定值*转换为`NA`，请使用**dplyr**包里的`na_if()`。下面的命令执行与`replace_na()` 的相反操作。在下面的示例中，`hospital`列中“缺省”的任何值都将转换为`NA`。
 
 ```{r}
 linelist <- linelist %>% 
@@ -1607,6 +1692,7 @@ linelist <- linelist %>%
 ```
 
 Note: `na_if()` **cannot be used for logic criteria** (e.g. "all values > 99") - use `replace()` or `case_when()` for this:  
+注意：`na_if()` **不能作为逻辑条件**（如“所有值>99”），可用`replace()` 或 `case_when()` 。
 
 ```{r, eval=F}
 # Convert temperatures above 40 to NA 
@@ -1619,11 +1705,24 @@ linelist <- linelist %>%
 ```
 
 
+```{r, eval=F}
+# 将40度以上转换为NA 
+linelist <- linelist %>% 
+  mutate(temp = replace(temp, temp > 40, NA))
+
+# 将早于2000年1月1日的发病日期转换为缺省值
+linelist <- linelist %>% 
+  mutate(date_onset = replace(date_onset, date_onset > as.Date("2000-01-01"), NA))
+```
+
+
 
 
 ### Cleaning dictionary {.unnumbered}
+### 清洗字典 {.unnumbered}
 
 Use the R package **linelist** and it's function `clean_variable_spelling()` to clean a data frame with a *cleaning dictionary*. **linelist** is a package developed by [RECON](https://github.com/reconhub/linelist) - the R Epidemics Consortium.  
+应用**linelist**包的`clean_variable_spelling()`函数，导入*清洗字典*来清洗数据框数据。该包是由[流行病联盟RECON](https://github.com/reconhub/linelist)研发制作的。
 
 1) Create a cleaning dictionary with 3 columns:  
     * A "from" column (the incorrect value)  
@@ -1632,12 +1731,20 @@ Use the R package **linelist** and it's function `clean_variable_spelling()` to 
 
 Note: .global dictionary entries will be overridden by column-specific dictionary entries.  
 
+1）创建一个3行的清洗字典：
+    * 一个“from”列（不正确值）
+    * 一个“to”gqj （正确值）
+    * 一个拟处理的指定列（或者用“.global”应用于全部列）
+    
+注意： .global 字典条目将被列特定的字典条目覆盖。
+
 ```{r, fig.align = "center", out.width = "100%", echo=F}
 knitr::include_graphics(here::here("images", "cleaning_dict.png"))
 ```
 
 
 2) Import the dictionary file into R. This example can be downloaded via instructions on the [Download handbook and data] page.  
+2）向R导入字典文件。这个示例可以在[手册和数据下载]章节下载。
 
 ```{r, echo=F}
 cleaning_dict <- rio::import(here("data", "case_linelists", "cleaning_dict.csv"))
@@ -1649,6 +1756,8 @@ cleaning_dict <- import("cleaning_dict.csv")
 
 3) Pass the raw linelist to `clean_variable_spelling()`, specifying to `wordlists = ` the cleaning dictionary data frame. The `spelling_vars = ` argument can be used to specify which column in the dictionary refers to the columns (3rd by default), or can be set to `NULL` to have the dictionary apply to all character and factor columns. Note this function can take a long time to run.  
 
+3）将原始linelist传递给`clean_variable_spelling()`，把清理字典数据框指定到`wordlists =`。`spelling_vars =`参数可用于指定字典数据框中哪列中存放拟清洗列名值（默认为第三列），或者可以设置为`NULL`使字典应用于拟清洗数据框的所有字符和因子列。请注意，此功能可能要运行很长时间。
+
 ```{r}
 linelist <- linelist %>% 
   linelist::clean_variable_spelling(
@@ -1656,24 +1765,37 @@ linelist <- linelist %>%
     spelling_vars = "col",        # dict column containing column names, defaults to 3rd column in dict
   )
 ```
+```{r}
+linelist <- linelist %>% 
+  linelist::clean_variable_spelling(
+    wordlists = cleaning_dict,
+    spelling_vars = "col",        # 包含拟清洗列名的字典数据框列名，默认是字典的第三列
+  )
+```
 
 Now scroll to the right to see how values have changed - particularly `gender` (lowercase to uppercase), and all the symptoms columns have been transformed from yes/no to 1/0.  
+
+现在滚动右侧看看各列值发生了怎么样的变化 - 特别是`gender`（小写到大写），并且所有症状列都从是/否转换为 1/0。
 
 ```{r message=FALSE, echo=F}
 # display the linelist data as a table
 DT::datatable(head(linelist,50), rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
-
+```{r message=FALSE, echo=F}
+# 一览表数据显示为表格
+DT::datatable(head(linelist,50), rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
+```
 
 Note that your column names in the cleaning dictionary must correspond to the names *at this point* in your cleaning script. See this [online reference for the linelist package](https://www.repidemicsconsortium.org/linelist/reference/clean_data.html) for more details.
 
-
-
+请注意，清理字典中的列名称必须与清理脚本中*此时*的名称相对应。有关详细信息，请参阅 [linelist包在线参考资料](https://www.repidemicsconsortium.org/linelist/reference/clean_data.html)。
 
 
 #### Add to pipe chain {.unnumbered}  
+#### 添加到管道链 {.unnumbered}  
 
 **Below, some new columns and column transformations are added to the pipe chain.**  
+**下面，一些新列和完成转换的列都被添加到管道链中**
 
 ```{r}
 # CLEANING 'PIPE' CHAIN (starts with raw data and pipes it through cleaning steps)
@@ -1734,6 +1856,65 @@ linelist <- linelist_raw %>%
           TRUE ~ NA_real_))
 ```
 
+```{r}
+# 数据清洗“管道”链（以原始数据开始，然后将其传递给数据清洗步骤）
+##################################################################################
+
+# 数据清洗管道链开始
+###########################
+linelist <- linelist_raw %>%
+    
+    # 标准化列名语法
+    janitor::clean_names() %>% 
+    
+    # 手动重命名列
+           # 新名               # 原名
+    rename(date_infection       = infection_date,
+           date_hospitalisation = hosp_date,
+           date_outcome         = date_of_outcome) %>% 
+      
+    # 删除列
+    select(-c(row_num, merged_header, x28)) %>% 
+  
+    # 数据去重
+    distinct() %>% 
+
+    # 添加新列
+    mutate(bmi = wt_kg / (ht_cm/100)^2) %>% 
+  
+    # 转换一些列的类
+    mutate(across(contains("date"), as.Date), 
+           generation = as.numeric(generation),
+           age        = as.numeric(age)) %>% 
+      
+    # 新增列：入院延迟
+    mutate(days_onset_hosp = as.numeric(date_hospitalisation - date_onset)) %>% 
+    
+    # 以上是上游清洗步骤已经讨论过了
+    #####################################################
+
+  # 清洗hospital列的值
+    mutate(hospital = recode(hospital,
+                      # 原值              = 新值
+                      "Mitylira Hopital"  = "Military Hospital",
+                      "Mitylira Hospital" = "Military Hospital",
+                      "Military Hopital"  = "Military Hospital",
+                      "Port Hopital"      = "Port Hospital",
+                      "Central Hopital"   = "Central Hospital",
+                      "other"             = "Other",
+                      "St. Marks Maternity Hopital (SMMH)" = "St. Mark's Maternity Hospital (SMMH)"
+                      )) %>% 
+    
+    mutate(hospital = replace_na(hospital, "Missing")) %>% 
+
+    # 创建age_year列（用age和age_unit两列）
+    mutate(age_years = case_when(
+          age_unit == "years" ~ age,
+          age_unit == "months" ~ age/12,
+          is.na(age_unit) ~ age,
+          TRUE ~ NA_real_))
+
+```
 
 
 
@@ -1743,6 +1924,7 @@ linelist <- linelist_raw %>%
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Numeric categories {#num_cats}
+## 数值分组 {#num_cats}
 
 
 Here we describe some special approaches for creating categories from numerical columns. Common examples include age categories, groups of lab values, etc. Here we will discuss:  
@@ -1752,20 +1934,41 @@ Here we describe some special approaches for creating categories from numerical 
 * `case_when()`  
 * quantile breaks with `quantile()` and `ntile()` 
 
+在这里，我们讨论一些从数值列创建分组的特殊方法。常见的例子包括年龄组别、实验室数据分组等。这里我们将讨论：
+
+* `age_categories()`，来自**epikit**包
+* `cut()`, 来自**base** R
+* `case_when()`
+* 分位数，可由`quantile()`和`ntile()`生成
+
+
 
 ### Review distribution {.unnumbered}
+### 检查分布 {.unnumbered}
 
 For this example we will create an `age_cat` column using the `age_years` column.  
+
+本例中，将用`age_years`列创建`age_cat`列。
 
 ```{r}
 #check the class of the linelist variable age
 class(linelist$age_years)
 ```
+```{r}
+#检查linelist数据集中age变量的类
+class(linelist$age_years)
+```
 
 First, examine the distribution of your data, to make appropriate cut-points. See the page on [ggplot basics].  
 
+首先，检查数据的分布，以确定适当的分割点。请参阅[ggplot 基础知识]章节。
+
 ```{r, out.height='50%'}
 # examine the distribution
+hist(linelist$age_years)
+```
+```{r, out.height='50%'}
+# 检查分布
 hist(linelist$age_years)
 ```
 
@@ -1774,6 +1977,8 @@ summary(linelist$age_years, na.rm=T)
 ```
 
 <span style="color: orange;">**_CAUTION:_** Sometimes, numeric variables will import as class "character". This occurs if there are non-numeric characters in some of the values, for example an entry of "2 months" for age, or (depending on your R locale settings) if a comma is used in the decimals place (e.g. "4,5" to mean four and one half years)..</span>
+
+<span style="color: orange;">**_注意_** 有时，数值变量会以“字符”类导入。这一般发生在以下情况下：如果某些值中存在非数字字符，例如年龄录入“2 个月”，或者（取决于您的 R 语言环境设置）如果在小数位使用逗号（例如“4， 5”表示四年半）。</span>
 
 
 <!-- ======================================================= -->
@@ -1787,6 +1992,15 @@ Here are the required inputs:
 * The `breakers = ` argument - provide a numeric vector of break points for the new groups  
 
 First, the simplest example:  
+
+可使用**epikit**包的`age_categories()`函数轻松对数值列进行分类和标记（注意：此函数也可以应用于非年龄数字变量）。作为福利，输出列自动是一个有序因子。
+
+以下是所需的输入：
+
+* 一个数值向量（列）
+* `breakers =`参数-提供新组的数值分界点
+
+首先，最简单的例子：
 
 ```{r}
 # Simple example
@@ -1804,7 +2018,25 @@ linelist <- linelist %>%
 table(linelist$age_cat, useNA = "always")
 ```
 
+```{r}
+# 简单的例子
+################
+pacman::p_load(epikit)                    # 加载包
+
+linelist <- linelist %>% 
+  mutate(
+    age_cat = age_categories(             # 创建新列
+      age_years,                            # 创建分组的原数值列
+      breakers = c(0, 5, 10, 15, 20,        # 分界点
+                   30, 40, 50, 60, 70)))
+
+# 表格呈现
+table(linelist$age_cat, useNA = "always")
+```
+
 The break values you specify are by default the lower bounds - that is, they are included in the "higher" group / the groups are "open" on the lower/left side. As shown below, you can add 1 to each break value to achieve groups that are open at the top/right.
+
+默认情况下，您指定的分界值默认是下限 - 也就是说，这个界值包含在“较高”组中，或者说新创建组的下限/左侧是开区间。如下所示，您可以将每个分界值加 1，这样上限/右侧就会是开区间。
  
 ```{r}
 # Include upper ends for the same categories
@@ -1818,11 +2050,28 @@ linelist <- linelist %>%
 # show table
 table(linelist$age_cat, useNA = "always")
 ```
+ 
+```{r}
+# 相同分组中包含上限点
+############################################
+linelist <- linelist %>% 
+  mutate(
+    age_cat = age_categories(
+      age_years, 
+      breakers = c(0, 6, 11, 16, 21, 31, 41, 51, 61, 71)))
+
+# 显示表格
+table(linelist$age_cat, useNA = "always")
+```
 
 
 You can adjust how the labels are displayed with `separator = `. The default is "-"  
 
 You can adjust how the top numbers are handled, with the `ceiling = ` arguemnt. To set an upper cut-off set `ceiling = TRUE`. In this use, the highest break value provided is a "ceiling" and a category "XX+" is not created. Any values above highest break value (or to `upper = `, if defined) are categorized as `NA`. Below is an example with `ceiling = TRUE`, so that there is no category of XX+ and values above 70 (the highest break value) are assigned as NA.  
+
+可使用`separator = `调整标签分隔符。默认为“-”
+
+可使用`ceiling =`参数调整处理最高数字的方式。设置上限截止参数`ceiling = TRUE`后，提供的最高分界值是“天花板”，并且不会创建类别“XX+”。任何高于最高分界值（或已经定义`upper =`值）的值都归类为`NA`。下面是一个带有`ceiling = TRUE`的示例，因此不存在XX+组别，并且将 70（最高分界值）以上的值指定为`NA`。
 
 ```{r}
 # With ceiling set to TRUE
@@ -1837,12 +2086,31 @@ linelist <- linelist %>%
 # show table
 table(linelist$age_cat, useNA = "always")
 ```
+```{r}
+# ceiling参数设置为TRUE
+##########################
+linelist <- linelist %>% 
+  mutate(
+    age_cat = age_categories(
+      age_years, 
+      breakers = c(0, 5, 10, 15, 20, 30, 40, 50, 60, 70),
+      ceiling = TRUE)) # 70是天花板，所有大于70的值都变为NA
+
+# 显示表格
+table(linelist$age_cat, useNA = "always")
+```
 
 Alternatively, instead of `breakers = `, you can provide all of `lower = `, `upper = `, and `by = `:  
 
 * `lower = ` The lowest number you want considered - default is 0  
 * `upper = ` The highest number you want considered  
 * `by = `    The number of years between groups  
+
+或者不用`breakers =`，可提供所有的`lower =`，`upper =`以及`by =`：
+
+* `lower =` 想设置的最低数字 - 默认为 0
+* `upper =` 想设置的最高数字
+* `by =`    组间隔年数
 
 ```{r}
 linelist <- linelist %>% 
@@ -1859,6 +2127,8 @@ table(linelist$age_cat, useNA = "always")
 
 
 See the function's Help page for more details (enter `?age_categories` in the R console). 
+更多信息，请参阅相关函数帮助 （在R控制台输入运行`?age_categories`即可）。 
+
 
 
 <!-- ======================================================= -->
@@ -1871,15 +2141,32 @@ See the function's Help page for more details (enter `?age_categories` in the R 
 * You must provide accurate labels yourself  
 * If you want 0 included in the lowest group you must specify this  
 
+`cut()`是**base** R里与`age_categories()`功能类似的函数，但`age_categories()`开发出来简化这个工作。它与`age_categories()`一些明显的不同之处在于：
+
+* 无需安装/加载另一个包
+* 可以指定分组的左/右侧开/闭区间
+* 必须另外提供准确的标签
+* 必须指定才可以将 0 包含在最低组中
+
 The basic syntax within `cut()` is to first provide the numeric column to be cut (`age_years`), and then the *breaks* argument, which is a numeric vector `c()` of break points. Using `cut()`, the resulting column is an ordered factor.  
+
+`cut()`的基本语法是首先提供拟分组的数值列 (如 `age_years`)，然后是*breaks*参数（可为一个由分界值构成的`c()`数值向量）。`cut()`处理后，产生的列是一个有序因子变量。
 
 By default, the categorization occurs so that the right/upper side is "open" and inclusive (and the left/lower side is "closed" or exclusive). This is the opposite behavior from the `age_categories()` function. The default labels use the notation "(A, B]", which means A is not included but B is. **Reverse this behavior by providing the `right = TRUE` argument**.   
 
-Thus, by default, "0" values are excluded from the lowest group, and categorized as `NA`! "0" values could be infants coded as age 0 so be careful! To change this, add the argument `include.lowest = TRUE` so that any "0" values will be included in the lowest group. The automatically-generated label for the lowest category will then be "[A],B]". Note that if you include the `include.lowest = TRUE` argument **and** `right = TRUE`, the extreme inclusion will now apply to the *highest* break point value and category, not the lowest.  
+默认情况下，`cut()`进行分组时，右/上限侧为“开放”且包含（而左/下限侧为“封闭”或不包含）。这与`age_categories()`函数相反。默认标签用符号“(A, B]”表示，这意味着  不包含A，但包含B。**通过提供`right = FALSE`参数可调整为左闭右开**。
+
+Thus, by default, "0" values are excluded from the lowest group, and categorized as `NA`! "0" values could be infants coded as age 0 so be careful! To change this, add the argument `include.lowest = TRUE` so that any "0" values will be included in the lowest group. The automatically-generated label for the lowest category will then be "[A ,B]". Note that if you include the `include.lowest = TRUE` argument **and** `right = TRUE`, the extreme inclusion will now apply to the *highest* break point value and category, not the lowest.  
+
+因此默认情况下，“0”值被排除在最低组之外，并归类为`NA`! “0”值可能是编码为 0 岁的婴儿，所以要小心！要更改此设置，请添加参数，`include.lowest = TRUE`以便所有“0”值都包含在最低组中。最低类别的自动生成的标签将是“[A,B]”。请注意，如果您包含`include.lowest = TRUE`和 `right = TRUE`两个参数，则两端极值包含（全闭区间）将应用于最高分界点值和组别，而不是最低组别。
 
 You can provide a vector of customized labels using the `labels = ` argument. As these are manually written, be very careful to ensure they are accurate! Check your work using cross-tabulation, as described below. 
 
 An example of `cut()` applied to `age_years` to make the new variable `age_cat` is below:  
+
+您可以使用`labels =`参数提供自定义标签的向量。由于这些是手动编写的，因此请务必小心以确保组标签准确无误！可用下面的方法列出交叉汇总表来验证。
+
+应用`cut()`把`age_years`换算成新`age_cat`分组变量的示例如下：
 
 ```{r}
 # Create new variable, by cutting the numeric age variable
@@ -1897,8 +2184,26 @@ linelist <- linelist %>%
 table(linelist$age_cat, useNA = "always")
 ```
 
+```{r}
+# 通过分割年龄数值变量来创建新变量
+# 低分界值不包含而高分界值包含在每一组中
+linelist <- linelist %>% 
+  mutate(
+    age_cat = cut(
+      age_years,
+      breaks = c(0, 5, 10, 15, 20,
+                 30, 50, 70, 100),
+      include.lowest = TRUE         # 0包含在最低组中
+      ))
+
+# 计算每组观测数
+table(linelist$age_cat, useNA = "always")
+```
+
 
 **Check your work!!!** Verify that each age value was assigned to the correct category by cross-tabulating the numeric and category columns. Examine assignment of boundary values (e.g. 15, if neighboring categories are 10-15 and 16-20).  
+
+**请检查你的工作！！！** 通过列出数值列和组别列的交叉汇总表来验证每个年龄值是否已分配给正确的组别。检查边界值的分配（例如如果相邻类别是 10-15 和 16-20，请核查一下15分在哪边）。
 
 ```{r}
 # Cross tabulation of the numeric and category columns. 
@@ -1909,11 +2214,23 @@ table("Numeric Values" = linelist$age_years,   # names specified in table for cl
 
 
 
+```{r}
+# 数值和组别的交叉汇总表 
+table("Numeric Values" = linelist$age_years,   # 指定标目便于识别
+      "Categories"     = linelist$age_cat,
+      useNA = "always")                        # 别忘记检查NA值
+```
+
+
+
 
 
 **Re-labeling `NA` values**
+**`NA`值重新标记**
 
 You may want to assign `NA` values a label such as "Missing". Because the new column is class Factor (restricted values), you cannot simply mutate it with `replace_na()`, as this value will be rejected. Instead, use `fct_explicit_na()` from **forcats** as explained in the [Factors] page.   
+
+您可能想为`NA`值分配一个诸如“Missing”之类的标签。因为新列是因子类（限定值），不能简单地使用`replace_na()`来转换，此类值不被接受。取而代之，可按照[因子]章节中介绍的用**forcats**包`fct_explicit_na()`函数来处理。
 
 ```{r}
 linelist <- linelist %>% 
@@ -1936,9 +2253,33 @@ linelist <- linelist %>%
 table(linelist$age_cat, useNA = "always")
 ```
 
+```{r}
+linelist <- linelist %>% 
+  
+  # cut() 创建age_cat，自动转换为因子类      
+  mutate(age_cat = cut(
+    age_years,
+    breaks = c(0, 5, 10, 15, 20, 30, 50, 70, 100),          
+    right = FALSE,
+    include.lowest = TRUE,        
+    labels = c("0-4", "5-9", "10-14", "15-19", "20-29", "30-49", "50-69", "70-100")),
+         
+    # 显性声明缺省值水平
+    age_cat = fct_explicit_na(
+      age_cat,
+      na_level = "Missing age")  # 可定制标签
+  )    
+
+# 生成表格查看计数
+table(linelist$age_cat, useNA = "always")
+```
+
 **Quickly make breaks and labels**  
+**快速创建界值和标签**  
 
 For a fast way to make breaks and label vectors, use something like below. See the [R basics] page for references on `seq()` and `rep()`.  
+
+要快速创建和标签向量，请使用如下所示的方法。有关`seq()` 和 `rep()`更多信息请参阅[R基础知识]章节。
 
 ```{r, eval=F}
 # Make break points from 0 to 90 by 5
@@ -1954,21 +2295,45 @@ length(age_seq) == length(age_labels)
 ```
 
 
-Read more about `cut()` in its Help page by entering `?cut` in the R console.  
+```{r, eval=F}
+# 以5为步长创建从0到90的分界点向量
+age_seq = seq(from = 0, to = 90, by = 5)
+age_seq
 
+# 创建以上分组的标签向量，假设cut()函数各参数为默认设置
+age_labels = paste0(age_seq + 1, "-", age_seq + 5)
+age_labels
+
+# 检查确定创建的两个向量等长
+length(age_seq) == length(age_labels)
+```
+
+
+Read more about `cut()` in its Help page by entering `?cut` in the R console.  
+在R控制台输入运行`?cut`查看函数帮助了解更多内容。
 
 
 
 ### Quantile breaks {.unnumbered}  
+### 分位数界值 {.unnumbered}  
 
 In common understanding, "quantiles" or "percentiles" typically refer to a value below which a proportion of values fall. For example, the 95th percentile of ages in `linelist` would be the age below which 95% of the age fall.  
 
 However in common speech, "quartiles" and "deciles" can also refer to the *groups of data* as equally divided into 4, or 10 groups (note there will be one more break point than group).    
 
+在普遍的理解中，“分位数”或“百分位数”通常是指一个值及低于该值的一定比例的集合。例如，`linelist`数据框中年龄的第 95 个百分位数将是低于该年龄的 95%百分位值 的年龄集合。
+
+然而，在比较常用的“四分位数”和“十分位数”也可以指将数据组平均分为 4 或 10 组（注意分界值数会比组数多1，四分位数默认是0，25%，50%，75%，100%五个值）。
+
 To get quantile break points, you can use `quantile()` from the **stats** package from **base** R. You provide a numeric vector (e.g. a column in a dataset) and vector of numeric probability values ranging from 0 to 1.0. The break points are returned as a numeric vector. Explore the details of the statistical methodologies by entering `?quantile`.  
 
 * If your input numeric vector has any missing values it is best to set `na.rm = TRUE`  
 * Set `names = FALSE` to get an un-named numeric vector  
+
+要求分位数值，可使用**base** R中**stats**包的`quantile()`。提供一个数值向量（例如数据集中的一列）和范围从 0 到 1.0 的数字概率值向量作为函数参数。百分位数值以数值向量返回。可通过输入运行`?quantile`来查看该函数统计方法细节。
+
+* 如果数向量中含有任何缺省值，最好设置 `na.rm = TRUE`参数
+* 设置`names = FALSE`参数可返回一组无列名的数值向量百分位数结果
 
 ```{r}
 quantile(linelist$age_years,               # specify numeric vector to work on
@@ -1976,7 +2341,9 @@ quantile(linelist$age_years,               # specify numeric vector to work on
   na.rm = TRUE)                            # ignore missing values 
 ```
 
-You can use the results of `quantile()` as break points in `age_categories()` or `cut()`. Below we create a new column `deciles` using `cut()` where the breaks are defined using `quantiles()` on `age_years`. Below, we display the results using `tabyl()` from **janitor** so you can see the percentages (see the [Descriptive tables] page). Note how they are not exactly 10% in each group.  
+You can use the results of `quantile()` as break points in `age_categories()` or `cut()`. Below we create a new column `deciles` using `cut()` where the breaks are defined using `quantiles()` on `age_years`. Below, we display the results using `tabyl()` from **janitor** so you can see the percentages (see the [Descriptive tables] page). Note how they are not exactly 10% in each group. 
+
+您可以将`quantile()`的运算结果用作`age_categories()`或`cut()` 分界值 。下面我们用`cut()`创建一个新列`deciles`,其中`cut()`分界值由`age_years`求`quantiles()`产生。下面，我们用**janitor**包的`tabyl()`显示结果，查看产生的百分位数（请参阅[描述性表格]章节）。请注意它们在每组中的比例并不完全是10%。
 
 ```{r}
 linelist %>%                                # begin with linelist
@@ -1989,9 +2356,23 @@ linelist %>%                                # begin with linelist
   janitor::tabyl(deciles)                   # pipe to table to display
 ```
 
+```{r}
+linelist %>%                                # 以inelist数据框开始
+  mutate(deciles = cut(age_years,           # 分割age_years创建deciles新列
+    breaks = quantile(                      # 用quantile()定义分界值
+      age_years,                               # 处理age_years变量
+      probs = seq(0, 1, by = 0.1),             # 0.0到1.0，步长为0.1
+      na.rm = TRUE),                           # 忽略缺省值
+    include.lowest = TRUE)) %>%             # cut()函数定义包含0岁
+  janitor::tabyl(deciles)                   # 传递到交叉汇总表显示出来
+```
+
 ### Evenly-sized groups {.unnumbered}  
+### 等样本分组 {.unnumbered}  
 
 Another tool to make numeric groups is the the **dplyr** function `ntile()`, which attempts to break your data into n *evenly-sized groups* - *but be aware that unlike with `quantile()` the same value could appear in more than one group.* Provide the numeric vector and then the number of groups. The values in the new column created is just group "numbers" (e.g. 1 to 10), not the range of values themselves as when using `cut()`.  
+
+另一种创建数值分组的工具是`dplyr`包的`ntile()`函数，可数据分成 n个*大小均匀的组*。*但请注意：与`quantile()`不同，相同值可能分配到多个组。*需为函数提供一个数值向量和拟分成的组数。创建的新列的值只是“数字”组数（例如1到 10），而不是像`cut()`那样返回的是值的范围。
 
 ```{r}
 # make groups with ntile()
@@ -2014,18 +2395,46 @@ ntile_ranges <- ntile_data %>%
 left_join(ntile_table, ntile_ranges, by = "even_groups")
 ```
 
+```{r}
+# 用ntile()创建分组
+ntile_data <- linelist %>% 
+  mutate(even_groups = ntile(age_years, 10))
+
+# 计算分组计数和构成比汇总表
+ntile_table <- ntile_data %>% 
+  janitor::tabyl(even_groups)
+  
+# 计算各组值域的最小值和最大值
+ntile_ranges <- ntile_data %>% 
+  group_by(even_groups) %>% 
+  summarise(
+    min = min(age_years, na.rm=T),
+    max = max(age_years, na.rm=T)
+  )
+
+# 合并和打印-注意：同值出现在多个组中
+left_join(ntile_table, ntile_ranges, by = "even_groups")
+```
+
 
 <!-- ======================================================= -->
 ### `case_when()` { .unnumbered}
+### `case_when()` { .unnumbered}
 
-It is possible to use the **dplyr** function `case_when()` to create categories from a numeric column, but it is easier to use `age_categories()` from **epikit** or `cut()` because these will create an ordered factor automatically. 
+It is possible to use the **dplyr** function `case_when()` to create categories from a numeric column, but it is easier to use `age_categories()` from **epikit** or `cut()` because these will create an ordered factor automatically.
+
 
 If using `case_when()`, please review the proper use as described earlier in the Re-code values section of this page. Also be aware that all right-hand side values must be of the same class. Thus, if you want `NA` on the right-side you should either write "Missing" or use the special `NA` value `NA_character_`.  
 
+使用**dplyr**包的`case_when()`函数也可以从数值列创建分组变量，但使用**epikit**包的`age_categories()`或`cut()`函数可能更容易，因为它们会自动创建一个有序因子。
+
+如果使用case_when()，请查看本页前面“重新编码值”部分中所述的正确使用方法。另请注意，所有右侧值都必须是同一类。因此，如果在右侧产生`NA`，应写成“Missing”或使用特殊`NA`值`NA_character_`。
 
 ### Add to pipe chain {.unnumbered}  
+### 添加到管道链 {.unnumbered}  
 
 Below, code to create two categorical age columns is added to the cleaning pipe chain:  
+下面，将创建两个年龄分组变量的代码添加到数据清洗管道链中：
 
 ```{r}
 # CLEANING 'PIPE' CHAIN (starts with raw data and pipes it through cleaning steps)
@@ -2093,6 +2502,72 @@ linelist <- linelist_raw %>%
 ```
 
 
+```{r}
+# 数据清洗“管道”链（以原始数据开始，然后将其传递给数据清洗步骤）
+##################################################################################
+
+# 数据清洗管道链开始
+###########################
+linelist <- linelist_raw %>%
+    
+    # 标准化列名语法
+    janitor::clean_names() %>% 
+    
+    # 手动重命名列
+           # 新名               # 原名
+    rename(date_infection       = infection_date,
+           date_hospitalisation = hosp_date,
+           date_outcome         = date_of_outcome) %>% 
+      
+    # 删除列
+    select(-c(row_num, merged_header, x28)) %>% 
+  
+    # 数据去重
+    distinct() %>% 
+
+    # 添加新列
+    mutate(bmi = wt_kg / (ht_cm/100)^2) %>% 
+  
+    # 转换一些列的类
+    mutate(across(contains("date"), as.Date), 
+           generation = as.numeric(generation),
+           age        = as.numeric(age)) %>% 
+      
+    # 新增列：入院延迟
+    mutate(days_onset_hosp = as.numeric(date_hospitalisation - date_onset)) %>% 
+    
+  # 清洗hospital列的值
+    mutate(hospital = recode(hospital,
+                      # 原值              = 新值
+                      "Mitylira Hopital"  = "Military Hospital",
+                      "Mitylira Hospital" = "Military Hospital",
+                      "Military Hopital"  = "Military Hospital",
+                      "Port Hopital"      = "Port Hospital",
+                      "Central Hopital"   = "Central Hospital",
+                      "other"             = "Other",
+                      "St. Marks Maternity Hopital (SMMH)" = "St. Mark's Maternity Hospital (SMMH)"
+                      )) %>% 
+    
+    mutate(hospital = replace_na(hospital, "Missing")) %>% 
+
+    # 创建age_year列（用age和age_unit两列）
+    mutate(age_years = case_when(
+          age_unit == "years" ~ age,
+          age_unit == "months" ~ age/12,
+          is.na(age_unit) ~ age,
+          TRUE ~ NA_real_)) %>% 
+
+    # 以上是上游清洗步骤已经讨论过了
+    #####################################################
+    mutate(
+          # 年龄组：定制
+          age_cat = epikit::age_categories(age_years, breakers = c(0, 5, 10, 15, 20, 30, 50, 70)),
+        
+          # 年龄组：0至85岁，每组5岁间隔
+          age_cat5 = epikit::age_categories(age_years, breakers = seq(0, 85, 5)))
+
+
+```
 
 
 
@@ -2101,10 +2576,14 @@ linelist <- linelist_raw %>%
 
 <!-- ======================================================= -->
 ## Add rows  
+## 添加行
 
 ### One-by-one {.unnumbered}  
+### 逐行添加 {.unnumbered}  
 
 Adding rows one-by-one manually is tedious but can be done with `add_row()` from **dplyr**. Remember that each column must contain values of only one class (either character, numeric, logical, etc.). So adding a row requires nuance to maintain this. 
+
+手动逐行添加行很乏味，但可以使用**dplyr**包的`add_row()`函数来完成。请记住，每一列必须只包含一类（字符、数值、逻辑等）的值。因此，添加一行时需要注意每列的细微差别并保证与原列类相同。
 
 ```{r, eval=F}
 linelist <- linelist %>% 
@@ -2117,38 +2596,54 @@ linelist <- linelist %>%
 
 Use `.before` and `.after.` to specify the placement of the row you want to add. `.before = 3` will put the new row before the current 3rd row. The default behavior is to add the row to the end. Columns not specified will be left empty (`NA`).  
 
+使用`.before`和.`after`可指定要添加的行的位置。`.before = 3`将新行放在当前第三行之前。默认是将行添加到末尾，未指定的列将设为缺省值（`NA`）。
+
 The new *row number* may look strange ("...23") but the row numbers in the pre-existing rows *have* changed. So if using the command twice, examine/test the insertion carefully.
 
+新的*行号*可能看起来有点奇怪（“...23”），但预先存在的行的行号*已经*改变。因此，如果使用该命令两次，请仔细检查/测试新插入的部分。
+
 If a class you provide is off you will see an error like this:  
+如果提供的类是不一致的，会显示以下错误信息：
 
 ```
 Error: Can't combine ..1$infection date <date> and ..2$infection date <character>.
 ```
 
-(when inserting a row with a date value, remember to wrap the date in the function `as.Date()` like `as.Date("2020-10-10")`).
+```
+错误：不能合并，..1$infection date <日期类> 和 ..2$infection date <字符类>。
+```
 
+(when inserting a row with a date value, remember to wrap the date in the function `as.Date()` like `as.Date("2020-10-10")`).
+（当插入一行含日期值数据时，请记得把这个日期值置于`as.Date()` 函数中，如 `as.Date("2020-10-10")`）
 
 ### Bind rows {.unnumbered}  
+### 合并行 {.unnumbered}  
 
 To combine datasets together by binding the rows of one dataframe to the bottom of another data frame, you can use `bind_rows()` from **dplyr**. This is explained in more detail in the page [Joining data].  
 
 
+可以通过将一个数据框的行拼接到另一个数据框的尾部来将数据集组合在一起，此操作可由**dplyr**包的`bind_rows()`函数处理。请参阅[拼接数据]章节了解更多信息。
 
 
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Filter rows {  }
+## 筛选行 {  }
+
 
 
 A typical cleaning step after you have cleaned the columns and re-coded values is to *filter* the data frame for specific rows using the **dplyr** verb `filter()`.  
 
 Within `filter()`, specify the logic that must be `TRUE` for a row in the dataset to be kept. Below we show how to filter rows based on simple and complex logical conditions.  
 
+清洗列并重新编码值后，典型的清理步骤是使用**dplyr**动词`filter()`去*筛选*数据框的特定行。
 
+在`filter()`中，对于数据框中要保留的那行指定的逻辑条件必须为`TRUE`。下面我们展示如何根据简单和复杂的逻辑条件来筛选行。
 
 <!-- ======================================================= -->
 ### Simple filter {.unnumbered} 
+### 简单筛选 {.unnumbered} 
 
 This simple example re-defines the dataframe `linelist` as itself, having filtered the rows to meet a logical condition. **Only the rows where the logical statement within the parentheses evaluates to `TRUE` are kept.**  
 
@@ -2156,33 +2651,58 @@ In this example, the logical statement is `gender == "f"`, which is asking wheth
 
 Before the filter is applied, the number of rows in `linelist` is ` nrow(linelist)`.
 
+这个简单的例子将`linelist`数据框重新定义为它本身，筛选了满足逻辑条件的行。**仅保留那些圆括号中逻辑语句评估为`TRUE`的行才被保留。**
+
+本例中，逻辑语句是`gender == "f"`，它检查`gender`列中的值是否等于“f”（区分大小写）。
+
+筛选前，`linelist`数据集的行数是`r nrow(linelist)`。
+
 ```{r, eval=F}
 linelist <- linelist %>% 
   filter(gender == "f")   # keep only rows where gender is equal to "f"
 ```
 
+```{r, eval=F}
+linelist <- linelist %>% 
+  filter(gender == "f")   # 仅保留gender等于"f"的那些行
+```
+
 After the filter is applied, the number of rows in `linelist` is ` linelist %>% filter(gender == "f") %>% nrow()`.
+筛选后，`linelist`数据集的行数是`r linelist %>% filter(gender == "f") %>% nrow()`。
 
 
 ### Filter out missing values {.unnumbered}  
+### 筛选掉缺省值 {.unnumbered}  
 
 It is fairly common to want to filter out rows that have missing values. Resist the urge to write `filter(!is.na(column) & !is.na(column))` and instead use the **tidyr** function that is custom-built for this purpose: `drop_na()`. If run with empty parentheses, it removes rows with *any* missing values. Alternatively, you can provide names of specific columns to be evaluated for missingness, or use the "tidyselect" helper functions described [above](#clean_tidyselect).  
+
+要筛选掉有缺省值的行是很常见的。抵制编写`filter(!is.na(column) & !is.na(column))`此类代码的冲动，而使用为此目的定制的**tidyr**包里的`drop_na()`函数。如果使用空括号运行，将删除具有*任何*缺省值的行。或者，可以指定特定列名来评估缺省与否，或使用[上面](#clean_tidyselect)提到的“tidyselect”辅助函数。
 
 ```{r, eval=F}
 linelist %>% 
   drop_na(case_id, age_years)  # drop rows with missing values for case_id or age_years
 ```
+```{r, eval=F}
+linelist %>% 
+  drop_na(case_id, age_years)  # 筛掉case_id或者age_years为缺省值的行
+```
 
 See the page on [Missing data] for many techniques to analyse and manage missingness in your data. 
 
+分析和管理数据缺省的更多技术请参阅[缺省数据]章节。
 
 
 
 ### Filter by row number {.unnumbered}  
+### 按行号筛选 {.unnumbered}  
 
 In a data frame or tibble, each row will usually have a "row number" that (when seen in R Viewer) appears to the left of the first column. It is not itself a true column in the data, but it can be used in a `filter()` statement.  
 
 To filter based on "row number", you can use the **dplyr** function `row_number()` with open parentheses as part of a logical filtering statement. Often you will use the `%in%` operator and a range of numbers as part of that logical statement, as shown below. To see the *first* N rows, you can also use the special **dplyr** function `head()`.   
+
+在数据框中，每一行通常都有一个“行号”（在 R 查看器中查看时）出现在第一列的左侧。它本身不是数据中真正的列，但可以在`filter()`语句中引用。
+
+要按“行号”筛选，可用**dplyr**包的`row_number()`。使用时将不带参数的`row_number()`作为逻辑筛选语句的一部分。通常，您将使用`%in%`运算符和一系列数值作为逻辑语句的一部分，如下所示。要查看*前*N行，还可以使用**dplyr**包里专用函数`head()`。
 
 ```{r, eval=F}
 # View first 100 rows
@@ -2195,21 +2715,41 @@ linelist %>% filter(row_number() == 5)
 linelist %>% filter(row_number() %in% 2:20) %>% select(date_onset, outcome, age)
 ```
 
+```{r, eval=F}
+# 查看前100行数据
+linelist %>% head(100)     # 用tail()查看后n行数据
+
+# 仅显示5行
+linelist %>% filter(row_number() == 5)
+
+# 筛选指定三列的2至20行数据
+linelist %>% filter(row_number() %in% 2:20) %>% select(date_onset, outcome, age)
+```
+
 You can also convert the row numbers to a true column by piping your data frame to the **tibble** function `rownames_to_column()` (do not put anything in the parentheses).  
+
+还可将数据框通过管道传输到**tibble**包的`rownames_to_column()`函数（不要在括号中放置任何内容）将行号转换为真正的列值。
 
 
 <!-- ======================================================= -->
 ### Complex filter {.unnumbered} 
+### 复杂筛选 {.unnumbered} 
 
 More complex logical statements can be constructed using parentheses `( )`, OR `|`, negate `!`, `%in%`, and AND `&` operators. An example is below:  
 
-
 Note: You can use the `!` operator in front of a logical criteria to negate it. For example, `!is.na(column)` evaluates to true if the column value is *not* missing. Likewise `!column %in% c("a", "b", "c")` evaluates to true if the column value is *not* in the vector.  
+
+可以用以下操作符构建更复杂的逻辑语句：括号`( )`，逻辑或`|`，逻辑非`!`，`%in%`以及逻辑与`&`等。一个示例如下：
+
+注意：可在逻辑条件前使用`!`运算符来否定它。例如，如果某列*无*缺省值，则`!is.na(column)`将返回“TRUE”。再如：如果某列中的值未出现在`c("a", "b", "c")`向量时，则将返回“TRUE”。
 
 
 #### Examine the data  {.unnumbered}  
+#### 检查数据  {.unnumbered}  
 
 Below is a simple one-line command to create a histogram of onset dates. See that a second smaller outbreak from 2012-2013 is also included in this raw dataset. **For our analyses, we want to remove entries from this earlier outbreak.**  
+
+下面是一个用于创建发病日期的直方图的简单单行命令。请注意，此原始数据集中还包含 2012-2013 年的第二次较小爆发。**为便于分析，拟把早期暴发数据删除。**
 
 ```{r, out.width = "50%"}
 hist(linelist$date_onset, breaks = 50)
@@ -2217,17 +2757,25 @@ hist(linelist$date_onset, breaks = 50)
 
 
 #### How filters handle missing numeric and date values {.unnumbered}  
+#### 如何筛选处理缺省值和日期值 {.unnumbered}  
 
 Can we just filter by `date_onset` to rows after June 2013? **Caution! Applying the code `filter(date_onset > as.Date("2013-06-01")))` would remove any rows in the later epidemic with a missing date of onset!**  
+
+可以只通过`date_onset`筛选201年6月之后的数据行吗？**注意！运行`filter(date_onset > as.Date("2013-06-01")))`代码会筛掉后续流行中的发病日期含缺省值的行。
 
 <span style="color: red;">**_DANGER:_** Filtering to greater than (>) or less than (<) a date or number can remove any rows with missing values (`NA`)! This is because `NA` is treated as infinitely large and small.</span>
 
 *(See the page on [Working with dates] for more information on working with dates and the package **lubridate**)*
 
+<span style="color: red;">**_危险：_** 筛选大于（>）或小于（<）某日期或数值的同时会筛选掉含缺省值（`NA`）的行！这是因为`NA`被当做无限大或无限小处理。</span>
+
+*（更多有关处理日期和**lubridate**包的信息请参阅[处理日期] 章节）*
+
 #### Design the filter {.unnumbered}  
+#### 设计筛选条件 {.unnumbered}  
 
 Examine a cross-tabulation to make sure we exclude only the correct rows:  
-
+用交叉汇总表检查以确保只筛选掉正确的行：
 
 ```{r}
 table(Hospital  = linelist$hospital,                     # hospital name
@@ -2235,19 +2783,40 @@ table(Hospital  = linelist$hospital,                     # hospital name
       useNA     = "always")                              # show missing values
 ```
 
+
+```{r}
+table(Hospital  = linelist$hospital,                     # 医院名称
+      YearOnset = lubridate::year(linelist$date_onset),  # 发病时间年份
+      useNA     = "always")                              # 显示缺省值信息
+```
+
 What other criteria can we filter on to remove the first outbreak (in 2012 & 2013) from the dataset? We see that:  
 
 * The first epidemic  in 2012 & 2013 occurred at Hospital A, Hospital B, and that there were also 10 cases at Port Hospital.  
 * Hospitals A & B did *not* have cases in the second epidemic, but Port Hospital did.  
 
-We want to exclude:  
+如何设置筛选条件把第一次疫情（2012 年和 2013 年）数据以从数据集中删除？我们发现：
 
-* The ` nrow(linelist %>% filter(hospital %in% c("Hospital A", "Hospital B") | date_onset < as.Date("2013-06-01")))` rows with onset in 2012 and 2013 at either hospital A, B, or Port:  
+* 2012年和2013年的第一次疫情发生在A医院、B医院，港口医院也有10例。
+* A和B医院在第二次疫情中没有病例，但港口医院有。
+
+We want to exclude:  
+* ` nrow(linelist %>% filter(hospital %in% c("Hospital A", "Hospital B") | date_onset < as.Date("2013-06-01")))` rows with onset in 2012 and 2013 at either hospital A, B, or Port:  
+
   * Exclude ` nrow(linelist %>% filter(date_onset < as.Date("2013-06-01")))` rows with onset in 2012 and 2013
   * Exclude ` nrow(linelist %>% filter(hospital %in% c('Hospital A', 'Hospital B') & is.na(date_onset)))` rows from Hospitals A & B with missing onset dates  
   * Do **not** exclude ` nrow(linelist %>% filter(!hospital %in% c('Hospital A', 'Hospital B') & is.na(date_onset)))` other rows with missing onset dates.  
+  
+  
+需排除：  
+* A、B和港口医院2012和2013年发病数据有The `r nrow(linelist %>% filter(hospital %in% c("Hospital A", "Hospital B") | date_onset < as.Date("2013-06-01")))` 行：  
+  * 排除2012和2013年发病的 `r nrow(linelist %>% filter(date_onset < as.Date("2013-06-01")))` 行
+  * 排除A和B医院发病日期含缺省值的` nrow(linelist %>% filter(hospital %in% c('Hospital A', 'Hospital B') & is.na(date_onset)))` 行 
+  * **不要** 排除发病日期含缺省值的其他 `r nrow(linelist %>% filter(!hospital %in% c('Hospital A', 'Hospital B') & is.na(date_onset)))`行。  
+
 
 We start with a linelist of ` `nrow(linelist)`. Here is our filter statement:  
+从含有`r nrow(linelist)`行数据的linelist数据框开始。下面是筛选条件语句：
 
 ```{r}
 linelist <- linelist %>% 
@@ -2257,12 +2826,26 @@ linelist <- linelist %>%
 nrow(linelist)
 ```
 
+```{r}
+linelist <- linelist %>% 
+  # 保留2013年6月1日以后发病的观测或者非A和B医院报告且发病时间为缺省值的观测
+  filter(date_onset > as.Date("2013-06-01") | (is.na(date_onset) & !hospital %in% c("Hospital A", "Hospital B")))
+
+nrow(linelist)
+```
+
 When we re-make the cross-tabulation, we see that Hospitals A & B are removed completely, and the 10 Port Hospital cases from 2012 & 2013 are removed, and all other values are the same - just as we wanted.  
- 
+
+再次生成交叉汇总表时发现：我们看到A和B医院数据被完全删除，2012年和2013年的港口医院的10 个病例被删除，所有其他值都相同 - 结果正确。
 ```{r}
 table(Hospital  = linelist$hospital,                     # hospital name
       YearOnset = lubridate::year(linelist$date_onset),  # year of date_onset
       useNA     = "always")                              # show missing values
+```
+```{r}
+table(Hospital  = linelist$hospital,                     # 医院名称
+      YearOnset = lubridate::year(linelist$date_onset),  # 发病时间年份
+      useNA     = "always")                              # 显示缺省值信息
 ```
 
 Multiple statements can be included within one filter command (separated by commas), or you can always pipe to a separate filter() command for clarity.  
@@ -2270,23 +2853,41 @@ Multiple statements can be included within one filter command (separated by comm
 
 *Note: some readers may notice that it would be easier to just filter by `date_hospitalisation` because it is 100% complete with no missing values. This is true. But `date_onset` is used for purposes of demonstrating a complex filter.* 
 
+多个筛选条件语句可以（用逗号分隔）置于一个筛选命令中，或者为了清楚起见，通过管道传递到单独的`filter()`命令中。
 
+*注意：一些读者可能会注意到，仅筛选`date_hospitalisation`会更容易，因为它是 100% 完整的，没有缺省值。这是真的。但是这里用`date_onset`主要是为了演示复杂的筛选条件设置。*
 
 
 ### Standalone {.unnumbered}  
+### 独立使用 {.unnumbered}  
 
 Filtering can also be done as a stand-alone command (not part of a pipe chain). Like other **dplyr** verbs, in this case the first argument must be the dataset itself.  
+筛选也可以作为一个独立的命令（不是管道链的一部分）来运行。与其他`dplyr`动词一样，在这种情况下，第一个参数必须是数据集。
 
 ```{r, eval=F}
 # dataframe <- filter(dataframe, condition(s) for rows to keep)
 
 linelist <- filter(linelist, !is.na(case_id))
 ```
+```{r, eval=F}
+# 数据集 <- filter(数据集, 保留行的条件)
+
+linelist <- filter(linelist, !is.na(case_id))
+```
 
 You can also use **base** R to subset using square brackets which reflect the [rows, columns] that you want to retain.  
 
+也可用**base** R以[行, 列]的形式保留子集。
+
 ```{r, eval=F}
 # dataframe <- dataframe[row conditions, column conditions] (blank means keep all)
+
+linelist <- linelist[!is.na(case_id), ]
+```
+
+
+```{r, eval=F}
+# 数据框 <- 数据框[行条件, 列条件] (空白表示全保留)
 
 linelist <- linelist[!is.na(case_id), ]
 ```
@@ -2296,22 +2897,28 @@ linelist <- linelist[!is.na(case_id), ]
 
 
 ### Quickly review records {.unnumbered} 
+### 快速检查记录 {.unnumbered} 
 
 Often you want to quickly review a few records, for only a few columns. The **base** R function `View()` will print a data frame for viewing in your RStudio. 
+经常需要快速查看几列变量的几条记录。**base** R的`View()`函数可在Rstudio里打印显示数据框。
 
 View the linelist in RStudio:  
+在Rstudio里查看`linelist`数据集
 
 ```{r, eval=F}
 View(linelist)
 ```
 
-Here are two examples of viewing specific cells (specific rows, and specific columns):  
+Here are two examples of viewing specific cells (specific rows, and specific columns): 
+这里是查看特定单元格（指定行和指定列）的两个示例：
 
 
 **With dplyr functions `filter()` and `select()`:**  
 
 Within `View()`, pipe the dataset to `filter()` to keep certain rows, and then to `select()` to keep certain columns. For example, to review onset and hospitalization dates of 3 specific cases:   
 
+**用dplyr的`filter()`和`select()`函数：**
+将数据集用`filter()`筛选保留特定行和用`select()`保留某此列，然后置于 `View()`函数中查看。比如，要查看3个指定病例的发病时间、入院日期等。
 ```{r, eval=F}
 View(linelist %>%
        filter(case_id %in% c("11f8ea", "76b97a", "47a5f5")) %>%
@@ -2320,6 +2927,8 @@ View(linelist %>%
 
 
 You can achieve the same with **base** R syntax, using brackets `[ ]` to subset you want to see. 
+
+用**base** R语法，使用方括号`[ ]`同样筛选同样的子集。
 
 ```{r, eval=F}
 View(linelist[linelist$case_id %in% c("11f8ea", "76b97a", "47a5f5"), c("date_onset", "date_hospitalisation")])
@@ -2406,6 +3015,82 @@ linelist <- linelist_raw %>%
 
 
 
+```{r}
+# 数据清洗“管道”链（以原始数据开始，然后将其传递给数据清洗步骤）
+##################################################################################
+
+# 数据清洗管道链开始
+###########################
+linelist <- linelist_raw %>%
+    
+    # 标准化列名语法
+    janitor::clean_names() %>% 
+    
+    # 手动重命名列
+           # 新名               # 原名
+    rename(date_infection       = infection_date,
+           date_hospitalisation = hosp_date,
+           date_outcome         = date_of_outcome) %>% 
+      
+    # 删除列
+    select(-c(row_num, merged_header, x28)) %>% 
+  
+    # 数据去重
+    distinct() %>% 
+
+    # 添加新列
+    mutate(bmi = wt_kg / (ht_cm/100)^2) %>% 
+  
+    # 转换一些列的类
+    mutate(across(contains("date"), as.Date), 
+           generation = as.numeric(generation),
+           age        = as.numeric(age)) %>% 
+      
+    # 新增列：入院延迟
+    mutate(days_onset_hosp = as.numeric(date_hospitalisation - date_onset)) %>% 
+    
+  # 清洗hospital列的值
+    mutate(hospital = recode(hospital,
+                      # 原值              = 新值
+                      "Mitylira Hopital"  = "Military Hospital",
+                      "Mitylira Hospital" = "Military Hospital",
+                      "Military Hopital"  = "Military Hospital",
+                      "Port Hopital"      = "Port Hospital",
+                      "Central Hopital"   = "Central Hospital",
+                      "other"             = "Other",
+                      "St. Marks Maternity Hopital (SMMH)" = "St. Mark's Maternity Hospital (SMMH)"
+                      )) %>% 
+    
+    mutate(hospital = replace_na(hospital, "Missing")) %>% 
+
+    # 创建age_year列（用age和age_unit两列）
+    mutate(age_years = case_when(
+          age_unit == "years" ~ age,
+          age_unit == "months" ~ age/12,
+          is.na(age_unit) ~ age,
+          TRUE ~ NA_real_)) %>% 
+
+    mutate(
+          # 年龄组：定制
+          age_cat = epikit::age_categories(age_years, breakers = c(0, 5, 10, 15, 20, 30, 50, 70)),
+        
+          # 年龄组：0至85岁，每组5岁间隔
+          age_cat5 = epikit::age_categories(age_years, breakers = seq(0, 85, 5))) %>% 
+  
+    # 以上是上游清洗步骤已经讨论过了
+    #####################################################
+
+    filter(
+          # 仅保留case_id非缺省行
+          !is.na(case_id),  
+          
+          # 同时筛选保留第2次暴发病例
+          date_onset > as.Date("2013-06-01") | (is.na(date_onset) & !hospital %in% c("Hospital A", "Hospital B")))
+
+
+```
+
+
 
 
 
@@ -2414,6 +3099,7 @@ linelist <- linelist_raw %>%
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Row-wise calculations  
+##   
 
 If you want to perform a calculation within a row, you can use `rowwise()` from **dplyr**. See this online vignette on [row-wise calculations](https://cran.r-project.org/web/packages/dplyr/vignettes/rowwise.html).  
 For example, this code applies `rowwise()` and then creates a new column that sums the number of the specified symptom columns that have value "yes", for each row in the linelist. The columns are specified within `sum()` by name within a vector `c()`. `rowwise()` is essentially a special kind of `group_by()`, so it is best to use `ungroup()` when you are done (page on [Grouping data]).  
