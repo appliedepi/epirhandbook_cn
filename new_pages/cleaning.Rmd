@@ -1961,7 +1961,11 @@ class(linelist$age_years)
 
 First, examine the distribution of your data, to make appropriate cut-points. See the page on [ggplot basics].  
 
+<<<<<<< HEAD
 首先，检查数据的分布，以确定适当的分割点。请参阅[ggplot 基础知识]章节。
+=======
+首先，检查数据的分布，以确定适当的切点。请参阅[ggplot 基础知识]章节。
+>>>>>>> ba0bf67d59259e5babcdc2f07ddf54400c9eed9a
 
 ```{r, out.height='50%'}
 # examine the distribution
@@ -2036,7 +2040,11 @@ table(linelist$age_cat, useNA = "always")
 
 The break values you specify are by default the lower bounds - that is, they are included in the "higher" group / the groups are "open" on the lower/left side. As shown below, you can add 1 to each break value to achieve groups that are open at the top/right.
 
+<<<<<<< HEAD
 默认情况下，您指定的分界值默认是下限 - 也就是说，这个界值包含在“较高”组中，或者说新创建组的下限/左侧是开区间。如下所示，您可以将每个分界值加 1，这样上限/右侧就会是开区间。
+=======
+默认情况下，您指定的分界值默认是下限 - 也就是说，这个界值包含在“较高”组中，或者说新创建组的低值/左侧是开区间。如下所示，您可以将每个分界值加 1，这样高值/右侧就会是开区间。
+>>>>>>> ba0bf67d59259e5babcdc2f07ddf54400c9eed9a
  
 ```{r}
 # Include upper ends for the same categories
@@ -2052,7 +2060,11 @@ table(linelist$age_cat, useNA = "always")
 ```
  
 ```{r}
+<<<<<<< HEAD
 # 相同分组中包含上限点
+=======
+# 相同分组中包含高值点
+>>>>>>> ba0bf67d59259e5babcdc2f07ddf54400c9eed9a
 ############################################
 linelist <- linelist %>% 
   mutate(
