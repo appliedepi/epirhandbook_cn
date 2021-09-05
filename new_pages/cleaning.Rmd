@@ -3099,10 +3099,14 @@ linelist <- linelist_raw %>%
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 ## Row-wise calculations  
-##   
+## 逐行计算  
 
 If you want to perform a calculation within a row, you can use `rowwise()` from **dplyr**. See this online vignette on [row-wise calculations](https://cran.r-project.org/web/packages/dplyr/vignettes/rowwise.html).  
+
+要在一行内运算，可使用**dplyr**包的`rowwise()`函数，具体请参阅在线函数使用说明 [逐行计算](https://cran.r-project.org/web/packages/dplyr/vignettes/rowwise.html)。
+
 For example, this code applies `rowwise()` and then creates a new column that sums the number of the specified symptom columns that have value "yes", for each row in the linelist. The columns are specified within `sum()` by name within a vector `c()`. `rowwise()` is essentially a special kind of `group_by()`, so it is best to use `ungroup()` when you are done (page on [Grouping data]).  
+例如，下面的代码应用`rowwise()`为linelist数据框中的每一行创建了一个新列，这列汇总计算了指定症状列值为“yes”的列数之和。这些指定的列名用`c()`连接为一个向量提供给`sum()`函数。`rowwise()`本质上是一种特殊的`group_by()`，因此当完成逐行操作后最好用`ungroup()`解除（[分组数据]章节）。
 
 ```{r,}
 linelist %>%
@@ -3111,15 +3115,29 @@ linelist %>%
   ungroup() %>% 
   select(fever, chills, cough, aches, vomit, num_symptoms) # for display
 ```
+```{r,}
+linelist %>%
+  rowwise() %>%
+  mutate(num_symptoms = sum(c(fever, chills, cough, aches, vomit) == "yes")) %>% 
+  ungroup() %>% 
+  select(fever, chills, cough, aches, vomit, num_symptoms) # 为了方便展示
+```
 
   
 As you specify the column to evaluate, you may want to use the  "tidyselect" helper functions described in the `select()` section of this page. You just have to make one adjustment (because you are not using them within a **dplyr** function like `select()` or `summarise()`).  
+当要指定拟计算的列时，可能需要使用本章中`select()`部分中介绍的“tidyselect”辅助函数。只需要进行一项调整（因为不是在**dplyr**包的诸如`select()`或`summarise()`之类的函数内使用）。
 
-Put the column-specification criteria within the **dplyr** function `c_across()`. This is because `c_across` ([documentation](https://dplyr.tidyverse.org/reference/c_across.html)) is designed to work with `rowwise()` specifically. For example, the following code:  
+
+Put the column-specification criteria within the **dplyr** function `c_across()`. This is because `c_across` ([documentation](https://dplyr.tidyverse.org/reference/c_across.html)) is designed to work with `rowwise()` specifically. For example, the following code: 
+将列指定条件置于**dplyr**包的`c_across()`函数中。这是因为`c_across`（[文档](https://dplyr.tidyverse.org/reference/c_across.html)）是专门为`rowwise()`使用而设计的。例如，以下代码：
 
 * Applies `rowwise()` so the following operation (`sum()`) is applied within each row (not summing entire columns)  
 * Creates new column `num_NA_dates`, defined for each row as the number of columns (with name containing "date") for which `is.na()` evaluated to TRUE (they are missing data).  
 * `ungroup()` to remove the effects of `rowwise()` for subsequent steps  
+
+* 应用`rowwise()`来使接下来的操作（`sum()`）在行内进行（而不是整列求和）
+* 创建新列 `num_NA_dates`，定义为每行中列名包含“date”且`is.na()`评估为TRUE（即是缺省值）的列数
+* `ungroup()` 是用于消除`rowwise()`对后续步骤的影响
 
 ```{r,}
 linelist %>%
@@ -3129,7 +3147,16 @@ linelist %>%
   select(num_NA_dates, contains("date")) # for display
 ```
 
+```{r,}
+linelist %>%
+  rowwise() %>%
+  mutate(num_NA_dates = sum(is.na(c_across(contains("date"))))) %>% 
+  ungroup() %>% 
+  select(num_NA_dates, contains("date")) # 为了便于展示
+```
+
 You could also provide other functions, such as `max()` to get the latest or most recent date for each row:  
+可能还需提供别的函数，例如`max()`来获取每行中最新或最近的日期：
 
 ```{r}
 linelist %>%
@@ -3138,9 +3165,17 @@ linelist %>%
   ungroup() %>% 
   select(latest_date, contains("date"))  # for display
 ```
+```{r}
+linelist %>%
+  rowwise() %>%
+  mutate(latest_date = max(c_across(contains("date")), na.rm=T)) %>% 
+  ungroup() %>% 
+  select(latest_date, contains("date"))  # 为了便于展示
+```
 
 
 ## Arrange and sort  
+## 排列或排序  
 
 Use the **dplyr** function `arrange()` to sort or order the rows by column values.  
 
@@ -3150,7 +3185,17 @@ By default, column will be sorted in "ascending" order (which applies to numeric
 
 Sorting data with `arrange()` is particularly useful when making [Tables for presentation], using `slice()` to take the "top" rows per group, or setting factor level order by order of appearance.  
 
-For example, to sort the our linelist rows by `hospital`, then by `date_onset` in descending order, we would use:  
+For example, to sort the our linelist rows by `hospital`, then by `date_onset` in descending order, we would use:
+
+使用**dplyr**包的`arrange()`函数可按列值进行排序。
+
+简单地把拟排序列的列名列出来。如果要排序任何*分组*操作过的数据的话，请指定`.by_group = TRUE`参数（请参阅[分组数据]章节）。
+
+默认情况下，列将按“升序”排序（适用于数字列和字符列）。若要“降序”排列，可通过将拟排序变量置于`desc()`中解决。
+
+在制作[展示表格]、用`slice()`获取每组的“顶部”行或按出现顺序设置因子级别顺序时，用`arrange()`对数据进行排序特别有用。
+
+例如，要将`linelist`数据集按`hospital`变量升序排列，然后按`date_onset`变量降序排序，会用到如下代码：
 
 ```{r, eval=F}
 linelist %>% 
@@ -3176,6 +3221,24 @@ linelist <- linelist %>%
 #min(linelist$date_outcome, na.rm=T)
 ```
 
+```{r, echo=F}
+# 隐藏
+#
+# 轻而易举地将一行旧疫情数据转换为缺省值
+linelist <- linelist %>% 
+  mutate(
+    date_hospitalisation = case_when(
+      date_hospitalisation < as.Date("2013-01-01") ~ as.Date(NA),
+      TRUE                                         ~ date_hospitalisation),
+    date_outcome = case_when(
+      date_outcome < as.Date("2013-01-01") ~ as.Date(NA),
+      TRUE                                 ~ date_outcome)
+    )
+
+#min(linelist$date_hospitalisation, na.rm=T)
+#min(linelist$date_outcome, na.rm=T)
+```
+
 
 
 ```{r echo=F}
@@ -3185,7 +3248,19 @@ linelist <- linelist %>%
 ```
 
 ```{r echo=F}
+# 导出数据时重排列序
+linelist <- linelist %>% 
+  select(case_id:gender, age, age_unit, age_years, age_cat, age_cat5, everything())
+```
+
+```{r echo=F}
 # EXPORT CLEANED LINELIST FILE TO "DATA" FOLDER
+rio::export(linelist, here::here("data", "case_linelists", "linelist_cleaned.xlsx"))
+rio::export(linelist, here::here("data", "case_linelists", "linelist_cleaned.rds"))
+```
+
+```{r echo=F}
+# 将清洗后的LINELIST文件导出到"DATA"文件夹
 rio::export(linelist, here::here("data", "case_linelists", "linelist_cleaned.xlsx"))
 rio::export(linelist, here::here("data", "case_linelists", "linelist_cleaned.rds"))
 ```
