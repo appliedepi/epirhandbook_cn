@@ -3,6 +3,7 @@
 <!-- ======================================================= -->
 <!-- ======================================================= -->
 # Pivoting data {}
+# 转置数据 {}
 
 ```{r, warning=F, message=F, out.height = c('50%'), fig.align="center", fig.show='hold', echo=F}
 knitr::include_graphics(here::here("images", "pivoting", "Pivoting_500x500.png"))
@@ -19,19 +20,30 @@ When managing data, *pivoting* can be understood to refer to one of two processe
 1. The creation of *pivot tables*, which are tables of statistics that summarise the data of a more extensive table  
 2. The conversion of a table from **long** to **wide** format, or vice versa. 
 
+管理数据时，*转置*通常可以理解为指的是两者之一：
+1. 创建*数据透视表*，一种汇总大量数据生成的统计表；
+2. 一种把表格从**长**格式到**宽**格式（反之亦然）的转换操作。
+
 **In this page, we will focus on the latter definition.** The former is a crucial step in data analysis, and is covered elsewhere in the [Grouping data] and [Descriptive tables] pages. 
+
+**本章中，将关注后一种定义。**前者是数据分析中的关键，将在[分组数据]和[描述性表格]章节中介绍。
 
 This page discusses the formats of data. It is useful to be aware of the idea of "tidy data", in which each variable has it's own column, each observation has it's own row, and each value has it's own cell. More about this topic can be found [at this online chapter in R for Data Science](https://r4ds.had.co.nz/tidy-data.html). 
 
+本章将讨论数据格式。了解有关“整洁数据”的概念十分有用。所谓“整洁数据”就是每个变量有自己的列，每个观测有自己的行，每个值有自己的单元格。有关本主题可参阅[R数据科学在线章节](https://r4ds.had.co.nz/tidy-data.html)。
 
 
 
 
 ## Preparation  
+## 准备工作
 
 ### Load packages {.unnumbered}  
+### 加载包 {.unnumbered}  
 
 This code chunk shows the loading of packages required for the analyses. In this handbook we emphasize `p_load()` from **pacman**, which installs the package if necessary *and* loads it for use. You can also load installed packages with  `library()` from **base** R. See the page on [R basics] for more information on R packages.  
+
+此代码块显示了分析所需包的加载。在本手册中，我们推荐用**pacman**包的`p_load()`函数，其在必要时安装*并*加载相应的包以供使用。还可用**base** R的`library()`加载已安装的包。有关R语言包的更多信息，请参阅[R基础知识]章节。
 
 ```{r}
 pacman::p_load(
@@ -40,15 +52,25 @@ pacman::p_load(
   tidyverse)    # data management + ggplot2 graphics
 ```
 
+```{r}
+pacman::p_load(
+  rio,          # 用于文件导入
+  here,         # 用于文件定位
+  tidyverse)    # 数据管理 + ggplot2作图
+```
+
 
 
 ### Import data {.unnumbered}
+### 导入数据 {.unnumbered}
 
 
 ### Malaria count data {-}  
+### 疟疾计数数据 {-}  
 
 In this page, we will use a fictional dataset of daily malaria cases, by facility and age group. If you want to follow along, <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_facility_count_data.rds' class='download-button'>click here to download (as .rds file)<span></a>. Import data with the `import()` function from the **rio** package (it handles many file types like .xlsx, .csv, .rds - see the [Import and export] page for details).  
 
+本章中，将使用一个按场所和年龄组统计的每日报告疟疾病例数虚拟数据集。要想继续，<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/malaria_facility_count_data.rds' class='download-button'>点击这里下载(.rds格式文件)<span></a>。使用**rio**包的`import()`函数导入数据（可处理诸多文件类型，如.xlsx, .csv, .rds，请参阅[导入和导出]章节）。
 ```{r, echo=F}
 count_data <- rio::import(here::here("data", "malaria_facility_count_data.rds")) %>% 
   as_tibble()
@@ -58,27 +80,49 @@ count_data <- rio::import(here::here("data", "malaria_facility_count_data.rds"))
 # Import data
 count_data <- import("malaria_facility_count_data.rds")
 ```
+```{r, eval=F}
+# 导入数据
+count_data <- import("malaria_facility_count_data.rds")
+```
 
 The first 50 rows are displayed below.
+前50行数据显示如下。
 
 ```{r, message=FALSE, echo=F}
 # display the linelist data as a table
 DT::datatable(head(count_data, 50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
 
+```{r, message=FALSE, echo=F}
+# 一览表数据表
+DT::datatable(head(count_data, 50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
+```
+
 
 ### Linelist case data {-}  
+### 病例一览表数据 {-}  
 
 In the later part of this page, we will also use the dataset of cases from a simulated Ebola epidemic. If you want to follow along, <a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_cleaned.rds' class='download-button'>click to download the "clean" linelist</a> (as .rds file). Import your data with the `import()` function from the **rio** package (it accepts many file types like .xlsx, .rds, .csv - see the [Import and export] page for details).  
 
+在本章的后面部分，还将使用模拟埃博拉疫情的病例数据集。如果想继续，<a href='https://github.com/appliedepi/epirhandbook_eng/raw/master/data/case_linelists/linelist_cleaned.rds' class='download-button'>请点击下载“整洁”的一览表</a> （以.rds格式文件）。使用**rio**包中的import()函数导入数据（它接受许多文件类型，如 .xlsx、.rds、.csv等。有关详细信息，请参阅[导入和导出]章节）。
+
 ```{r, echo=F}
 # import the linelist into R
+linelist <- rio::import(here::here("data", "case_linelists", "linelist_cleaned.rds"))
+```
+```{r, echo=F}
+# 把linelist数据集导入R
 linelist <- rio::import(here::here("data", "case_linelists", "linelist_cleaned.rds"))
 ```
 
 
 ```{r, eval=F}
 # import your dataset
+linelist <- import("linelist_cleaned.xlsx")
+```
+
+```{r, eval=F}
+# 导入数据库
 linelist <- import("linelist_cleaned.xlsx")
 ```
 
@@ -90,6 +134,7 @@ linelist <- import("linelist_cleaned.xlsx")
 
 <!-- ======================================================= -->
 ## Wide-to-long {}
+## 宽数据变长数据 {}
 
 ```{r, warning=F, message=F, echo=F}
 knitr::include_graphics(here::here("images", "pivoting", "pivot_longer_new.png"))
@@ -98,24 +143,38 @@ knitr::include_graphics(here::here("images", "pivoting", "pivot_longer_new.png")
 
 <!-- ======================================================= -->
 ### "Wide" format {.unnumbered}
+### “宽”格式 {.unnumbered}
 
 Data are often entered and stored in a "wide" format - where a subject's characteristics or responses are stored in a single row. While this may be useful for presentation, it is not ideal for some types of analysis.  
 
+数据经常以“宽”格式录入和存储，便于每个对象的所有属性或反应都存储在一个单独的行里。然而这样可能便于展示，但对于一些形式的分析来说并不理想。
+
 Let us take the `count_data` dataset imported in the Preparation section above as an example. You can see that each row represents a "facility-day". The actual case counts (the right-most columns) are stored in a "wide" format such that the information for every age group on a given facility-day is stored in a single row.  
+
+以上面准备工作部分导入的`count_data`数据集为例，可以看到其中每一行代表一个“场所-日”。实际病例数（最右边的列）以“宽”格式存储，以便给定场所日的每个年龄组的信息存储在单独一行中。
 
 ```{r, echo=F}
 DT::datatable(count_data, rownames = FALSE, options = list(pageLength = 5, scrollX=T) )
 ```
 
-Each observation in this dataset refers to the malaria counts at one of 65 facilities on a given date, ranging from ` count_data$data_date %>% min()` to ` count_data$data_date %>% max()`. These facilities are located in one `Province` (North) and four `District`s (Spring, Bolo, Dingo, and Barnard). The dataset provides the overall counts of malaria, as well as age-specific counts in each of three age groups - <4 years, 5-14 years, and 15 years and older.
+Each observation in this dataset refers to the malaria counts at one of 65 facilities on a given date, ranging from `r count_data$data_date %>% min()` to `r count_data$data_date %>% max()`. These facilities are located in one `Province` (North) and four `District`s (Spring, Bolo, Dingo, and Barnard). The dataset provides the overall counts of malaria, as well as age-specific counts in each of three age groups - <4 years, 5-14 years, and 15 years and older.
 
-"Wide" data like this are not adhering to "tidy data" standards, because the column headers do not actually represent "variables" - they represent *values* of a hypothetical "age group" variable. 
+此数据集中的每个观测表示的是从`r count_data$data_date%>% min()` 到`r count_data$data_date %>% max()`的给定日期内 65 个场所的疟疾病例计数。 这些场所位于一个`省`（北部）和四个`县区`（Spring、Bolo、Dingo 和 Barnard）。该数据集提供了疟疾的发病总数，以及三个年龄组（<4 岁、5-14 岁和 15 岁及以上）的年龄别发病数。
+
+"Wide" data like this are not adhering to "tidy data" standards, because the column headers do not actually represent "variables" - they represent *values* of a hypothetical "age group" variable.
+
+这样的“宽”数据就不符合“整洁数据”的标准，因为该列标题实际上并不代表“变量”，而代表一个潜在变量“年龄组”的*值*。
+
 
 
 This format can be useful for presenting the information in a table, or for entering data (e.g. in Excel) from case report forms. However, in the analysis stage, these data typically should be transformed to a "longer" format more aligned with "tidy data" standards. The plotting R package **ggplot2** in particular works best when data are in a "long" format.  
 
+这种格式对于在表格中显示信息或从病例报告表格输入数据（例如在 Excel 中）非常有用。但是，在分析阶段，这些数据通常应该转换为更符合“整洁数据”标准的“更长”格式。R 绘图包**ggplot2**尤其适合这种“长”格式数据。
+
 
 Visualising the *total* malaria counts over time poses no difficulty with the data in it's current format:
+
+当前格式对于可视化疟疾发病*总数*的时间趋势容易实现：
 
 ```{r, warning=F, message=F}
 ggplot(count_data) +
@@ -124,25 +183,37 @@ ggplot(count_data) +
 
 However, what if we wanted to display the relative contributions of each age group to this total count? In this case, we need to ensure that the variable of interest (age group), appears in the dataset in a single column that can be passed to `{ggplot2}`'s "mapping aesthetics" `aes()` argument.
 
+但是，如果要展示每个年龄组对这个发病总数的相对贡献怎么办？在这种情况下，我们需要确保感兴趣的变量（年龄组）出现在数据集中的单个列中，这样该列可以传递给{`ggplot2`}的“映射美学”`aes()`参数。
 
 
 
 <!-- ======================================================= -->
 ### `pivot_longer()` {.unnumbered}
+### `pivot_longer()` {.unnumbered}
 
-The **tidyr** function `pivot_longer()` makes data "longer". **tidyr** is part of the **tidyverse** of R packages.  
+The **tidyr** function `pivot_longer()` makes data "longer". **tidyr** is part of the **tidyverse** of R packages. 
+属于**tidyverse**族的**tidyr**包中的`pivot_longer()`函数可以把数据“变长”.
 
 It accepts a range of columns to transform (specified to `cols = `). Therefore, it can operate on only a part of a dataset. This is useful for the malaria data, as we only want to pivot the case count columns.  
+
+该函数可以接受一组拟转换的列（指定给`cols = `参数）。因此，其可以仅对数据集的一部分进行操作。这对疟疾数据很有用，因为仅需转换病例计数列。
 
 In this process, you will end up with two "new" columns - one with the categories (the former column names), and one with the corresponding values (e.g. case counts). You can accept the default names for these new columns, or you can specify your own to `names_to = ` and `values_to = ` respectively.  
 
 Let's see `pivot_longer()` in action... 
 
+在此过程中，最终得到两个“新”列——一个包含类别（以前的列名称），另一个包含相应的值（例如病例计数）。可以接受这些新列默认名称，也可指定用`names_to =`和`values_to =`这两个参数分别指定列名。
+
+下面看看`pivot_longer()`函数的操作...
 
 
 ### Standard pivoting {.unnumbered}  
+### 标准转置 {.unnumbered}  
 
 We want to use **tidyr**'s `pivot_longer()` function to convert the "wide" data to a "long" format. Specifically, to convert the four numeric columns with data on malaria counts to two new columns: one which holds the *age groups* and one which holds the corresponding *values*.  
+
+我们要用**tidyr**包的`pivot_longer()`函数来把“长”数据转换“宽”数据格式。具体来说，将包含疟疾计数数据的四个数值列转换为两个新列：一个包含*年龄组*，另一个包含相应的*值*。
+
 
 ```{r, eval=F}
 df_long <- count_data %>% 
@@ -155,9 +226,17 @@ df_long
 
 Notice that the newly created data frame (`df_long`) has more rows (12,152 vs 3,038); it has become *longer*. In fact, it is precisely four times as long, because each row in the original dataset now represents four rows in df_long, one for each of the malaria count observations (<4y, 5-14y, 15y+, and total).
 
+请注意，新创建的数据框 (`df_long`) 具有更多行（12,152比 3,038），变得`更长`了。事实上，它的长度正好是原来的四倍，因为原始数据集中的每一行现在在`df_long`数据框里是四行，每个疟疾计数观测值（<4y、5-14y、15y+ 和总数）各占一行。
+
 In addition to becoming longer, the new dataset has fewer columns (8 vs 10), as the data previously stored in four columns (those beginning with the prefix `malaria_`) is now stored in two. 
 
-Since the names of these four columns all begin with the prefix `malaria_`, we could have made use of the handy "tidyselect" function `starts_with()` to achieve the same result (see the page [Cleaning data and core functions] for more of these helper functions).  
+除了变长外，新的数据框列变少了（8比10），这是因为数据之前存储于4列（那些以`malaria_`为前缀的列）现在存储到2列中。
+
+Since the names of these four columns all begin with the prefix `malaria_`, we could have made use of the handy "tidyselect" function `starts_with()` to achieve the same result (see the page [Cleaning data and core functions] for more of these helper functions). 
+
+由于这四列的名称都以`malaria_`前缀开头，因此可以使用方便的“tidyselect”包的`starts_with()`函数来选择列实现相同的结果（有关更多辅助函数的信息，请参阅页面[清洗数据及其主要函数]）。
+
+
 
 ```{r}
 # provide column with a tidyselect helper function
@@ -166,8 +245,16 @@ count_data %>%
     cols = starts_with("malaria_")
   )
 ```
+```{r}
+# 用tidyselect辅助函数转置列
+count_data %>% 
+  pivot_longer(
+    cols = starts_with("malaria_")
+  )
+```
 
 or by position: 
+或者按位置
 
 ```{r, eval=F}
 # provide columns by position
@@ -177,10 +264,27 @@ count_data %>%
   )
 ```
 
+
+```{r, eval=F}
+# 按位置转置列
+count_data %>% 
+  pivot_longer(
+    cols = 6:9
+  )
+```
+
 or by named range:
+或者按列名范围
 
 ```{r, eval=F}
 # provide range of consecutive columns
+count_data %>% 
+  pivot_longer(
+    cols = `malaria_rdt_0-4`:malaria_tot
+  )
+```
+```{r, eval=F}
+# 提供连续的列名范围
 count_data %>% 
   pivot_longer(
     cols = `malaria_rdt_0-4`:malaria_tot
@@ -190,6 +294,8 @@ count_data %>%
 
 
 These two new columns are given the default names of `name` and `value`, but we can override these defaults to provide more meaningful names, which can help remember what is stored within, using the `names_to` and `values_to` arguments. Let's use the names `age_group` and `counts`:
+
+这两个新列的默认名称是`name`和`value`，但可用`names_to`和`values_to`参数提供更有意义的名称来覆盖这些默认列名，这有助于记住其中存储的内容。这里，我们用`age_group`和`counts`：
 
 ```{r}
 df_long <- 
@@ -205,6 +311,8 @@ df_long
 
 We can now pass this new dataset to `{ggplot2}`, and map the new column `count` to the y-axis and new column `age_group` to the `fill = ` argument (the column internal color). This will display the malaria counts in a stacked bar chart, by age group:
 
+我们现在可以将这个新数据集传递给`{ggplot2}`，并将新列`count`映射到y 轴，将新列`age_group`映射到`fill =`参数（列内部颜色）。这将按年龄组在堆叠条形图中显示疟疾计数：
+
 ```{r, warning=F, message=F}
 ggplot(data = df_long) +
   geom_col(
@@ -214,10 +322,15 @@ ggplot(data = df_long) +
 ```
 
 Examine this new plot, and compare it with the plot we created earlier - *what has gone wrong?*  
+检查这个新图，并与早前绘制的图对比一下，*发现什么错误了吗？*
 
 We have encountered a common problem when wrangling surveillance data - we have also included the total counts from the `malaria_tot` column, so the magnitude of each bar in the plot is twice as high as it should be. 
 
 We can handle this in a number of ways. We could simply filter these totals from the dataset before we pass it to `ggplot()`:
+
+在处理监测数据时遇到的一个常见问题：数据包括了`malaria_tot`列中的发病总数，因此图中每个条的大小是原来的两倍。
+
+我们可以通过多种方式处理这个问题。可以简单地从数据集中筛选掉这些总数，然后再传递给`ggplot2`：
 
 ```{r, warning=F, message=F}
 df_long %>% 
@@ -231,10 +344,21 @@ df_long %>%
 
 Alternatively, we could have excluded this variable when we ran `pivot_longer()`, thereby maintaining it in the dataset as a separate variable. See how its values "expand" to fill the new rows. 
 
+或者，我们可以在运行`pivot_longer()`时排除这个变量，将其作为一个单独的变量保留在数据集中。请注意查看这列的值是如何“扩展”以填充新行的。
+
 ```{r, warning=F, message=F}
 count_data %>% 
   pivot_longer(
     cols = `malaria_rdt_0-4`:malaria_rdt_15,   # does not include the totals column
+    names_to = "age_group",
+    values_to = "counts"
+  )
+```
+
+```{r, warning=F, message=F}
+count_data %>% 
+  pivot_longer(
+    cols = `malaria_rdt_0-4`:malaria_rdt_15,   # 不包含总数列
     names_to = "age_group",
     values_to = "counts"
   )
@@ -245,15 +369,24 @@ count_data %>%
 
 
 ### Pivoting data of multiple classes {.unnumbered}
+### 多类数据转置 {.unnumbered}
 
 The above example works well in situations in which all the columns you want to "pivot longer" are of the same class (character, numeric, logical...). 
+上面的示例在要“转换更长”的所有列都属于同一类（字符、数字、逻辑……）的情况下效果很好。
 
 However, there will be many cases when, as a field epidemiologist, you will be working with data that was prepared by non-specialists and which follow their own non-standard logic - as Hadley Wickham noted (referencing Tolstoy) in his [seminal article](https://vita.had.co.nz/papers/tidy-data.pdf) on **Tidy Data** principles: "Like families, tidy datasets are all alike but every messy dataset is messy in its own way."
 
+然而，作为现场流行病学家，很多情况下，会碰到一些非专业人氏并按照他们自己的非标准逻辑生成的数据-正如哈德利·威克姆在他的[著名论文](https://vita.had.co.nz/papers/tidy-data.pdf) 上论述**整洁数据**原则时（引用托尔斯泰那句名言）评论道：“像不幸的家庭一样，整洁的数据集都是相似的，但每个杂乱的数据集都有自己的杂乱方式。”
+
 One particularly common problem you will encounter will be the need to pivot columns that contain different classes of data. This pivot will result in storing these different data types in a single column, which is not a good situation. There are various approaches one can take to separate out the mess this creates, but there is an important step you can take using `pivot_longer()` to avoid creating such a situation yourself.
+
+
 
 Take a situation in which there have been a series of observations at different time steps for each of three items A, B and C. Examples of such items could be individuals (e.g. contacts of an Ebola case being traced each day for 21 days) or remote village health posts being monitored once per year to ensure they are still functional. Let's use the contact tracing example. Imagine that the data are stored as follows:
 
+一个特别常见的问题是需要对包含不同类的数据列进行转换。此种转换将会把这些不同的数据类型存储在同一列中，这不是是好做法。可以采取多种方法来消除由此造成的混乱，但更重要的是在运行`pivot_longer()`尽可能避免造成这种情况。
+
+假设在 A、B 和 C 三个项目中的每一个都在不同时间进行了一系列观测。此类项目的示例可以是个人（例如，每天追踪埃博拉病例的接触者，持续 21 天）或每年对偏远乡村卫生站进行一次监测，以确保它们仍然正常运行。下面使用密切接触者追踪示例。想象一下，数据存储如下：
 
 ```{r, message=FALSE, echo=F}
 
@@ -271,9 +404,15 @@ DT::datatable(df, rownames = FALSE)
 
 As can be seen, the data are a bit complicated. Each row stores information about one item, but with the time series running further and further away to the right as time progresses. Moreover, the column classes alternate between date and character values.  
 
+可以看出，数据有点复杂。每一行都存储有关一个项目的信息，但随着时间的推移，时间序列会越来越向右移动。此外，列类在日期和字符值之间交替。
+
 One particularly bad example of this encountered by this author involved cholera surveillance data, in which 8 new columns of observations were added *each day* over the course of __4 years__. Simply opening the Excel file in which these data were stored took >10 minuntes on my laptop!
 
+作者遇到的一个特别糟糕的例子涉及霍乱监测数据，其中在4 年的时间里每天增加 8 个新的观测列。在我的笔记本电脑上，光打开存储这些数据的 Excel 文件就需要超过 10 分钟！
+
 In order to work with these data, we need to transform the data frame to long format, but keeping the separation between a `date` column and a `character` (status) column, for each observation for each item. If we don't, we might end up with a mixture of variable types in a single column (a very big "no-no" when it comes to data management and tidy data):
+
+为了处理这些数据，要将数据框转换为长格式，但每个项目的每个观测仍保持`date`列和`character`（状态）列之间的分隔。如果我们不这样做，我们最终可能会在单个列中混合多种变量类型（对于数据管理和整洁数据来说，这是一个非常大的“禁忌”）：
 
 ```{r}
 df %>% 
@@ -286,14 +425,22 @@ df %>%
 
 Above, our pivot has merged *dates* and *characters* into a single `value` column. R will react by converting the entire column to class character, and the utility of the dates is lost.  
 
+上面，我们的数据转置将*日期*和*字符*合并到一个`value`列中。R将会把整个列转换为字符类，这样日期格式将丢失。
+
 To prevent this situation, we can take advantage of the syntax structure of the original column names. There is a common naming structure, with the observation number, an underscore, and then either "status" or "date". We can leverage this syntax to keep these two data types in separate columns after the pivot. 
+为了防止这种情况发生，我们可以利用原始列名的语法结构来解决。本例中列名有一个通用的命名结构：观察编号，下划线，然后是“状态”或“日期”。我们可以利用这种语法在数据转置后将这两种数据类型保存在单独的列中。
 
 We do this by:  
 
 * Providing a character vector to the `names_to = ` argument, with the second item being (`".value"` ). This special term indicates that the pivoted columns will be split based on a character in their name...  
 * You must also provide the "splitting" character to the `names_sep = ` argument. In this case, it is the underscore "_".  
 
+可以这么做：
+* 指定一个字符向量和第二项（`".value"`）给`names_to = `参数。这个特殊术语表示拟转置的列将根据其名称中的该字符进行拆分......
+* 还须为`names_sep =`参数提供“拆分”字符。本例中，是下划线“_”。
+
 Thus, the naming and split of new columns is based around the underscore in the existing variable names.  
+如此以来，新列的命名和拆分来源于现有变量名称中的下划线两侧内容。
 
 ```{r}
 
@@ -315,6 +462,12 @@ Note that the `date` column is currently in *character* class - we can easily co
 
 We may also want to convert the `observation` column to a `numeric` format by dropping the "obs" prefix and converting to numeric. We cando this with `str_remove_all()` from the **stringr** package (see the [Characters and strings] page).  
 
+_收尾工作_：
+
+请注意，该`date`列当前是字符类 -可应用[处理日期]章节中介绍 的`mutate()`和`as_date()`函数轻松将其转换为正确的日期类。
+
+可能还想通过删除“obs”前缀并转换为数值来将`observation`列转换为`数值`格式。我们可以用**stringr**包的`str_remove_all()`函数处理（请参阅[字符和字符串]章节）。
+
 ```{r}
 
 df_long <- 
@@ -332,6 +485,7 @@ df_long
 ```
 
 And now, we can start to work with the data in this format, e.g. by plotting a descriptive heat tile:  
+目前，我们可以开始使用这种格式的数据，例如绘制描述性热图
 
 ```{r}
 ggplot(data = df_long, mapping = aes(x = date, y = id, fill = status)) +
@@ -351,6 +505,7 @@ ggplot(data = df_long, mapping = aes(x = date, y = id, fill = status)) +
 
 <!-- ======================================================= -->
 ## Long-to-wide {}
+## 长到宽 {}
 
 ```{r, warning=F, message=F, echo=F}
 knitr::include_graphics(here::here("images", "pivoting", "pivot_wider_new.png"))
@@ -359,21 +514,34 @@ knitr::include_graphics(here::here("images", "pivoting", "pivot_wider_new.png"))
 
 In some instances, we may wish to convert a dataset to a wider format. For this, we can use the `pivot_wider()` function.
 
+
 A typical use-case is when we want to transform the results of an analysis into a format which is more digestible for the reader (such as a [Table for presentation][Tables for presentation]). Usually, this involves transforming a dataset in which information for one subject is are spread over multiple rows into a format in which that information is stored in a single row.
 
+在某些情况下，可能要把数据集转换为更宽的格式。为此，可以使用`pivot_wider()`函数。
+
+一个典型的用途就是要将分析结果转换为读者更容易理解的格式（例如[用于演示的表格]）。通常，这就是将一个对象的信息分布在多行的数据集转换为信息存储在单行格式的数据集。
+
 ### Data {.unnumbered}
+### 数据 {.unnumbered}
 
 For this section of the page, we will use the case linelist (see the [Preparation](#pivot_prep) section), which contains one row per case.  
-
+本部分将使用病例一览表（请参阅[准备工作](#pivot_prep)部分），其中每个病例占一行。
 Here are the first 50 rows:  
+下面是前50行：
 
 ```{r, message=FALSE, echo=F}
 # display the linelist data as a table
 DT::datatable(head(linelist, 50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
 
+```{r, message=FALSE, echo=F}
+# 将一览表数据打印成表格
+DT::datatable(head(linelist, 50), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
+```
+
 
 Suppose that we want to know the counts of individuals in the different age groups, by gender:
+假设要了解不同年龄组中分性别个案计数：
 
 ```{r}
 df_wide <- 
@@ -384,6 +552,7 @@ df_wide
 ```
 
 This gives us a long dataset that is great for producing visualisations in **ggplot2**, but not ideal for presentation in a table:
+这生成了一个长数据集，非常适合在`ggplot2`中可视化，但可能不适合在表格中呈现：
 
 ```{r}
 ggplot(df_wide) +
@@ -391,10 +560,15 @@ ggplot(df_wide) +
 ```
 
 ### Pivot wider {.unnumbered}  
+### 转置成宽数据 {.unnumbered}  
 
 Therefore, we can use `pivot_wider()` to transform the data into a better format for inclusion as tables in our reports.  
 
 The argument `names_from` specifies the column *from* which to generate the new column *names*, while the argument `values_from` specifies the column *from* which to take the *values* to populate the cells. The argument `id_cols = ` is optional, but can be provided a vector of column names that should not be pivoted, and will thus identify each row.  
+
+因此，我们可以使用`pivot_wider()`将数据转换为更好的格式，方便作为表格嵌入报告中。
+
+参数`names_from`指定拟*从中*生成新列的*列名*，而参数`values_from`则指定拟*从中*获取*值*以填充单元格的那列的列名。该参数`id_cols =`是可选的，但可提供不应转置的列名称向量，其将标识每一行。
 
 ```{r}
 table_wide <- 
@@ -409,10 +583,19 @@ table_wide
 ```
 
 This table is much more reader-friendly, and therefore better for inclusion in our reports. You can convert into a pretty table with several packages including **flextable** and **knitr**. This process is elaborated in the page [Tables for presentation].  
+该表更易于阅读，因此更适合嵌入报告中。您可以使用包括**flextable**和**knitr**在内的多个包转换为漂亮的表格。此过程在[演示用表格]章节中详述。
+
 
 ```{r}
 table_wide %>% 
   janitor::adorn_totals(c("row", "col")) %>% # adds row and column totals
+  knitr::kable() %>% 
+  kableExtra::row_spec(row = 10, bold = TRUE) %>% 
+  kableExtra::column_spec(column = 5, bold = TRUE) 
+```
+```{r}
+table_wide %>% 
+  janitor::adorn_totals(c("row", "col")) %>% # 添加行、列总计
   knitr::kable() %>% 
   kableExtra::row_spec(row = 10, bold = TRUE) %>% 
   kableExtra::column_spec(column = 5, bold = TRUE) 
@@ -423,14 +606,19 @@ table_wide %>%
 
 <!-- ======================================================= -->
 ## Fill 
+## 填充
 
 In some situations after a `pivot`, and more commonly after a `bind`, we are left with gaps in some cells that we would like to fill.  
 
+在`转置`操作之后的某些情况下，更常见的是在`合并`操作之后，会在一些单元格中产生空白需要填充。
 <!-- ======================================================= -->
+
 ### Data {.unnumbered}
+### 数据 {.unnumbered}
 
 For example, take two datasets, each with observations for the measurement number, the name of the facility, and the case count at that time. However, the second dataset also has a variable `Year`. 
 
+例如，有两个数据集，每个数据集都有测量编号、场所名称和当时病例数的观测值。但是，第二个数据集同时还有一个变量`Year`。
 ```{r}
 df1 <- 
   tibble::tribble(
@@ -462,6 +650,7 @@ df2
 
 When we perform a `bind_rows()` to join the two datasets together, the `Year` variable is filled with `NA` for those rows where there was no prior information (i.e. the first dataset):
 
+当执行`bind_rows()`将两个数据集连接在一起时，对于那些没有上述`Year`信息的行（即第一个数据集），`Year`变量被填充为`NA`：
 
 ```{r}
 df_combined <- 
@@ -474,8 +663,10 @@ df_combined
 
 <!-- ======================================================= -->
 ### `fill()` {.unnumbered}
+### `fill()` {.unnumbered}
 
 In this case, `Year` is a useful variable to include, particularly if we want to explore trends over time. Therefore, we use `fill()` to *fill* in those empty cells, by specifying the column to fill and the direction (in this case **up**):
+在这种情况下，`Year`是一个有用的变量，特别是要探索时间趋势的时候。因此，可应用`fill()`通过指定要填充的列和方向（在本例中为up）来填充那些空单元格：
 
 ```{r}
 df_combined %>% 
@@ -483,6 +674,7 @@ df_combined %>%
 ```
 
 Alternatively, we can rearrange the data so that we would need to fill in a downward direction:
+或者，可以重新排列数据，以便我们需要向下填充：
 
 ```{r}
 df_combined <- 
@@ -499,6 +691,7 @@ df_combined
 ```
 
 We now have a useful dataset for plotting:
+现在就有了一个绘图用数据集
 
 ```{r}
 ggplot(df_combined) +
@@ -507,6 +700,7 @@ ggplot(df_combined) +
 ```
 
 But less useful for presenting in a table, so let's practice converting this long, untidy dataframe into a wider, tidy dataframe:
+但是对于在表格中呈现不太有用，所以来练习将这个长而不整洁的数据框转换为更宽、更整洁的数据框：
 
 ```{r}
 df_combined %>% 
@@ -524,6 +718,8 @@ df_combined %>%
 
 N.B. In this case, we had to specify to only include the three variables `Facility`, `Year`, and `Cases` as the additional variable `Measurement` would interfere with the creation of the table:
 
+注意在这种情况下，必须指定仅包含`Facility`, `Year`和`Cases`三个变量的列做为拟转换列，因为如果附加了`Measurement`变量会干扰表的创建：
+
 ```{r}
 df_combined %>% 
   pivot_wider(
@@ -534,6 +730,10 @@ df_combined %>%
 ```
 
 ## Resources  
+## 资源
 
 Here is a helpful [tutorial](https://datacarpentry.org/r-socialsci/03-dplyr-tidyr/index.html)
+
+一个有用的 [教程](https://datacarpentry.org/r-socialsci/03-dplyr-tidyr/index.html)
+
 
