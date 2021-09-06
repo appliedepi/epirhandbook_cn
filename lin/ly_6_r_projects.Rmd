@@ -1,0 +1,107 @@
+
+# R项目 {}  
+
+R项目可以将您的工作保存到一个独立的、便携式的   文件夹中。在此项目中，所有相关的脚本、数据文件、图形/输出和历史都存储在子文件夹中。值得注意的是，*工作目录*是项目的根文件夹。
+
+
+## 推荐用法  
+
+通常用一个R项目来管理一个单独的工作项目。使用R的一种常用、有效且可靠的方法是将以下三个元素结合起来：
+
+1) **R项目**
+-一个独立的工作环境，包含数据、脚本、输出等文件夹。
+2) **here**包用于处理相对文件路径
+-文件路径是相对于R项目的根文件夹写入的-更多信息请参见[Import and export]
+3)**rio**包用于(文件)导入和导出
+- 根据拓展名的不同，`import()`和`export()`可处理不同的文件类型(例如.csv， .xlsx， .png)
+
+
+接下来将对每一个元素进行说明。
+
+<!-- ======================================================= -->
+## 创建R项目 {}
+
+从“文件”菜单中选择“新建项目”来创建一个新的R项目。
+
+*如果你想为项目创建一个新文件夹，选择“新目录”并指明创建的位置。
+*如果您想在现有文件夹中创建项目，请单击“现有目录”并指明该文件夹。
+*如果你想克隆一个Github库，选择第三个选项“版本控制”，然后选择“Git”。详情请参阅[Version control and collaboration with Git and Github]页面。
+
+
+```{r out.width = "75%", fig.align = "center", echo=F}
+knitr::include_graphics(here::here("images", "create_project.png"))
+```
+
+您创建的R项目中包含一个后缀为*.Rproj *的文件。您可以通过双击此文件来打开对应的R项目。您也可以通过选择“文件”菜单中的“打开项目”来打开项目。或者，在RStudio的右上方，你会看到一个R项目图标和一个可用R项目的下拉菜单。
+
+要退出当前的R项目，您可以打开一个新的R项目，或者点击`文件-->关闭项目`来关闭当前项目。
+
+### 项目切换 {.unnumbered}
+
+
+要在不同项目之间切换，请单击RStudio右上角的R项目图标和下拉菜单。您将看到关闭项目、打开项目的选项，以及最近项目的列表。
+
+
+```{r out.width = "100%", fig.align = "center", echo=F}
+knitr::include_graphics(here::here("images", "Rproject_dropdown.png"))
+```
+
+
+### 设置 {.unnumbered}  
+
+通常建议您在每次启动RStudio时都带着“空白的工作环境”——也就是说，**不保存**前一次会话框的工作空间。这将意味着您的所有对象和结果将不会保持在新开启的会话中(您必须通过运行脚本重新创建它们)。这样做会迫使您编写更好的脚本，并避免在重复、长期运行中犯错误。
+
+
+您可以进行以下操作来将Rstudio设置为每次重启都是“空白的工作环境”：
+
+
+*从工具菜单中选择“项目选项”。
+*在“一般”选项卡中，设置RStudio为**不**恢复.RData到工作空间，同时设置在退出时**不**将.RData保存到工作空间。
+
+
+### 组织 {.unnumbered}  
+
+It is common to have subfolders in your project. Consider having folders such as "data", "scripts", "figures", "presentations". You can add folders in the typical way you would add a new folder for your computer. Alternatively, see the page on [Directory interactions] to learn how to create new folders with R commands.
+
+通常情况下，在项目根目录中可创建多个子文件夹。可以考虑使用“数据”、“脚本”、“图形”、“报告”等来命名子文件夹。在R项目中创建新文件夹的方式和您在计算机上添加文件夹的方式一样。或者，请参阅[Directory interactions]页面了解如何使用R命令创建新文件夹。
+
+
+### 版本控制 {.unnumbered}  
+
+考虑一个版本控制系统。它可以是一些简单的事情，比如在脚本的名字上加上日期(例如:“transmission_analysis_2020-10-03.R”)，或建立一个名为“存档”的文件夹。还可以考虑在每个脚本的开头添加注释文本，包括描述、标签、作者和更改日志。
+
+更复杂的方法是使用Github或类似平台进行版本控制。参见[Version control and collaboration with Git and Github]页面。
+
+一个小技巧：您可以使用“编辑菜单”-->“在文件中查找”来搜索整个项目或文件夹。这样做可以搜索甚至替换所查找的字符串。
+
+## 实例 
+
+下面是在R项目中使用`here()`导入/导出/保存的一些例子。您可以在[Import and export]页面阅读更多关于使用**here**包的信息。
+
+*从R项目的data文件夹中导入linelist_raw.xlsx*
+
+```{r eval=F}
+linelist <- import(here("data", "linelist_raw.xlsx"))
+```
+
+*将R对象' linelist '导出到R项目的“data”文件夹中的“clean”子文件夹中，并命名为"my_linelist.rsd"在*
+
+```{r, eval=F}
+export(linelist, here("data","clean", "my_linelist.rds"))
+```
+
+*将最近输出的图形保存为“epicurve_201202-15 .png”，并保存在R项目的“outputs”文件夹中的“epicurves”子文件夹中。*
+
+```{r, eval=F}
+ggsave(here("outputs", "epicurves", "epicurve_2021-02-15.png"))
+```
+
+
+
+
+<!-- ======================================================= -->
+## 可用资源 {}
+
+RStudio网页[使用R项目](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)
+
+
