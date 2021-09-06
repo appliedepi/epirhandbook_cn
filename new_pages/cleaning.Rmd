@@ -1894,13 +1894,13 @@ linelist <- linelist %>%
 
 
 
-```{r echo=F}
+```{r eval=F,echo=F}
 # REARRANGE COLUMNS FOR EXPORT
 linelist <- linelist %>% 
   select(case_id:gender, age, age_unit, age_years, age_cat, age_cat5, everything())
 ```
 
-```{r echo=F}
+```{r eval=F, echo=F}
 # EXPORT CLEANED LINELIST FILE TO "DATA" FOLDER
 rio::export(linelist, here::here("data", "case_linelists", "linelist_cleaned.xlsx"))
 rio::export(linelist, here::here("data", "case_linelists", "linelist_cleaned.rds"))
