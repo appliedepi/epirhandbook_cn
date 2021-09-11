@@ -559,25 +559,29 @@ weekly_counts <- linelist %>%
 ```
 
 Here are the first 50 rows of the resulting data frame:  
+下面是新生成数据框的前50行：
 
 ```{r message=FALSE, echo=F}
 DT::datatable(weekly_counts, rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
 
 ### Linelist cases into months {.unnumbered}
+### 以月为单位的病例数 {.unnumbered}
 
 To aggregate cases into months, again use `floor_date()` from the **lubridate** package, but with the argument `unit = "months"`. This rounds each date down to the 1st of its month. The output will be class Date. Note that in the `complete()` step we also use `by = "months"`.  
 
+要将病例汇总到月，再次使用**lubridate**包中的`floor_date()`函数，但参数为`unit = "month"`。这将使每个日期向下四舍五入到其月份第1天。输出结果将是日期类。注意在`complete()`步骤中也要使用`by = "month"`。 
+
 
 ```{r}
-# Make dataset of monthly case counts
+# 生成月发病数据集
 monthly_counts <- linelist %>% 
   drop_na(date_onset) %>% 
-  mutate(month = lubridate::floor_date(date_onset, unit = "months")) %>%  # new column, 1st of month of onset
-  count(month) %>%                          # count cases by month
+  mutate(month = lubridate::floor_date(date_onset, unit = "months")) %>%  # 新列，发病日期月份的第1天
+  count(month) %>%                          # 按月计数病例
   complete(
     month = seq.Date(
-      min(month, na.rm=T),     # include all months with no cases reported
+      min(month, na.rm=T),                  # 包含无病例报告的所有月份
       max(month, na.rm=T),
       by="month"),
     fill = list(n = 0))
@@ -589,42 +593,62 @@ DT::datatable(monthly_counts, rownames = FALSE, options = list(pageLength = 5, s
 
 
 ### Daily counts into weeks {.unnumbered}
+### 每日发病数汇总到周 {.unnumbered}
 
 To aggregate daily counts into weekly counts, use `floor_date()` as above. However, use `group_by()` and `summarize()` instead of `count()` because you need to `sum()` daily case counts instead of just counting the number of rows per week.
 
+要把每天计数汇总成每周计数，请上述方法使用`floor_date()`。但是这里得使用`group_by()`和`summarize()`，而不是`count()`，因为现在需要`sum()`每日病例计数，而不是仅仅计算每周的行数。
 
 
 #### Daily counts into months {.unnumbered}
+#### 每日发病计数汇总到月 {.unnumbered}
 
 To aggregate daily counts into months counts, use `floor_date()` with `unit = "month"` as above. However, use `group_by()` and `summarize()` instead of `count()` because you need to `sum()` daily case counts instead of just counting the number of rows per month.  
+
+要把每天计数汇总成每月计数，请使用带`unit = "month"`参数的`floor_date()`函数。但是这里得使用`group_by()`和`summarize()`，而不是`count()`，因为现在需要`sum()`每日病例计数，而不是仅仅计算每月的行数。
 
 
 
 
 ## Arranging grouped data
+## 排序分组数据
 
-Using the **dplyr** verb `arrange()` to order the rows in a data frame behaves the same when the data are grouped, *unless* you set the argument `.by_group =TRUE`. In this case the rows are ordered first by the grouping columns and then by any other columns you specify to `arrange()`.   
+Using the **dplyr** verb `arrange()` to order the rows in a data frame behaves the same when the data are grouped, *unless* you set the argument `.by_group =TRUE`. In this case the rows are ordered first by the grouping columns and then by any other columns you specify to `arrange()`.
+
+数据分组后，使用**dplyr**动词`arrange()`来对数据框中的行进行排序与未分组时无异，**除非**设置参数`.by_group =TRUE`。在这种情况下，行会先按分组列排序，然后再按指定给`arrange()`的任何其他列排序。
 
 
 
 ## Filter on grouped data
+## 分组数据筛选
 
+### `filter()` {.unnumbered}
 ### `filter()` {.unnumbered}
 
 When applied in conjunction with functions that evaluate the data frame (like `max()`, `min()`, `mean()`), these functions will now be applied to the groups. For example, if you want to filter and keep rows where patients are above the median age, this will now apply per group - filtering to keep rows above the *group's* median age. 
 
+当与统计数据框的函数（如`max()`, `min()`, `mean()`）一起应用时，这些函数将被应用到各组中。例如，如果要筛选并保留患者年龄在中位数以上的行，这将适用于每个组--筛选以保留高于*各组*的中位数的行。
 
 
 
 ### Slice rows per group {.unnumbered} 
+### 分组切片行 {.unnumbered} 
 
 The **dplyr** function `slice()`, which [filters rows based on their position](https://dplyr.tidyverse.org/reference/slice.html) in the data, can also be applied per group. Remember to account for sorting the data within each group to get the desired "slice".  
+
+**dplyr**包的`slice()`函数，可[根据位置筛选行](https://dplyr.tidyverse.org/reference/slice.html)，也可应用于每个组。记住要考虑到在每个组内对数据进行排序，以获得所需的 "切片"。 
 
 For example, to retrieve only the latest 5 admissions from each hospital:  
 
 1) Group the linelist by column `hospital`  
 2) Arrange the records from latest to earliest `date_hospitalisation` *within each hospital group*  
 3) Slice to retrieve the first 5 rows from each hospital  
+
+例如，只检索每个医院最近的5个入院病例：
+
+1) 按`hospital`列对病例一览表进行分组  
+2) *在每个医院组内*，将记录按`date_hospitalisation`从最晚到最早排列 
+3) 从每家医院中切片获取前5条记录 
 
 ```{r,}
 linelist %>%
@@ -635,6 +659,15 @@ linelist %>%
   select(case_id, hospital, date_hospitalisation)  # for display
 ```
 
+```{r,}
+linelist %>%
+  group_by(hospital) %>%
+  arrange(hospital, date_hospitalisation) %>%
+  slice_head(n = 5) %>% 
+  arrange(hospital) %>%                            # 便于显示
+  select(case_id, hospital, date_hospitalisation)  # 便于显示
+```
+
 `slice_head()` - selects n rows from the top  
 `slice_tail()` - selects n rows from the end  
 `slice_sample()` - randomly selects n rows  
@@ -643,15 +676,26 @@ linelist %>%
 
 See the [De-duplication] page for more examples and detail on `slice()`.  
 
+`slice_head()` - 从顶部选择n条记录  
+`slice_tail()` - 从尾部选择n条记录  
+`slice_sample()` - 随机选择n条记录  
+`slice_min()` - 选择在`order_by = `列中数值最低的n条记录，使用`with_ties = TRUE`来保留并列值。 
+`slice_max()` - 选择`order_by = `列中数值最高的n条记录，使用`with_ties = TRUE`来保持并列值。 
+
+关于`slice()`的更多例子和细节，请参阅[数据去重]章节。 
 
 
 
 ### Filter on group size {#group_filter_grp_size .unnumbered} 
+### 按组大小筛选 {#group_filter_grp_size .unnumbered} 
 
 The function `add_count()` adds a column `n` to the original data giving the number of rows in that row's group. 
 
 Shown below, `add_count()` is applied to the column `hospital`, so the values in the new column `n` reflect the number of rows in that row's hospital group. Note how values in column `n` are repeated. In the example below, the column name `n` could be changed using `name = ` within `add_count()`. For demonstration purposes we re-arrange the columns with `select()`.  
 
+函数`add_count()`在原始数据中增加一列`n`，并给出各行分组的行数。
+
+如下所示，`add_count()`应用于`hospital`列，所以新列`n`中的值代表该行医院分组的行数。注意`n`列中的数值是如何重复的。在下面的例子中，可以在`add_count()'中使用`name = `参数改变列名`n`。为了演示方便，用`select()`重新对各列排序。 
 
 ```{r}
 linelist %>% 
@@ -660,7 +704,17 @@ linelist %>%
   select(hospital, n, everything())
 ```
 
-It then becomes easy to filter for case rows who were hospitalized at a "small" hospital, say, a hospital that admitted fewer than 500 patients:  
+```{r}
+linelist %>% 
+  as_tibble() %>% 
+  add_count(hospital) %>%          # 添加“与该行医院为同一医院的行数” 
+  select(hospital, n, everything())
+```
+
+It then becomes easy to filter for case rows who were hospitalized at a "small" hospital, say, a hospital that admitted fewer than 500 patients: 
+
+这样就很容易筛选出那些在“小”医院住院的病例行，比如说，收治病人少于500人的医院。 
+
 
 ```{r, eval=F}
 linelist %>% 
@@ -673,6 +727,7 @@ linelist %>%
 
 
 ## Mutate on grouped data  
+## 分组数据计算  
 
 To retain all columns and rows (not summarise) and *add a new column containing group statistics*, use `mutate()` after `group_by()` instead of `summarise()`. 
 
@@ -680,11 +735,22 @@ This is useful if you want group statistics in the original dataset *with all ot
 
 For example, this code below calculates the difference between a row's delay-to-admission and the median delay for their hospital. The steps are:  
 
+要保留所有的列和行（不是汇总），*添加一个包含组统计的新列*，请在`group_by()`之后使用`mutate()`而不是`summarise()`。
+
+如果要在原始数据集中获得组的统计信息，又同时确保*其他列都存在*的情况下，这是非常有用的--例如，用于将某一行与它所在组进行比较的计算。 
+
+例如，下面这段代码计算了某一行的入院延迟时间与该医院的延迟时间中位数之间的差异。其步骤是：  
+
 1) Group the data by hospital  
 2) Use the column `days_onset_hosp` (delay to hospitalisation) to create a new column containing the mean delay at the hospital of *that row*  
 3) Calculate the difference between the two columns  
 
+1）以hospital分组数据
+2）用`days_onset_hosp`列（入院延迟时间）来创建一个包含*那行*医院延迟均数的新列
+3）计算两列间的差值
+
 We `select()` only certain columns to display, for demonstration purposes.  
+为便于演示，仅`selection()`显示某些列
 
 ```{r}
 linelist %>% 
@@ -702,13 +768,30 @@ linelist %>%
   # select certain rows only - for demonstration/viewing purposes
   select(case_id, hospital, days_onset_hosp, group_delay_admit, diff_to_group)
 ```
+```{r}
+linelist %>% 
+  # 按hospital分组数据（未改变一览表数据）
+  group_by(hospital) %>% 
+  
+  # 新列
+  mutate(
+    # 每个医院延迟入院均数（精确至1位小数）
+  group_delay_admit = round(mean(days_onset_hosp, na.rm=T), 1),
+    # 行延迟和所在医院延迟均数间差值（精确到1位小数）
+  diff_to_group     = round(days_onset_hosp - group_delay_admit, 1)) %>%
+  
+  # 为便于演示/查看，仅选择某些列 
+  select(case_id, hospital, days_onset_hosp, group_delay_admit, diff_to_group)
+```
 
 
 
 ## Select on grouped data  
+## 分组数据选择  
 
 The verb `select()` works on grouped data, but the grouping columns are always included (even if not mentioned in `select()`). If you do not want these grouping columns, use `ungroup()` first.  
 
+动词`select()`对分组数据起作用，但分组列总是被包括在内（即使在`select()`中没有提到）。如果不想要这些分组列，请先使用`ungroup()`。 
 
 
 
@@ -722,15 +805,23 @@ The verb `select()` works on grouped data, but the grouping columns are always i
 ## Resources {  }
 
 Here are some useful resources for more information:  
-
+下面是有关信息的一些有用资源：
 You can perform any summary function on grouped data; see the [RStudio data transformation cheat sheet](https://github.com/rstudio/cheatsheets/blob/master/data-transformation.pdf)  
+可在分组数据是运行任何汇总函数；请参阅[Rstudio数据转换速查表](https://github.com/rstudio/cheatsheets/blob/master/data-transformation.pdf)  
 
-The Data Carpentry page on [**dplyr**](https://datacarpentry.org/R-genomics/04-dplyr.html)  
+The Data Carpentry page on [**dplyr**](https://datacarpentry.org/R-genomics/04-dplyr.html) 
+
+数据工匠网站在线资源[**dplyr**](https://datacarpentry.org/R-genomics/04-dplyr.html) 
+
 The **tidyverse** reference pages on [group_by()](https://dplyr.tidyverse.org/reference/group_by.html) and [grouping](https://dplyr.tidyverse.org/articles/grouping.html)  
 
-This page on [Data manipulation](https://itsalocke.com/files/DataManipulationinR.pdf)  
+**tidyverse** 在线参考资料[group_by()](https://dplyr.tidyverse.org/reference/group_by.html) 和 [grouping](https://dplyr.tidyverse.org/articles/grouping.html)  
 
-[Summarize with conditions in dplyr](https://stackoverflow.com/questions/23528862/summarize-with-conditions-in-dplyr)  
+本网页关于[数据操作](https://itsalocke.com/files/DataManipulationinR.pdf)  
+
+[Summarize with conditions in dplyr](https://stackoverflow.com/questions/23528862/summarize-with-conditions-in-dplyr)
+
+[用dplyr按条件汇总](https://stackoverflow.com/questions/23528862/summarize-with-conditions-in-dplyr)  
 
 
 
