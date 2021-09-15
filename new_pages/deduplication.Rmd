@@ -1,5 +1,6 @@
 
 # De-duplication {}  
+# 数据去重 {}  
 
 ```{r, out.width=c("50%"), echo=F}
 knitr::include_graphics(here::here("images", "deduplication.png"))
@@ -11,14 +12,24 @@ This page covers the following de-duplication techniques:
 2. "Slicing" rows to keep only certain rows (e.g. min or max) from each group of rows  
 3. "Rolling-up", or combining values from multiple rows into one row  
 
+本章涵盖了以下去重技术： 
+
+1. 识别和删除重复的行  
+2. “切片”行，只保留每组中的某些行（例如最小或最大）。 
+3. “上卷"，或将多行的数值合并为一行  
+
 
 <!-- ======================================================= -->
 ## Preparation { }
+## 准备工作 { }
 
 
 ### Load packages {.unnumbered}
+### 加载包 {.unnumbered}
 
 This code chunk shows the loading of packages required for the analyses. In this handbook we emphasize `p_load()` from **pacman**, which installs the package if necessary *and* loads it for use. You can also load installed packages with  `library()` from **base** R. See the page on [R basics] for more information on R packages.  
+
+此代码块显示了分析所需包的加载。在本手册中，我们推荐用**pacman**包的`p_load()`函数，其在必要时安装*并*加载相应的包以供使用。还可用**base** R的`library()`加载已安装的包。有关R语言包的更多信息，请参阅[R基础知识]章节。
 
 ```{r}
 pacman::p_load(
@@ -27,13 +38,27 @@ pacman::p_load(
   stringr)      # for string searches, can be used in "rolling-up" values
 ```
 
+```{r}
+pacman::p_load(
+  tidyverse,   # 数据去重，分组和切片
+  janitor,     # 核查重复数据的函数
+  stringr)      # “上卷”值内字符串搜索
+```
+
 ### Import data {.unnumbered}
+### 导入数据 {.unnumbered}
 
 For demonstration, we will use an example dataset that is created with the R code below.  
 
 The data are records of COVID-19 phone encounters, including encounters with contacts and with cases. The columns include `recordID` (computer-generated), `personID`, `name`, `date` of encounter, `time` of encounter, the `purpose` of the encounter (either to interview as a case or as a contact), and `symptoms_ever` (whether the person in that encounter reported *ever* having symptoms).  
 
 Here is the code to create the `obs` dataset:  
+
+为了演示，用下面的R代码创建的示例数据集备用。 
+
+这些数据是COVID-19电话咨询记录，包括密切接触者和病例的咨询。数据集中包括 `recordID`（计算机生成），`personID`, `name`, 咨询日期`date`，咨询时间`time`，咨询目的`purpose`（病例还是密切接触者咨询）和`symptoms_ever`（来电咨询者是否*曾*报告有过症状）。 
+
+下面是创建`obs`数据集的代码: 
 
 ```{r}
 obs <- data.frame(
@@ -56,9 +81,10 @@ obs <- data.frame(
 
 
 #### Here is the data frame {#dedup_data .unnumbered}  
+#### 生成数据框 {#dedup_data .unnumbered}  
 
 Use the filter boxes along the top to review the encounters for each person.  
-
+筛选前几行数据查看每个来电咨询者的情况。
 ```{r message=FALSE, echo=F}
 DT::datatable(obs, rownames = FALSE, filter = "top", options = list(pageLength = nrow(obs), scrollX=T), class = 'white-space: nowrap' )
 ```
@@ -71,30 +97,53 @@ A few things to note as you review the data:
 * Several people had multiple phone encounters, at various dates and times, and as contacts and/or cases  
 * At each encounter, the person was asked if they had **ever** had symptoms, and some of this information is missing.  
 
+检查数据时，有几件事需要注意： 
+
+* 前两条记录是100%完全重复的，包括重复的`recordID`（一定是电脑出了问题！）。 
+* 第二个2行*除`recordID`外*，其他所有列值都是重复的。 
+* 还有几个人在不同的日期和时间，作为密切接触者和/或病例，有多次来电咨询。 
+* 每次来电过程中，人们都被问及他们是否**曾**出现过症状，其中一些人的该信息缺省。 
+
 
 And here is a quick summary of the people and the purposes of their encounters, using `tabyl()` from **janitor**:  
 
+下面是使用**janitor**包的`tabyl()`函数对这些来电咨询者及其来电目的的一个快速汇总结果。 
 ```{r}
 obs %>% 
   tabyl(name, purpose)
 ```
+
 <!-- ======================================================= -->
 ## Deduplication { }
+## 数据去重 { }
 
 
 This section describes how to review and remove duplicate rows in a data frame. It also show how to handle duplicate elements in a vector.  
 
+本节介绍如何核查和删除数据框中的重复行以及如何处理向量中的重复元素。 
+
 
 <!-- ======================================================= -->
 ### Examine duplicate rows {.unnumbered}  
+### 检查重复行 {.unnumbered}  
 
 
 To quickly review rows that have duplicates, you can use `get_dupes()` from the **janitor** package. *By default*, all columns are considered when duplicates are evaluated - rows returned by the function are 100% duplicates considering the values in *all* columns.  
 
+为了快速查看有重复的行，可以使用**janitor**包的`get_dupes()`。*默认情况下*，在评估重复的时候会考虑所有的列--由函数返回的行是*所有*列的值100%重复。 
+
 In the `obs` data frame, the first two rows are *100% duplicates* - they have the same value in every column (including the `recordID` column, which is *supposed* to be unique - it must be some computer glitch). The returned data frame automatically includes a new column `dupe_count` on the right side, showing the number of rows with that combination of duplicate values. 
+
+在`obs`数据框中，前两行是*100%重复的*--每一列都有相同的值（包括`recordID`列，它*应该是*唯一的--这一定是某些计算机的故障）。返回的数据框在右边自动包括一个新列`dupe_count`，显示与该行数据重复的行数。
 
 ```{r, eval=F}
 # 100% duplicates across all columns
+obs %>% 
+  janitor::get_dupes()
+```
+
+```{r, eval=F}
+# 跨所有行100%重复
 obs %>% 
   janitor::get_dupes()
 ```
@@ -106,13 +155,22 @@ obs %>%
 ```
 
 See the [original data](#dedup_data)  
+查看[原始数据](#dedup_data) 
 
 However, if we choose to ignore `recordID`, the 3rd and 4th rows rows are also duplicates of each other. That is, they have the same values in all columns *except* for `recordID`. You can specify specific columns to be ignored in the function using a `-` minus symbol.  
+
+然而，如果选择忽略`recordID`，第3和第4行也是相互重复的。也就是说，除了`recordID`之外，其他所有列值都是一样的。可以在函数中使用`-`减号来指定要忽略的特定列。 
 
 ```{r, eval=F}
 # Duplicates when column recordID is not considered
 obs %>% 
   janitor::get_dupes(-recordID)         # if multiple columns, wrap them in c()
+```
+
+```{r, eval=F}
+# recordID列不考虑时的重复情况
+obs %>% 
+  janitor::get_dupes(-recordID)         # 多列请以c()形式指定
 ```
 
 ```{r message=FALSE, echo=F}
@@ -125,8 +183,17 @@ You can also positively specify the columns to consider. Below, only rows that h
 
 *Scroll left for more rows**  
 
+也可以指定要考虑的列。下面，只有在`name`和`purpose`列中有相同值的行才会被返回。注意“amrish”现在的`dupe_count`等于3，代表他有三次“密切接触”的情况。 
+
+*向左滚动可查看更多列*
+
 ```{r, eval=F}
 # duplicates based on name and purpose columns ONLY
+obs %>% 
+  janitor::get_dupes(name, purpose)
+```
+```{r, eval=F}
+# 仅根据name和purpose列
 obs %>% 
   janitor::get_dupes(name, purpose)
 ```
@@ -138,9 +205,11 @@ obs %>%
 ```
 
 See the [original data](#dedup_data).  
+查看[原始数据](#dedup_data)。
 
 See `?get_dupes` for more details, or see this [online reference](https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html#explore-records-with-duplicated-values-for-specific-combinations-of-variables-with-get_dupes)  
 
+运行`?get_dupes`查看更多信息，或请参阅[在线参考](https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html#explore-records-with-duplicated-values-for-specific-combinations-of-variables-with-get_dupes)  
 
 
 
@@ -148,6 +217,7 @@ See `?get_dupes` for more details, or see this [online reference](https://cran.r
 
 <!-- ======================================================= -->
 ### Keep only unique rows  {.unnumbered}
+### 仅保留独特行  {.unnumbered}
 
 
 To keep only unique rows of a data frame, use `distinct()` from **dplyr** (as demonstrated in the [Cleaning data and core functions] page). Rows that are duplicates are removed such that only the first of such rows is kept. By default, "first" means the highest `rownumber` (order of rows top-to-bottom). Only unique rows remain.  
@@ -155,6 +225,12 @@ To keep only unique rows of a data frame, use `distinct()` from **dplyr** (as de
 In the example below, we run `distinct()` such that the column `recordID` is excluded from consideration - thus **two duplicate rows are removed**. The first row (for "adam") was 100% duplicated and has been removed. Also row 3 (for "amrish") was a duplicate in every column *except* `recordID` (which is not being considered) and so is also removed. The `obs` dataset n is now ` nrow(obs)-2`, not ` nrow(obs)` rows).  
 
 *Scroll to the left to see the entire data frame*  
+
+要想只保留数据框中独特值行，请使用**dplyr**包的`distinct()`函数（如[清洗数据及其主要函数]章节的介绍）。重复的行会被删除，这样就只保留了这些行中的第一行。默认情况下，“第一”是指最先的 `rownumber`（从上到下顺序）。只保留这些唯一的行。 
+
+下例中，运行`distinct()`并忽略`recordID`列，**两行重复的记录被移除**。第一行（“adam”）是100%重复的，已经被删除。另外，第三行（“amrish”）*除*`recordID`（不被考虑）之外，每一列都是重复的，所以也被删除。现在的`obs`数据集的行数是`r nrow(obs) - 2`，而不是`r nrow(obs)`。  
+
+*向左滚动以查看整个数据框*。 
 
 
 ```{r, eval=F}
@@ -174,16 +250,42 @@ obs %>%
   DT::datatable(rownames = FALSE, options = list(pageLength = 6, scrollX=T), class = 'white-space: nowrap' )
 ```
 
+```{r, eval=F}
+# 添加到管道链（如数据清洗）
+obs %>% 
+  distinct(across(-recordID), # 将数据框精减至只含唯一值行（保留重复行的第一个记录）
+           .keep_all = TRUE) 
+
+# 不用管道的话，请把数据集作为第一个参数  
+# distinct(obs)
+```
+
+```{r message=FALSE, echo=F}
+obs %>% 
+  distinct(across(-recordID), # 将数据框精减至只含唯一值行（保留重复行的第一个记录）
+           .keep_all = TRUE) %>% 
+  DT::datatable(rownames = FALSE, options = list(pageLength = 6, scrollX=T), class = 'white-space: nowrap' )
+```
+
 <span style="color: orange;">**_CAUTION:_** If using `distinct()` on grouped data, the function will apply to each group.</span>
+
+<span style="color: orange;">**_注意：_** 在分组数据中使用`distinct()`时，函数将作用于每个组。</span>
 
 
 **Deduplicate based on specific columns**  
+**根据特定列去重**  
 
 You can also specify columns to be the basis for de-duplication. In this way, the de-duplication only applies to rows that are duplicates within the specified columns. Unless you set `.keep_all = TRUE`, all columns not mentioned will be dropped.  
 
 In the example below, the de-duplication only applies to rows that have identical values for `name` and `purpose` columns. Thus, "brian" has only 2 rows instead of 3 - his *first* "contact" encounter and his only "case" encounter. To adjust so that brian's *latest* encounter of each purpose is kept, see the tab on Slicing within groups.  
 
 *Scroll to the left to see the entire data frame*  
+
+也可指定列执行数据去重。此时，去重只作用于在指定列内重复的行。除非设置`.keep_all = TRUE`，否则所有未提及的列都会被删除。 
+
+下例中，去重只作用于那些在`name`和`purpose`列中有相同值的记录。因此“brian”只有2行，而不是3行--他的*第一次*以“密切接触者”目的来电咨询和唯一一次以“病例”目的来电咨询记录。 。要使brian以每个目的来电咨询的*最近*记录被保留下来，请参阅关于组内切片的有关内容。 
+
+*向左滚动以查看整个数据框架*。 
 
 ```{r, eval=F}
 # added to a chain of pipes (e.g. data cleaning)
@@ -201,11 +303,31 @@ obs %>%
 
 See the [original data](#dedup_data).  
 
+```{r, eval=F}
+# 添加到管道链(如数据清洗)
+obs %>% 
+  distinct(name, purpose, .keep_all = TRUE) %>%  # 按name和purpose独特值保留行，保留所有列
+  arrange(name)                                  # 排序便于查看
+```
+
+```{r message=FALSE, echo=F}
+obs %>% 
+  distinct(name, purpose, .keep_all = TRUE) %>%  # 按name和purpose独特值保留行，保留所有列
+  arrange(name) %>% 
+  DT::datatable(rownames = FALSE, options = list(pageLength = 6, scrollX=T), class = 'white-space: nowrap' )
+```
+
+See the [original data](#dedup_data).  
+查看 [原始数据](#dedup_data).  
+
 <!-- ======================================================= -->
 ### Deduplicate elements in a vector {.unnumbered}  
+### 向量中元素去重 {.unnumbered}  
 
 
 The function `duplicated()` from **base** R will evaluate a vector (column) and return a logical vector of the same length (TRUE/FALSE). The first time a value appears, it will return FALSE (not a duplicate), and subsequent times that value appears it will return TRUE. Note how `NA` is treated the same as any other value.    
+
+来自**base** R的`duplicated()`函数将评估一个向量（列）并返回一个相同长度的逻辑向量（TRUE/ALSE）。一个值第一次出现时，它将返回FALSE（不是重复的），随后该值再出现时，将返回TRUE。注意`NA`与其他值的处理方式是一样的。   
 
 ```{r}
 x <- c(1, 1, 2, NA, NA, 4, 5, 4, 4, 1, 2)
@@ -213,6 +335,7 @@ duplicated(x)
 ```
 
 To return only the duplicated elements, you can use brackets to subset the original vector: 
+为了只返回重复的元素，可以使用括号对原始向量取子集。
 
 ```{r}
 x[duplicated(x)]
@@ -220,28 +343,46 @@ x[duplicated(x)]
 
 To return only the unique elements, use `unique()` from **base** R. To remove `NA`s from the output, nest `na.omit()` within `unique()`.  
 
+要想只返回唯一的元素，请使用**base** R的`unique()`函数。要想从输出中删除`NA`，请在`unique()`中嵌套`na.omit()`。 
+
+
 ```{r}
 unique(x)           # alternatively, use x[!duplicated(x)]
 unique(na.omit(x))  # remove NAs 
+```
+```{r}
+unique(x)           # 或使用 x[!duplicated(x)]
+unique(na.omit(x))  # 移除缺省值 
 ```
 
 
 <!-- ======================================================= -->
 ### Using **base** R {.unnumbered}
+### 应用 **base** R {.unnumbered}
 
 **To return duplicate rows**  
+**返回重复值行**  
 
 In **base** R, you can also see which rows are 100% duplicates in a data frame `df` with the command `duplicated(df)` (returns a logical vector of the rows).  
 
 Thus, you can also use the base subset `[ ]` on the data frame to see the *duplicated* rows with `df[duplicated(df),]` (don't forget the comma, meaning that you want to see all columns!). 
 
+在**base** R中，也可以用`duplicated(df)`命令查看`df`数据框中哪些行是100%重复的（返回一个行的逻辑向量）。 
+
+因此，也可以在数据框上使用base取子集`[]`，用`df[duplicated(df),]（别忘了逗号，代表想看所有的列！）`查看*重复的*行。
+
 **To return unique rows**  
+**返回独特值行**  
 
 See the notes above. To see the *unique* rows you add the logical negator `!` in front of the `duplicated()` function:  
 `df[!duplicated(df),]`  
 
+参见上面的说明，要看到*独特值*行，要在`duplicated()`函数前面加上逻辑非符号`！`： 
+`df[!doubleicated(df),]`  
+
 
 **To return rows that are duplicates of only certain columns**  
+**返回某些列重复的行**  
 
 Subset the `df` that is *within the `duplicated()` parentheses*, so this function will operate on only certain columns of the `df`.  
 
@@ -252,17 +393,31 @@ Be sure to keep the comma `,` *outside* after the `duplicated()` function as wel
 For example, to evaluate only columns 2 through 5 for duplicates:  `df[!duplicated(df[, 2:5]),]`  
 To evaluate only columns `name` and `purpose` for duplicates: `df[!duplicated(df[, c("name", "purpose)]),]`  
 
+对*`duplicated()`括号内*的`df`取子集，然后该函数将只对`df`的某些列进行操作。 
+
+要指定这些列，请在逗号后提供列号或列名（记住，所有这些仅限于`duplicated()`函数内）。 
+
+请保留逗号`,`，在`duplicated()`函数*外部*也要保留!  
+
+例如，只评估第2列到第5列的重复情况。 `df[!duplicated(df[, 2:5]),]`。 
+只评估`name`和`purpose`列的重复。`df[!duplicated(df[, c("name", "purpose")]),]`  
+
 
 
 
 
 <!-- ======================================================= -->
 ## Slicing { }
+## 切片 { }
 
 
 To "slice" a data frame to apply a filter on the rows by row number/position. This becomes particularly useful if you have multiple rows per functional group (e.g. per "person") and you only want to keep one or some of them. 
 
 The basic `slice()` function accepts numbers and returns rows in those positions. If the numbers provided are positive, only they are returned. If negative, those rows are *not* returned. Numbers must be either all positive or all negative.     
+
+对一个数据框进行 "切片"操作就是按行号/位置对行进行筛选。如果数据中每组（如每个“人”）有多条记录，而只想保留其中的一条或几条时，切片操作就特别有用。
+
+基本的`slice()`函数接受表示位置的数字并返回这些位置的行。如果提供的数字是正数，则只返回它们。如果是负数，这些行就不会被返回。数字必须全部是正数或全部是负数。    
 
 ```{r}
 obs %>% slice(4)  # return the 4th row
@@ -273,8 +428,18 @@ obs %>% slice(c(2,4))  # return rows 2 and 4
 #obs %>% slice(c(2:4))  # return rows 2 through 4
 ```
 
+```{r}
+obs %>% slice(4)  # 返回第4行
+```
+
+```{r}
+obs %>% slice(c(2,4))  # 返回第2和4行
+#obs %>% slice(c(2:4))  # 返回第2到4行
+```
+
 
 See the [original data](#dedup_data). 
+查看 [原始数据](#dedup_data). 
 
 There are several variations:  These should be provided with a column and a number of rows to return (to `n = `).  
 
@@ -282,12 +447,23 @@ There are several variations:  These should be provided with a column and a numb
 * `slice_head()` and `slice_tail()` - keep only the *first* or *last* row(s).  
 * `slice_sample()`  - keep only a random sample of the rows.  
 
+该函数有几种变体：需提供一个列和要返回的行数（到`n = `）。 
+
+* `slice_min()`和`slice_max()`只保留有指定列的最小值或最大值的行。这也可以用来返回有序因子的 “最小值”和“最大值”。   
+* `slice_head()` 和 `slice_tail()` - 只保留*首*或*末*行。 
+* `slice_sample()` - 只保留随机抽取一定数量的行。 
+
 
 ```{r}
 obs %>% slice_max(encounter, n = 1)  # return rows with the largest encounter number
 ```
+```{r}
+obs %>% slice_max(encounter, n = 1)  # 返回encounter的最大值所在的行
+```
 
 Use arguments `n = ` or `prop = ` to specify the number or proportion of rows to keep. If not using the function in a pipe chain, provide the data argument first (e.g. `slice(data, n = 2)`). See `?slice` for more information. 
+
+使用参数`n = `或`prop = `来指定要保留的行的数量或比例。如果不是在管道链中使用该函数，请先提供数据参数（例如：`slice(data, n = 2)`）。更多信息见`?slice`。
 
 Other arguments:  
 
@@ -296,28 +472,52 @@ Other arguments:
 `.preserve = ` FALSE by default. If TRUE then the grouping structure is re-calculated after slicing.  
 `weight_by = ` Optional, numeric column to weight by (bigger number more likely to get sampled).  Also `replace = ` for whether sampling is done with/without replacement.  
 
+其他参数：
+
+`.order_by = `在`slice_min()`和`slice_max()`中使用，这里指定一个需要在切片前排序的列。 
+`with_ties = `默认为`TRUE`，此时保留所有并列等值。 
+`.preserve = ` 默认为`FALSE`。如果为`TRUE`，则分组结构将在切片后重新计算。 
+`weight_by = ` 可选的，指定拟作为权重的数值列（数值越大越有可能被抽样）。 同时，`replace = `用于确定是否进行替换采样。 
+
 <span style="color: darkgreen;">**_TIP:_** When using `slice_max()` and `slice_min()`, be sure to specify/write the `n = `  (e.g. `n = 2`, not just `2`). Otherwise you may get an error `Error: `...` is not empty.` </span>
 
 <span style="color: black;">**_NOTE:_** You may encounter the function [`top_n()`](https://dplyr.tidyverse.org/reference/top_n.html), which has been superseded by the `slice` functions.</span>
 
+ <span style="color: darkgreen;">***_提示：_** 当使用`slice_max()`和`slice_min()`时，一定要指定/写入`n = `（例如`n = 2`，而不是仅仅`2`）。否则你可能会得到一个错误 `错误: `...`不能为空。`</span>。
+
+<span style="color: black;">**_注意：_** 你可能会用到函数[`top_n()`](https://dplyr.tidyverse.org/reference/top_n.html)，它已经被`slice`函数取代了。</span>
+
  
+
 
 
 <!-- ======================================================= -->
 ### Slice with groups  {.unnumbered}
+### 分组切片  {.unnumbered}
 
 The `slice_*()` functions can be very useful if applied to a grouped data frame because the slice operation is performed on each group separately. Use the **function** `group_by()` in conjunction with `slice()` to group the data to take a slice from each group.  
 
 This is helpful for de-duplication if you have multiple rows per person but only want to keep one of them. You first use `group_by()` with key columns that are the same per person, and then use a slice function on a column that will differ among the grouped rows.  
 
+`slice_*()`函数如果应用于分组的数据框，也非常有用，切片操作是在每组上单独进行的。将**函数** `group_by()`与`slice()`结合使用，对数据进行分组，从每组中抽取一个片断。 
+
+如果每个人有多条记录，但只想保留其中的一条，这时数据去重就很用。首先使用`group_by()`按人分组，然后对某一列使用切片函数在分组的行中进行切片操作。 
+
 In the example below, to keep only the *latest* encounter *per person*, we group the rows by `name` and then use `slice_max()` with `n = 1` on the `date` column. Be aware! To apply a function like `slice_max()` on dates, the date column must be class Date.   
 
 By default, "ties" (e.g. same date in this scenario) are kept, and we would still get multiple rows for some people (e.g. adam). To avoid this we set `with_ties = FALSE`. We get back only one row per person.  
+
+下例中，为只保留*每个人*的*最近*来电咨询，先按`name`分组，然后在`日期`列上使用`slice_max()`函数，设置`n = 1`。请注意! 要在日期上应用`slice_max()`函数，日期列必须是日期类。  
+
+默认情况下，“结”（例如，在本例中为相同日期）被保留，这样仍然会得到一些人的多条记录（例如adam）。为了避免这种情况，设置`with_ties = FALSE`，这样得到的结果是每个人只有一条记录。 
 
 <span style="color: orange;">**_CAUTION:_** If using `arrange()`, specify `.by_group = TRUE` to have the data arranged within each group.</span>
 
 <span style="color: red;">**_DANGER:_** If `with_ties = FALSE`, the first row of a tie is kept. This may be deceptive. See how for Mariah, she has two encounters on her latest date (6 Jan) and the first (earliest) one was kept. Likely, we want to keep her later encounter on that day. See how to "break" these ties in the next example. </span>  
 
+<span style="color: orange;">**_注意：_** 如果使用`arrange()`，请指定`.by_group = TRUE`，让数据在每个组内排序。
+
+<span style="color: red;">***_危险：_** 如果`with_ties = FALSE`，则保留结（相同值）的第一行。这可能导致误操作的。请看Mariah的情况，她在最近的日期（1月6日）有两次来电咨询，而第一次（最早的）被保留。但很可能，我们要保留她在那一天的后来的来电咨询。请看下例中如何“打破”这些结。</span>  
 
 
 
@@ -337,14 +537,36 @@ obs %>%
             with_ties = F) %>%  # if there's a tie (of date), take the first row
   DT::datatable(rownames = FALSE, options = list(pageLength = 8, scrollX=T), class = 'white-space: nowrap' )
 ```
+```{r, eval=F}
+obs %>% 
+  group_by(name) %>%       # 按name分组记录
+  slice_max(date,          # 保留每组的最大日期期 
+            n = 1,         # 只保留单条最大值行 
+            with_ties = F) # 如果有相同日期，取第一行
+```
+
+```{r message=FALSE, echo=F}
+obs %>% 
+  group_by(name) %>%       # 按name分组记录
+  slice_max(date,          # 保留每组的最大日期期 
+            n = 1,         # 只保留单条最大值行 
+            with_ties = F) %>%  # 如果有相同日期，取第一行
+  DT::datatable(rownames = FALSE, options = list(pageLength = 8, scrollX=T), class = 'white-space: nowrap' )
+```
 
 Above, for example we can see that only Amrish's row on 5 Jan was kept, and only Brian's row on 7 Jan was kept. See the [original data](#dedup_data).  
 
+上面，例如可以看到Amrish只有在1月5日的一行记录被保留，Brian只有在1月7日的一行被保留。参见 [原始数据](#dedup_data)。 
+
 
 **Breaking "ties"**  
+**打破“结”**  
 
 Multiple slice statements can be run to "break ties". In this case, if a person has multiple encounters on their latest *date*, the encounter with the latest *time* is kept (`lubridate::hm()` is used to convert the character times to a sortable time class).  
 Note how now, the one row kept for "Mariah" on 6 Jan is encounter 3 from 08:32, not encounter 2 at 07:25.  
+
+可以运行多个切片语句来“打破结”。在这种情况下，如果一个人在其最近的*日期*有多条记录，那么具有最近*时间*的记录将被保留（`lubridate::hm()`被用来将字符时间转换成可排序的时间类）。 
+请注意，现在“Mariah”在1月6日保留的一行是08:32的记录3，而不是07:25的记录2。 
 
 ```{r, eval=F}
 # Example of multiple slice statements to "break ties"
@@ -355,6 +577,18 @@ obs %>%
   slice_max(date, n = 1, with_ties = TRUE) %>% 
   
   # SECOND - if there is a tie, select row with latest time; ties prohibited
+  slice_max(lubridate::hm(time), n = 1, with_ties = FALSE)
+```
+
+```{r, eval=F}
+# 多个切片语句“打破结”的示例
+obs %>%
+  group_by(name) %>%
+  
+  # 首先 - 按最近日期切片
+  slice_max(date, n = 1, with_ties = TRUE) %>% 
+  
+  # 然后 - 如果存在结，选择最近时间的行，结就没了
   slice_max(lubridate::hm(time), n = 1, with_ties = FALSE)
 ```
 
@@ -371,6 +605,19 @@ obs %>%
   
   DT::datatable(rownames = FALSE, options = list(pageLength = 8, scrollX=T), class = 'white-space: nowrap' )
 ```
+```{r message=FALSE, echo=F}
+# 多个切片语句“打破结”的示例
+obs %>%
+  group_by(name) %>%
+  
+  # 首先 - 按最近日期切片
+  slice_max(date, n = 1, with_ties = TRUE) %>% 
+  
+  # 然后 - 如果存在结，选择最近时间的行，结就没了
+  slice_max(lubridate::hm(time), n = 1, with_ties = FALSE) %>% 
+  
+  DT::datatable(rownames = FALSE, options = list(pageLength = 8, scrollX=T), class = 'white-space: nowrap' )
+```
 
 *In the example above, it would also have been possible to slice by `encounter` number, but we showed the slice on `date` and `time` for example purposes.*  
 
@@ -378,15 +625,26 @@ obs %>%
 
 See the [original data](#dedup_data).  
 
+*在上例中，也可按“来电咨询记录”的数量来切分，但便于举例仅展示了对“日期”和“时间”的切片。 
+
+<span style="color: darkgreen;">***_提示：_** 要在“字符”列上使用`slice_max()`或`slice_min()`，请将其转换为一个*有序的*因子类！</span>。
+
+参见 [原始数据](#dedup_data)。 
+
 
 <!-- ======================================================= -->
 ### Keep all but mark them  {.unnumbered}
+### 保留全部并标记 {.unnumbered}
 
 If you want to keep all records but mark only some for analysis, consider a two-step approach utilizing a unique recordID/encounter number:  
 
 1) Reduce/slice the orginal data frame to only the rows for analysis. Save/retain this reduced data frame.  
 2) In the original data frame, mark rows as appropriate with `case_when()`, based on whether their record unique identifier (recordID in this example) is present in the reduced data frame.  
 
+如果想要保留所有的记录，但只标记一部分用于分析，可以考虑采用两步法，利用唯一的recordID/encounter号。 
+
+1）将原始数据框减少/切成只用于分析的行。保存/保留这个缩减的数据框。 
+2) 在原始数据框中，根据记录的唯一标识符（本例中为recordID）是否存在于缩减后的数据框中，用`case_when()`标记相应的行。 
 
 ```{r}
 # 1. Define data frame of rows to keep for analysis
@@ -410,6 +668,28 @@ obs_marked <- obs %>%
 # print
 obs_marked
 ```
+```{r}
+# 1. 定义要保留分析用的数据框行
+obs_keep <- obs %>%
+  group_by(name) %>%
+  slice_max(encounter, n = 1, with_ties = FALSE) # 仅保留每个最近的记录
+
+
+# 2. 标记原始数据框
+obs_marked <- obs %>%
+
+  # 生成新重复记录列
+  mutate(dup_record = case_when(
+    
+    # 如果记录在obs_keep data数据框
+    recordID %in% obs_keep$recordID ~ "For analysis", 
+    
+    # 所有其他记录在分析时标记为"Ignore"
+    TRUE                            ~ "Ignore"))
+
+# 打印
+obs_marked
+```
 
 
 ```{r, echo=F}
@@ -417,9 +697,10 @@ DT::datatable(obs_marked, rownames = FALSE, options = list(pageLength = 8, scrol
 ```
 
 See the [original data](#dedup_data).  
-
+查看 [原始记录](#dedup_data)。
 <!-- ======================================================= -->
 ### Calculate row completeness {.unnumbered} 
+### 计算行完整性 {.unnumbered} 
 
 Create a column that contains a metric for the row's completeness (non-missingness). This could be helpful when deciding which rows to prioritize over others when de-duplicating/slicing.  
 
@@ -431,9 +712,29 @@ This involves the function `rowSums()` from **base** R. Also used is `.`, which 
 
 *Scroll to the right to see more rows**  
 
+创建一个包含行的完整性（非缺省性）的度量的列。在决定哪些行在去重/切片时要优先于其他行时比较有用。 
+
+本例中，要测量完整性的“关键”列被保存在一个列名向量中。 
+
+然后用`mutate()`创建新列`key_completeness`。每一行的新值被定义为一个计算出的分数：该行中关键列中的非缺省值的数量，除以该关键列的数量。 
+
+这涉及到来自**base** R的函数`rowSums()`。还使用了`.`，其在管道中指的是管道中位于该点的数据框（本例中，它被用大括号`[]`取子集）。 
+
+*向右滚动以查看更多的行*。 
+
 ```{r, eval=F}
 # create a "key variable completeness" column
 # this is a *proportion* of the columns designated as "key_cols" that have non-missing values
+
+key_cols = c("personID", "name", "symptoms_ever")
+
+obs %>% 
+  mutate(key_completeness = rowSums(!is.na(.[,key_cols]))/length(key_cols)) 
+```
+
+```{r, eval=F}
+# 创建一个“关键变量完整性”列
+# 这是指定“关键列”中含非缺省值的*比例*
 
 key_cols = c("personID", "name", "symptoms_ever")
 
@@ -450,12 +751,14 @@ obs %>%
 ```
 
 See the [original data](#dedup_data).  
+查看 [原始记录](#dedup_data)。
 
 
 
 
 <!-- ======================================================= -->
 ## Roll-up values {#str_rollup}
+## 上卷列值 {#str_rollup}
 
 
 This section describes:  
@@ -465,10 +768,17 @@ This section describes:
 
 This tab uses the example dataset from the Preparation tab.  
 
+本节介绍：
+
+1) 如何将多行的数值“上卷”到一行中，并做一些变动  
+2) 一旦有了“上卷”的值，如何改写/优先处理每个单元格中的值  
+
+本节使用准备工作部分生成的示例数据集。 
 
 
 <!-- ======================================================= -->
 ### Roll-up values into one row {.unnumbered}  
+### 上卷值到一行 {.unnumbered}  
 
 The code example below uses `group_by()` and `summarise()` to group rows by person, and then paste together all unique values within the grouped rows. Thus, you get one summary row per person. A few notes:  
 
@@ -476,6 +786,11 @@ The code example below uses `group_by()` and `summarise()` to group rows by pers
 * If you want to show only unique values per cell, then wrap the `na.omit()` with `unique()`  
 * `na.omit()` removes `NA` values, but if this is not desired it can be removed `paste0(.x)`...  
 
+下面的代码示例使用`group_by()`和`summarise()`按人分组，然后将分组后各行中的所有唯一值粘贴在一起。由此，就可以得到每人的一个摘要行。一些注意事项： 
+
+* 所有的新列都有一个后缀（本例中为"_roll"）。 
+* 如果要在每个单元格中只显示唯一的值，那么就用`unique()`嵌套`na.omit()`。 
+* `na.omit()`会删除`NA`值，但如果不希望这样，可以删除`paste0(.x)`...  
 
 
 ```{r, eval=F}
@@ -494,7 +809,26 @@ cases_rolled <- obs %>%
            ~paste0(na.omit(.x), collapse = "; "))) # function is defined which combines non-NA values
 ```
 
+```{r, eval=F}
+# 每组“上卷”值到一行 (每个"personID") 
+cases_rolled <- obs %>% 
+  
+  # 按name创建分组
+  group_by(personID) %>% 
+  
+  # 每组内行排序 (例如按日期)
+  arrange(date, .by_group = TRUE) %>% 
+  
+  # 对于每列，把各分组行的所有值都粘贴在一起，以“;”分割
+  summarise(
+    across(everything(),                           # 应用于所有列
+           ~paste0(na.omit(.x), collapse = "; "))) # 合并粘贴非NA值
+```
+
 The result is one row per group (`ID`), with entries arranged by date and pasted together. *Scroll to the left to see more rows*    
+
+结果是每组（`ID`）有一行，条目按日期排列并粘贴在一起。
+*向左滚动以查看更多行*。   
 
 ```{r message=FALSE, echo=F}
 # "Roll-up" values into one row per group (per "personID") 
@@ -514,10 +848,30 @@ obs %>%
   DT::datatable(rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap')
 ```
 
+```{r message=FALSE, echo=F}
+# 每组“上卷”值到一行 (每个"personID") 
+cases_rolled <- obs %>% 
+  
+  # 按name创建分组
+  group_by(personID) %>% 
+  
+  # 每组内行排序 (例如按日期)
+  arrange(date, .by_group = TRUE) %>% 
+  
+  # 对于每列，把各分组行的所有值都粘贴在一起，以“;”分割
+  summarise(
+    across(everything(),                           # 应用于所有列
+           ~paste0(na.omit(.x), collapse = "; "))) %>%  # 合并粘贴非NA值
+
+  DT::datatable(rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap')
+```
+
 See the [original data](#dedup_data).  
+查看 [原始数据](#dedup_data).  
 
 
 **This variation shows unique values only:**  
+**本写法仅显示独特值**  
 
 ```{r}
 # Variation - show unique values only 
@@ -530,13 +884,13 @@ cases_rolled <- obs %>%
 ```
 
 ```{r message=FALSE, echo=F}
-# Variation - show unique values only 
+# 变体 - 仅显示独特值
 obs %>% 
   group_by(personID) %>% 
   arrange(date, .by_group = TRUE) %>% 
   summarise(
-    across(everything(),                                   # apply to all columns
-           ~paste0(unique(na.omit(.x)), collapse = "; "))) %>%  # function is defined which combines unique non-NA values
+    across(everything(),                                   # 应用于所有列
+           ~paste0(unique(na.omit(.x)), collapse = "; "))) %>%  # 合并粘贴非NA值
 
   DT::datatable(rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
@@ -544,6 +898,9 @@ obs %>%
 
 **This variation appends a suffix to each column.**  
 In this case "_roll" to signify that it has been rolled:  
+
+**这种变体在每一列上附加一个后缀。** 
+在这种情况下，"_roll "表示它已被上卷。 
 
 ```{r, eval=F}
 # Variation - suffix added to column names 
@@ -566,13 +923,37 @@ obs %>%
            list(roll = ~paste0(na.omit(.x), collapse = "; ")))) %>%  # _roll is appended to column names
   DT::datatable(rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
+```{r, eval=F}
+# 变体 - 列名加后缀
+cases_rolled <- obs %>% 
+  group_by(personID) %>% 
+  arrange(date, .by_group = TRUE) %>% 
+  summarise(
+    across(everything(),                
+           list(roll = ~paste0(na.omit(.x), collapse = "; ")))) # _roll添加到列名上
+```
+
+```{r message=FALSE, echo=F}
+# 将一览表数据显示为表格
+# 变体 - 列名加后缀 
+obs %>% 
+  group_by(personID) %>% 
+  arrange(date, .by_group = TRUE) %>% 
+  summarise(
+    across(everything(),                
+           list(roll = ~paste0(na.omit(.x), collapse = "; ")))) %>%  # _roll添加到列名上
+  DT::datatable(rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
+```
 
 
 <!-- ======================================================= -->
 ### Overwrite values/hierarchy {.unnumbered} 
+### 改写值/层级 {.unnumbered} 
 
 
 If you then want to evaluate all of the rolled values, and keep only a specific value (e.g. "best" or "maximum" value), you can use `mutate()` across the desired columns, to implement `case_when()`, which uses `str_detect()` from the **stringr** package to sequentially look for string patterns and overwrite the cell content.  
+
+如果要评估所有的上卷值，只保留一个特定的值（例如“最佳”或“最大”值），可使用`mutate()`计算所需的所有列，执行`case_when()`，其使用**stringr**包的`str_detect()`依次寻找字符串模式并改写单元格内容。 
 
 ```{r}
 # CLEAN CASES
