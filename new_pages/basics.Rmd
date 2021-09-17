@@ -1,261 +1,230 @@
-# R Basics {}
+# R 基础
 
 ```{r out.width = "100%", fig.align = "center", echo=F}
 knitr::include_graphics(here::here("images", "basics_header_close.png"))
 ```
 
+热烈欢迎！
 
-Welcome!  
+本章节主要包括 R 的基本知识。本页面不是一个全面的教程，但提供了基础的要点，可以帮助你巩固记忆。[学习资源](#learning) 部分链接到更全面的教程。
 
-This page reviews the essentials of R. It is not intended to be a comprehensive tutorial, but it provides the basics and can be useful for refreshing your memory. The section on [Resource for learning](#learning) links to more comprehensive tutorials.  
+此页面的部分内容已在 [R4Epis](https://r4epis.netlify.app/) 项目的许可下进行了改编。
 
-Parts of this page have been adapted with permission from the [R4Epis project](https://r4epis.netlify.app/).  
-
-See the page on [Transition to R] for tips on switching to R from STATA, SAS, or Excel.  
+有关从STATA、SAS或Excel转换到R的提示，请参阅 [转换到 R] 页面。
 
 ```{r, echo=F}
-# import the cleaned ebola linelist
+# 导入整理过的埃博拉病毒线列表
 linelist <- rio::import(here::here("data", "case_linelists", "linelist_cleaned.rds"))
 pacman::p_load(apyramid)
 ```
 
-
-
-
 <!-- ======================================================= -->
-## Why use R?
 
-As stated on the [R project website](https://www.r-project.org/about.html), R is a programming language and environment for statistical computing and graphics. It is highly versatile, extendable, and community-driven.  
+## 为什么用 R **？**
 
-**Cost**
+如 [R project 网站](https://www.r-project.org/about.html) 所述，R 是一种用于统计计算和图形的编程语言和环境。 它具有高度通用性、可扩展性和社区驱动性。
 
-R is free to use! There is a strong ethic in the community of free and open-source material.  
+**费用**
 
-**Reproducibility**  
+R是免费的！ 其基于免费和开源社区中强烈的道德规范。
 
-Conducting your data management and analysis through a programming language (compared to Excel or another primarily point-click/manual tool) enhances **reproducibility**, makes **error-detection** easier, and eases your workload.  
+**重复性**
 
-**Community**  
+与 Excel 或其他主要通过点击或手动交互的工具相比，通过编程语言进行数据管理和分析可提高**可重复性**，使**错误检测**更容易，并减轻您的工作量。
 
-The R community of users is enormous and collaborative. New packages and tools to address real-life problems are developed daily, and vetted by the community of users. As one example, [R-Ladies](https://rladies.org/) is a worldwide organization whose mission is to promote gender diversity in the R community, and is one of the largest organizations of R users. It likely has a chapter near you!  
+**社区**
 
+R 社区拥有巨量的和互相协助的用户。每天都有解决当前问题的新 packages 和工具被开发出来，并由用户社区进行审查。例如，[R-Ladies](https://rladies.org/) 是一个全球性组织，其使命是促进 R 社区的性别多样性，是最大的 R 用户组织之一。 可能在您附近就有一个分会！
 
-## Key terms  
+## 关键术语
 
-**RStudio** - RStudio is a Graphical User Interface (GUI) for easier use of **R**. Read more [in the RStudio section](#rstudio).  
+**RStudio** - RStudio 是一个图形用户界面 (GUI)用于更方便的使用 **R**。详细信息请参考[RStudio](#rstudio) 。
 
-**Objects** - Everything you store in R - datasets, variables, a list of village names, a total population number, even outputs such as graphs - are *objects* which are *assigned a name* and *can be referenced* in later commands. Read more [in the Objects section](#objects).  
+**对象** - 您在 R 中存储的所有内容------数据集、变量、村庄名称列表、总人口数，甚至诸如图表之类的输出------都是分配了名称的**对象**，并且可以在之后的代码中引用。详细信息请参考 [Objects](#objects) 。
 
-**Functions** - A function is a code operation that accept inputs and returns a transformed output. Read more [in the Functions section](#functions).  
+**函数** - 函数是一个接受输入并返回转换后的输出的操作。详细信息请参考 [Functions](#functions) 。
 
-**Packages** - An R package is a shareable bundle of functions. Read more [in the Packages section](#packages).  
+**Packages** - R package 是一组可共享的函数。详细信息请参考 [Packages](#packages) 。
 
-**Scripts** - A script is the document file that hold your commands. Read more [in the Scripts section](#scripts)
+**脚本** - 脚本是保存您的代码的文档文件。详细信息请参考 [Scripts](#scripts) 。
 
+## 学习资源 {#learning}
 
+### RStudio 资源 {.unnumbered}
 
-## Resources for learning {#learning}  
+**帮助文档**
 
-### Resources within RStudio {.unnumbered}  
+在 RStudio 的"帮助"选项中可以搜索有关 R packages 和特定函数的帮助文档。 它还位于包含文件、绘图和packages 的面板中（通常在右下面板）。 还有一种快捷方式，您可以在 R 控制台中写入问号与packages 或函数的名称来打开相关的帮助页面。 请不要包括括号。
 
-**Help documentation**  
+例如： `?filter` 或者 `?diagrammeR` 。
 
-Search the RStudio "Help" tab for documentation on R packages and specific functions. This is within the pane that also contains Files, Plots, and Packages (typically in the lower-right pane). As a shortcut, you can also type the name of a package or function into the R console after a question-mark to open the relevant Help page. Do not include parentheses.  
+**交互指南**
 
-For example: `?filter`  or `?diagrammeR`.  
+在 RStudio 中有多种交互式学习 R 的方法。
 
-**Interactive tutorials**  
+RStudio 本身提供了一个由 [**learnr**](https://blog.rstudio.com/2020/02/25/rstudio-1-3-integrated-tutorials/) R package 提供支持的教程面板。 只需安装此 package 并通过右上方 RStudio 面板（其中还包含环境和历史选项卡）中的新"教程"选项打开教程。
 
-There are several ways to learn R interactively *within* RStudio.  
+R package [**swirl**](https://swirlstats.com/) 在 R 控制台中提供交互式课程。 安装并加载此 package ，然后在 R 控制台中运行命令 `swirl()`（空括号）。 您将看到控制台中出现提示。 通过在控制台中写入代码来响应。 它将指导您完成您选择的课程。
 
-RStudio itself offers a Tutorial pane that is powered by the [**learnr**](https://blog.rstudio.com/2020/02/25/rstudio-1-3-integrated-tutorials/) R package. Simply install this package and open a tutorial via the new "Tutorial" tab in the upper-right RStudio pane (which also contains Environment and History tabs).  
+### 速查表 {.unnumbered}
 
-The R package [**swirl**](https://swirlstats.com/) offers interactive courses in the R Console. Install and load this package, then run the command `swirl()` (empty parentheses) in the R console. You will see prompts appear in the Console. Respond by typing in the Console. It will guide you through a course of your choice.   
+[RStudio](https://rstudio.com/resources/cheatsheets/) 网站上有许多 PDF"速查表"，例如：
 
+-   **forcats** package 的因子\
+-   **lubridate** package 的日期与时间\
+-   **stringr** package 的字符串\
+-   **purrr** package 的迭代运算\
+-   数据导入\
+-   **dplyr** package 的数据转换速查表\
+-   R Markdown(用于创建PDF、Word、Powerpoint等文档...)\
+-   Shiny (用于构建交互式 web 应用程序)\
+-   **ggplot2** package 的数据可视化\
+-   地理信息系统制图 (GIS)\
+-   **leaflet** package (交互式地图)\
+-   Python 与 R (**reticulate** package)
 
-### Cheatsheets {.unnumbered}
+这是一个专门针对 [Excel 用户](https://jules32.github.io/r-for-excel-users/) 的在线 R 资源。
 
-There are many PDF "cheatsheets" available on the [RStudio website](https://rstudio.com/resources/cheatsheets/), for example:  
+### Twitter {.unnumbered}
 
-* Factors with **forcats** package  
-* Dates and times with **lubridate** package  
-* Strings with **stringr** package  
-* iterative opertaions with **purrr** package  
-* Data import  
-* Data transformation cheatsheet with **dplyr** package  
-* R Markdown (to create documents like PDF, Word, Powerpoint...)  
-* Shiny (to build interactive web apps)  
-* Data visualization with **ggplot2** package  
-* Cartography (GIS)  
-* **leaflet** package (interactive maps)  
-* Python with R (**reticulate** package)  
+R 有一个充满活力的 twitter 社区，您可以在那里学习并了解技巧、快捷功能和最新消息 - 请关注以下帐户：
 
-This is an online R resource specifically for [Excel users](https://jules32.github.io/r-for-excel-users/)  
+-   关注我们！ [\@epiRhandbook](https://twitter.com/epirhandbook)\
+-   R Function A Day [\@rfuntionaday](https://twitter.com/rfunctionaday) 是一个**不可思议的**资源\
+-   R for Data Science [\@rstats4ds](https://twitter.com/rstats4ds?lang=en)\
+-   RStudio [\@RStudio](https://twitter.com/rstudio?lang=en)\
+-   RStudio Tips [\@rstudiotips](https://twitter.com/rstudiotips)\
+-   R-Bloggers [\@Rbloggers](https://twitter.com/Rbloggers)\
+-   R-ladies [\@RLadiesGlobal](https://twitter.com/RLadiesGlobal)\
+-   Hadley Wickham [\@hadleywickham](https://twitter.com/hadleywickham?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor)
 
+此外:
 
+**\#epitwitter** 和 **\#rstats**
 
-### Twitter {.unnumbered}  
+### 免费在线资源 {.unnumbered}
 
-R has a vibrant twitter community where you can learn tips, shortcuts, and news - follow these accounts:  
+Garrett Grolemund 和 Hadley Wickham 合著的 [R for Data Science](https://r4ds.had.co.nz/) 是具有权威性的一本书。
 
-* Follow us! [\@epiRhandbook](https://twitter.com/epirhandbook)  
-* R Function A Day [\@rfuntionaday](https://twitter.com/rfunctionaday) is an *incredible* resource  
-* R for Data Science [\@rstats4ds](https://twitter.com/rstats4ds?lang=en)  
-* RStudio [\@RStudio](https://twitter.com/rstudio?lang=en)  
-* RStudio Tips [\@rstudiotips](https://twitter.com/rstudiotips)  
-* R-Bloggers [\@Rbloggers](https://twitter.com/Rbloggers)  
-* R-ladies [\@RLadiesGlobal](https://twitter.com/RLadiesGlobal)  
-* Hadley Wickham [\@hadleywickham](https://twitter.com/hadleywickham?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor)  
+[R4Epis](https://r4epis.netlify.app/) 项目网站旨在"开发标准化的数据整理、分析和报告工具，以涵盖将在 MSF 应急响应环境中进行的常见爆发类型和基于人口的调查。" 您可以找到 R 基础培训材料、关于爆发和调查的 RMarkdown 报告模板以及能帮助您设置的教程。
 
-
-Also:  
-
-**#epitwitter** and **#rstats**  
-
-
-
-### Free online resources {.unnumbered}  
-
-A definitive text is the [R for Data Science](https://r4ds.had.co.nz/) book by Garrett Grolemund and Hadley Wickham
-
-The [R4Epis](https://r4epis.netlify.app/) project website aims to "develop standardised data cleaning, analysis and reporting tools to cover common types of outbreaks and population-based surveys that would be conducted in an MSF emergency response setting." You can find R basics training materials, templates for RMarkdown reports on outbreaks and surveys, and tutorials to help you set them up.  
-
-
-### Languages other than English {.unnumbered}  
+### 其他语言 {.unnumbered}
 
 [Materiales de RStudio en Español](https://www.rstudio.com/collections/espanol/)
 
-[Introduction à R et au tidyverse (Francais)](https://juba.github.io/tidyverse/index.html)  
-
-
-
-
-
-
-
+[Introduction à R et au tidyverse (Francais)](https://juba.github.io/tidyverse/index.html)
 
 <!-- ======================================================= -->
-## Installation  
 
-### R and RStudio {.unnumbered}  
+## 安装
 
-**How to install R**  
+### R 和 RStudio {.unnumbered}
 
-Visit this website [https://www.r-project.org/](https://www.r-project.org/) and download the latest version of R suitable for your computer.  
+**如何安装 R**
 
-**How to install RStudio**  
+访问此网站 <https://www.r-project.org/> 并下载最新版本并且适合您计算机的 R 。
 
-Visit this website [https://rstudio.com/products/rstudio/download/](https://rstudio.com/products/rstudio/download/) and download the latest free Desktop version of RStudio suitable for your computer.
+**如何安装 RStudio**
 
-**Permissions**  
-Note that you should install R and RStudio to a drive where you have read and write permissions. Otherwise, your ability to install R packages (a frequent occurrence) will be impacted. If you encounter problems, try opening RStudio by right-clicking the icon and selecting "Run as administrator". Other tips can be found in the page [R on network drives].  
+访问此网站[\<https://rstudio.com/products/rstudio/download/\>](https://rstudio.com/products/rstudio/download/){.uri} 并下载最新版本并且适合您计算机的 RStudio。
 
-**How to update R and RStudio**  
+**权限**\
+请注意，您应该将 R 和 RStudio 安装到具有读写权限的驱动器上。 否则，您在安装 R packages （经常发生）时将受到影响。 如果遇到问题，请尝试通过右键单击 RStudio 图标并选择"以管理员身份运行"来打开 RStudio。 其他提示可以在 [网络驱动器上的 R] 页面中找到。
 
-Your version of R is printed to the R Console at start-up. You can also run `sessionInfo()`.  
+**如何升级 R 和 RStudio**
 
-To update R, go to the website mentioned above and re-install R. Alternatively, you can use the **installr** package (on Windows) by running `installr::updateR()`. This will open dialog boxes to help you download the latest R version and update your packages to the new R version. More details can be found in the **installr** [documentation](https://www.r-project.org/nosvn/pandoc/installr.html).  
+您的 R 版本会在启动时在 R 控制台显示。 您还可以运行 `sessionInfo()`来查看。
 
-Be aware that the old R version will still exist in your computer. You can temporarily run an older version (older "installation") of R by clicking "Tools" -> "Global Options" in RStudio and choosing an R version. This can be useful if you want to use a package that has not been updated to work on the newest version of R.  
+要更新 R，请访问上述网站并重新安装 R。或者您可以通过运行 `installr::updateR()` 来使用 **installr** package（在 Windows 上）。 这将打开对话框来帮助您下​​载最新的 R 版本并将更新。 详细信息请参考 **installr** [文档](https://www.r-project.org/nosvn/pandoc/installr.html)。
 
-To update RStudio, you can go to the website above and re-download RStudio. Another option is to click "Help" -> "Check for Updates" within RStudio, but this may not show the very latest updates.  
+请注意，旧的 R 版本仍将存在于您的计算机中。 您可以通过单击 RStudio 中的"工具"-\>"全局选项"并选择 R 版本来临时运行 R 的旧版本（旧"安装"）。 如果您想使用尚未更新的 package 在最新版本的 R 上工作，这会很有用。
 
-To see which versions of R, RStudio, or packages were used when this Handbook as made, see the page on [Editorial and technical notes]. 
+要更新 RStudio，您可以访问上面的网站并重新下载 RStudio。 另一种选择是在 RStudio 中单击"帮助"-\>"检查更新"，但这可能不会显示最新的更新。
 
+要查看本指南制作时使用了哪些版本的 R、RStudio 或packages，请参阅页面 [编辑样式和技术规范]。
 
-### Other software you *may* need to install {.unnumbered} 
+### 其他可能需要安装的软件
 
-* TinyTeX (*for compiling an RMarkdown document to PDF*)  
-* Pandoc  (*for compiling RMarkdown documents*)  
-* RTools  (*for building packages for R*)  
-* phantomjs (*for saving still images of animated networks, such as transmission chains*)  
+-   TinyTeX (将 RMarkdown 文档编译为 PDF)
+-   Pandoc (编译 RMarkdown 文档)
+-   RTools (创建 R *packages*)
+-   phantomjs (保存动态网络的静止图像，例如传播链)
 
+#### TinyTex {.unnumbered}
 
-#### TinyTex {.unnumbered}  
+TinyTex 是一个自定义的 LaTeX 编译器，在尝试从 R 生成 PDF 时很有用。
 
-TinyTex is a custom LaTeX distribution, useful when trying to produce PDFs from R.  
-See [https://yihui.org/tinytex/](https://yihui.org/tinytex/) for more informaton.  
+详细信息请参考 [\<https://yihui.org/tinytex/\>](https://yihui.org/tinytex/){.uri} 。
 
-To install TinyTex from R:  
+从 R 安装 TinyTex：
 
 ```{r, eval=F}
 install.packages('tinytex')
 tinytex::install_tinytex()
-# to uninstall TinyTeX, run tinytex::uninstall_tinytex()
+# 要卸载 TinyTeX，请运行 tinytex::uninstall_tinytex()
 ```
-
 
 #### Pandoc {.unnumbered}
 
-Pandoc is a document converter, a separate software from R. **It comes bundled with RStudio and should not need to be downloaded.** It helps the process of converting Rmarkdown documents to formats like .pdf and adding complex functionality.  
+Pandoc 是一个文档转换器，一个独立于 R 的软件。**它与 RStudio 捆绑在一起，不需要下载。**它能帮助将 Rmarkdown 文档转换为 .pdf 等格式并添加复杂功能。
 
+#### RTools {.unnumbered}
 
-#### RTools {.unnumbered}  
+RTools 是为 R 构建 packages 的软件的集合
 
-RTools is a collection of software for building packages for R
+从此网站安装： [\<https://cran.r-project.org/bin/windows/Rtools/\>](https://cran.r-project.org/bin/windows/Rtools/){.uri}
 
-Install from this website: [https://cran.r-project.org/bin/windows/Rtools/](https://cran.r-project.org/bin/windows/Rtools/)  
+#### phantomjs {.unnumbered}
 
-
-#### phantomjs {.unnumbered}  
-
-This is often used to take "screenshots" of webpages. For example when you make a transmission chain with **epicontacts** package, an HTML file is produced that is interactive and dynamic. If you want a static image, it can be useful to use the [**webshot**](https://wch.github.io/webshot/articles/intro.html) package to automate this process. This will require the external program "phantomjs". You can install phantomjs via the **webshot** package with the command `webshot::install_phantomjs()`.  
-
-
-
+phantomjs 通常用于抓取网页的"截图"。例如，当您使用 **epicontacts** package 创建传播链时，将生成一个交互式和动态的HTML文件。如果您想要一个静态图像，可以使用 [**webshot**](https://wch.github.io/webshot/articles/intro.html) package 来自动化这个过程。这将需要外部程序 "phantomjs" 。你可以使用命令 `webshot::install_phantomjs()`通过 webshot package 安装 phantomjs。
 
 <!-- ======================================================= -->
+
 ## RStudio {#rstudio}
 
+### RStudio 导览 {.unnumbered}
 
-### RStudio orientation {.unnumbered}  
+**首先,打开 RStudio**。因为它们的图标看起来非常相似，所以要确保您打开的是 RStudio 而不是 R 。
 
-**First, open RStudio.** As their icons can look very similar, be sure you are opening *RStudio* and not R.  
+要使 RStudio 工作，您还必须在计算机上安装 R（有关安装说明，请参见上文）。
 
-For RStudio to work you must also have R installed on the computer (see above for installation instructions).  
+RStudio 是一个更方便使用 R 的界面 (GUI)。您可以将 R 视为车辆的引擎，执行关键工作，而 RStudio 则为车辆的主体（带有座椅、配件等）。您实际上是在使用引擎来前进！ 您可以在[此处](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)查看完整的 RStudio 用户界面速查表 (PDF)。
 
-**RStudio** is an interface (GUI) for easier use of **R**. You can think of R as being the engine of a vehicle, doing the crucial work, and RStudio as the body of the vehicle (with seats, accessories, etc.) that helps you actually use the engine to move forward! You can see the complete RStudio user-interface cheatsheet (PDF) [here](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)  
-
-By default RStudio displays four rectangle panes.  
+默认情况下，RStudio 显示四个矩形面板。
 
 ```{r out.width = "100%", fig.align = "center", echo=F}
 knitr::include_graphics(here::here("images", "RStudio_overview.png"))
 ```
 
+[**注释*:*** 如果您的 RStudio 只显示一个左侧面板，这是因为您还没打开脚本。]{style="color: black;"}
 
-<span style="color: black;">**_TIP:_** If your RStudio displays only one left pane it is because you have no scripts open yet.</span>
+**源代码面板**\
+默认情况下，此面板位于左上角，是用于编辑、运行和保存[脚本](#scripts)的面板。 脚本包含您要运行的代码。 此面板还可以显示数据集（数据框）以供查看。
 
+对于 Stata 用户，此面板类似于您的 Do-file 和 Data Editor 窗口。
 
-**The Source Pane**  
-This pane, by default in the upper-left, is a space to edit, run, and save your [scripts](#scripts). Scripts contain the commands you want to run. This pane can also display datasets (data frames) for viewing.  
+**R 控制台面板**
 
-For Stata users, this pane is similar to your Do-file and Data Editor windows.
+R 控制台（默认情况下位于 R Studio 的左侧或左下窗格）是 R"引擎"的所在地。 这是代码实际运行的地方，非图形输出和错误或警告消息出现的地方。 您可以直接在 R 控制台中输入和运行代码，但要意识到这些代码不会像从脚本运行代码时那样保存。
 
+如果您熟悉 Stata，R 控制台就像命令窗口和结果窗口。
 
+**环境面板**\
+此窗格默认位于右上角，常用于查看当前会话中 R 环境中[对象](#objects)的概要。 这些对象可能包括导入、修改或创建的数据集、您定义的参数（例如分析的特定 Epi 周）或您在分析期间定义的向量或列表（例如区域名称）。 您可以单击数据框名称旁边的箭头以查看其变量。
 
-**The R Console Pane**  
+在 Stata 中，此面板与变量管理器窗口最相似。
 
-The R Console, by default the left or lower-left pane in R Studio, is the home of the R "engine". This is where the commands are actually run and non-graphic outputs and error/warning messages appear. You can directly enter and run commands in the R Console, but realize that these commands are not saved as they are when running commands from a script.  
+此窗格还包含历史记录，您可以在其中查看以前的代码。 它还有一个"教程"选项卡，如果您安装了**learnr** package，您可以在其中完成交互式 R 教程。 它还有一个用于外部连接的"连接"窗格，如果您选择与 Github 交互，则可以有一个"Git"面板。
 
-If you are familiar with Stata, the R Console is like the Command Window and also the Results Window.
+**绘图、查看器、Packages 和帮助面板**
 
+右下窗格包括几个重要的选项卡。 包括地图在内的绘图图形将显示在绘图面板中。 交互式或 HTML 输出将显示在查看器面板中。 帮助面板可以显示文档和帮助文件。 文件窗格是一个浏览器，可用于打开或删除文件。 "Packages "窗格允许您查看、安装、更新、删除、加载/卸载 R Packages ，并查看您拥有的包的版本。 要了解有关 Packages 的更多信息，请参阅下面的 [packages](#packages) 部分。
 
-**The Environment Pane**  
-This pane, by default in the upper-right, is most often used to see brief summaries of [objects](#objects) in the R Environment in the current session. These objects could include imported, modified, or created datasets, parameters you have defined (e.g. a specific epi week for the analysis), or vectors or lists you have defined during analysis (e.g. names of regions). You can click on the arrow next to a data frame name to see its variables.  
+此面板等效与 Stata的绘图管理器和项目管理器窗口。
 
-In Stata, this is most similar to the Variables Manager window.
+### RStudio 设置 {.unnumbered}
 
-This pane also contains *History* where you can see commands that you can previously. It also has a "Tutorial" tab where you can complete interactive R tutorials if you have the **learnr** package installed. It also has a "Connections" pane for external connections, and can have a "Git" pane if you choose to interface with Github.  
-
-
-**Plots, Viewer, Packages, and Help Pane**  
-The lower-right pane includes several important tabs. Typical plot graphics including maps will display in the Plot pane. Interactive or HTML outputs will display in the Viewer pane. The Help pane can display documentation and help files. The Files pane is a browser which can be used to open or delete files. The Packages pane allows you to see, install, update, delete, load/unload R packages, and see which version of the package you have. To learn more about packages see the [packages section](#packages) below.  
-
-This pane contains the Stata equivalents of the Plots Manager and Project Manager windows.
-
-### RStudio settings {.unnumbered}  
-
-Change RStudio settings and appearance in the *Tools* drop-down menu, by selecting *Global Options*. There you can change the default settings, including appearance/background color.  
+通过在工具下拉菜单中选择全局选项。 您可以更改默认设置，包括外观/背景颜色。
 
 ```{r out.width = c('50%'), fig.show='hold', echo=F}
 knitr::include_graphics(here::here("images", "RStudio_tools_options_1.png"))
@@ -263,160 +232,146 @@ knitr::include_graphics(here::here("images", "RStudio_tools_options_1.png"))
 knitr::include_graphics(here::here("images", "RStudio_tools_options.png"))
 ```
 
-**Restart**  
+**重启**
 
-If your R freezes, you can re-start R by going to the Session menu and clicking "Restart R". This avoids the hassle of closing and opening RStudio. Everything in your R environment will be removed when you do this.  
+如果您的 R 卡住了，您可以通过转到"会话"菜单并单击"重新启动 R"来重新启动 R。 这避免了关闭和打开 RStudio 的麻烦操作。 执行此操作时，R 环境中的所有内容都将被删除。
 
+### 键盘快捷键 {.unnumbered}
 
-### Keyboard shortcuts {.unnumbered}  
+下面是一些非常有用的键盘快捷键。 如要查看适用于 Windows、Max 和 Linux 的所有键盘快捷键，请参阅 RStudio [用户界面速查表](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)的第二页。
 
-Some very useful keyboard shortcuts are below. See all the keyboard shortcuts for Windows, Max, and Linux in the second page of this RStudio [user interface cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf).  
+| Windows/Linux                    | Mac                    | Action 操作                                                                       |
+|----------------------------------|------------------------|-----------------------------------------------------------------------------------|
+| Esc                              | Esc                    | 中断当前命令 (如果您不小心运行了不完整的命令并且无法在 R 控制台中看到"+"时很有用) |
+| Ctrl+s                           | Cmd+s                  | 保存(脚本)                                                                        |
+| Tab                              | Tab                    | 自动补全                                                                          |
+| Ctrl + Enter                     | Cmd + Enter            | 运行当前行/选择的代码                                                             |
+| Ctrl + Shift + C                 | Cmd + Shift + c        | 注释/取消注释突出显示的行                                                         |
+| Alt + -                          | Option + -             | 插入`<-`                                                                          |
+| Ctrl + Shift + m                 | Cmd + Shift + m        | 插入`%>%`                                                                         |
+| Ctrl + l                         | Cmd + l                | 清空 R 控制台                                                                     |
+| Ctrl + Alt + b                   | Cmd + Option + b       | 运行，从开始行到当前行                                                            |
+| Ctrl + Alt + t                   | Cmd + Option + t       | 运行当前部分的代码 (R Markdown)                                                   |
+| Ctrl + Alt + i                   | Cmd + Shift + r        | 插入代码块 (into R Markdown)                                                      |
+| Ctrl + Alt + c                   | Cmd + Option + c       | 运行当前代码块 (R Markdown)                                                       |
+| up/down arrows in R console      | 相同                   | 切换最近运行的命令                                                                |
+| Shift + up/down arrows in script | 相同                   | 选择多个代码行                                                                    |
+| Ctrl + f                         | Cmd + f                | 在当前脚本中查找和替换                                                            |
+| Ctrl + Shift + f                 | Cmd + Shift + f        | 在文件中查找（在多个脚本中搜索/替换）                                             |
+| Alt + l                          | Cmd + Option + l       | 折叠选中的代码                                                                    |
+| Shift + Alt + l                  | Cmd + Shift + Option+l | 展开选定的代码                                                                    |
 
-
-Windows/Linux     |Mac             |Action                
-------------------|----------------|-----------------------------------------
-Esc               |Esc             |Interrupt current command (useful if you accidentally ran an incomplete command and cannot escape seeing "+" in the R console)
-Ctrl+s            |Cmd+s           |Save (script)
-Tab               |Tab             |Auto-complete  
-Ctrl + Enter      |Cmd + Enter     |Run current line(s)/selection of code
-Ctrl + Shift + C  |Cmd + Shift + c |comment/uncomment the highlighted lines
-Alt + -           |Option + -      |Insert `<-`  
-Ctrl + Shift + m  |Cmd + Shift + m |Insert `%>%`
-Ctrl + l          |Cmd + l         |Clear the R console
-Ctrl + Alt + b    |Cmd + Option + b|Run from start to current line
-Ctrl + Alt + t    |Cmd + Option + t|Run the current code section (R Markdown)
-Ctrl + Alt + i    |Cmd + Shift + r |Insert code chunk (into R Markdown)
-Ctrl + Alt + c    |Cmd + Option + c|Run current code chunk (R Markdown)
-up/down arrows in R console|Same |Toggle through recently run commands
-Shift + up/down arrows in script|Same|Select multiple code lines
-Ctrl + f |Cmd + f|Find and replace in current script
-Ctrl + Shift + f|Cmd + Shift + f|Find in files (search/replace across many scripts)
-Alt + l |Cmd + Option + l|Fold selected code
-Shift + Alt + l|Cmd + Shift + Option+l|Unfold selected code
-
-
-
-<span style="color: darkgreen;">**_TIP:_** Use your Tab key when typing to engage RStudio's auto-complete functionality. This can prevent spelling errors. Press Tab while typing to produce a drop-down menu of likely functions and objects, based on what you have typed so far.</span>  
-
-  
-
-
+[**提示*:*** 请用 Tab 按键打开 RStudio 的自动补全功能。此功能可阻止拼写错误。编写代码时按 Tab 会根据您目前编写的代码显示可能的函数或者对象的下拉菜单。]{style="color: darkgreen;"}
 
 <!-- ======================================================= -->
-## Functions {#functions}  
 
-Functions are at the core of using R. Functions are how you perform tasks and operations. Many functions come installed with R, many more are available for download in *packages* (explained in the [packages](#packages) section), and you can even write your own custom functions! 
+## 函数 {#functions}
 
-This basics section on functions explains:  
+函数是使用 R 的核心要素。函数是您执行任务和操作的方式。 许多函数随 R 一起安装，更多函数可以在packages 中下载（在[packages](#packages) 部分详细解释）。您甚至可以编写自定义函数。
 
-* What a function is and how they work  
-* What function *arguments* are  
-* How to get help understanding a function  
+此部分关于函数的基础，解释了：
 
-*A quick note on syntax:* In this handbook, functions are written in code-text with open parentheses, like this: `filter()`. As explained in the [packages](#packages) section, functions are downloaded within *packages*. In this handbook, package names are written in **bold**, like **dplyr**. Sometimes in example code you may see the function name linked explicitly to the name of its package with two colons (`::`) like this: `dplyr::filter()`. The purpose of this linkage is explained in the packages section.  
+-   什么是函数以及它们如何工作\
+-   什么是函数**参数**\
+-   如何在帮助文档下理解函数
 
+关于语法的快速说明：在本指南中，函数是用带括号的代码文本编写的，例如：`filter()`。 如 [packages](#packages)部分所述，函数在 *packages* 内下载。 在本手册中，package 名称以**粗体**显示，例如 **dplyr**。 有时在示例代码中，您可能会看到函数名称显式链接到其包名称，并带有两个冒号 (`::`)，如下所示：`dplyr::filter()`。 此链接的目的会在 packages 部分中解释。
 
 <!-- ======================================================= -->
-### Simple functions {.unnumbered}  
 
-**A function is like a machine that receives inputs, does some action with those inputs, and produces an output.** What the output is depends on the function.    
+### 简单函数 {.unnumbered}
 
-**Functions typically operate upon some object placed within the function's parentheses**. For example, the function `sqrt()` calculates the square root of a number:  
+**函数就像一台机器，它接收输入，对这些输入做一些处理，然后产生输出。**输出是什么取决于函数。
+
+**函数通常对放置在函数括号内的某个对象进行操作。** 例如，函数 `sqrt()` 计算一个数的平方根：
 
 ```{r basics_function_sqrt}
 sqrt(49)
 ```
 
-The object provided to a function also can be a column in a dataset (see the [Objects](#objects) section for detail on all the kinds of objects). Because R can store multiple datasets, you will need to specify both the dataset and the column. One way to do this is using the `$` notation to link the name of the dataset and the name of the column (`dataset$column`). In the example below, the function `summary()` is applied to the numeric column `age` in the dataset `linelist`, and the output is a summary of the column's numeric and missing values.  
-
+提供给函数的对象也可以是数据集中的一列（有关所有类型的对象的详细信息，请参阅[对象](#objects)部分）。 由于 R 可以存储多个数据集，因此您需要同时指定数据集和列。 一种方法是使用 `$` 符号来链接数据集的名称和列的名称 (`dataset$column`)。 在下面的示例中，函数 `summary()` 被应用于数据集 `linelist` 中的数字列 `age`，并且输出是该列的数字值和缺失值的摘要。
 
 ```{r basics_functions_summary}
-# Print summary statistics of column 'age' in the dataset 'linelist'
+# 打印数据集“linelist”中列“age”的汇总统计信息
 summary(linelist$age)
 ```
 
-<span style="color: black;">**_NOTE:_** Behind the scenes, a function represents complex additional code that has been wrapped up for the user into one easy command.</span>
-
-
+[**注释*:*** 一个函数其实代表了复杂的附加代码，这些代码已经被打包成一个简单的命令。]{style="color: black;"}
 
 <!-- ======================================================= -->
-### Functions with multiple arguments {.unnumbered}  
 
-Functions often ask for several inputs, called ***arguments***, located within the parentheses of the function, usually separated by commas. 
+### 多参数函数 {.unnumbered}
 
-* Some arguments are required for the function to work correctly, others are optional  
-* Optional arguments have default settings  
-* Arguments can take character, numeric, logical (TRUE/FALSE), and other inputs  
+函数通常要求多个输入，即**参数**，位于函数的括号内。参数通常用逗号分隔。
 
-Here is a fun fictional function, called `oven_bake()`, as an example of a typical function. It takes an input object (e.g. a dataset, or in this example "dough") and performs operations on it as specified by additional arguments (`minutes = ` and `temperature = `). The output can be printed to the console, or saved as an object using the assignment operator `<-`.  
+-   有些参数是函数正常运行所必需的，其他参数是可选的\
+-   可选参数具有默认设置\
+-   参数可以是用字符、数字、逻辑 (TRUE/FALSE) 和其他输入
+
+下面是一个有趣的虚构函数示例: `oven_bake()`。 它接受一个输入参数（例如一个数据集，或在本例中为 "面团"）并按照附加参数（`minutes =` 和`temperature =`）的指定对其执行操作。 输出可以打印到控制台，或使用赋值运算符 `<-`保存。
 
 ```{r basics_functions_image, echo=F, out.width = "75%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "Function_Bread_Example.png"))
 ```
 
-
-**In a more realistic example**, the `age_pyramid()` command below produces an age pyramid plot based on defined age groups and a binary split column, such as `gender`. The function is given three arguments within the parentheses, separated by commas. The values supplied to the arguments establish `linelist` as the dataframe to use, `age_cat5` as the column to count, and `gender` as the binary column to use for splitting the pyramid by color.
+**在更现实的示例中**，`age_pyramid()` 可以生成基于定义的年龄组和二元拆分列（例如`gender`）的年龄金字塔图。 该函数在括号内需要三个参数，用逗号分隔。 提供给参数的值中， `linelist` 作为要使用的数据， `age_cat5` 作为要计数的列，`gender`作为用于按颜色拆分的金字塔的二进制列。
 
 ```{r basics_functions_arguments, include=FALSE, results='hide', message=FALSE, warning=FALSE,}
-## create an age group variable by specifying categorical breaks
+## 通过指定分类间隔来创建年龄组变量
 linelist$age_group <- cut(linelist$age, breaks = c(0, 5, 10, 15, 20, 30, 45, 60))
 ```
 
 ```{r message=FALSE, warning=FALSE,  out.width = "75%", out.height="75%"}
-# Create an age pyramid
+# 创建年龄金字塔
 age_pyramid(data = linelist, age_group = "age_cat5", split_by = "gender")
 ```
 
-The above command can be equivalently written as below, in a longer style with a new line for each argument. This style can be easier to read, and easier to write "comments" with `#` to explain each part (commenting extensively is good practice!). To run this longer command you can highlight the entire command and click "Run", or just place your cursor in the first line and then press the Ctrl and Enter keys simultaneously.  
+上面的命令可以等效地写成如下代码：更长的格式，每个参数一行。 这种风格更容易阅读，更容易用 `#` 写"注释"来注释每个部分（广泛注释是一种很好的做法！）。 要运行这个更长的命令，您可以突出显示整个命令并单击"运行"，或者将光标放在第一行，然后同时按下 Ctrl 和 Enter 键。
 
 ```{r message=FALSE, warning=FALSE,  out.width = "75%", out.height="75%"}
-# Create an age pyramid
+# 创建年龄金字塔
 age_pyramid(
-  data = linelist,        # use case linelist
-  age_group = "age_cat5", # provide age group column
-  split_by = "gender"     # use gender column for two sides of pyramid
+  data = linelist,        # 用案例 linelist
+  age_group = "age_cat5", # 提供年龄组栏
+  split_by = "gender"     # 用性别列来划分金字塔
   )
 ```
 
-The first half of an argument assignment (e.g. `data = `) does not need to be specified if the arguments are written in a specific order (specified in the function's documentation). The below code produces the exact same pyramid as above, because the function expects the argument order: data frame, `age_group` variable, `split_by` variable.  
+如果参数以特定顺序（函数文档中指定）编写，则不需要指定参数赋值的前半部分（例如 `data =`）。 下面的代码生成与上面完全相同的金字塔，因为该函数规定的参数顺序：数据框、`age_group` 变量、`split_by` 变量。
 
 ```{r, basics_functions_pyramid2, eval = FALSE, warning=FALSE, message=FALSE, , out.width = "75%", out.height="75%", eval=F}
-# This command will produce the exact same graphic as above
+# 此命令将产生与上面完全相同的图形
 age_pyramid(linelist, "age_cat5", "gender")
 ```
 
-**A more complex `age_pyramid()` command might include the *optional* arguments to:**  
+**更复杂的 `age_pyramid()` 命令可能包含以下可选参数**：
 
-* Show proportions instead of counts (set `proportional = TRUE` when the default is `FALSE`)  
-* Specify the two colors to use (`pal = ` is short for "palette" and is supplied with a vector of two color names. See the [objects](#objectstructure) page for how the function `c()` makes a vector)  
+-   显示比例而不是数量（设置`proportional = TRUE`，默认为`FALSE`）\
+-   指定要使用的两种颜色（`pal =` 是"palette"的缩写，并提供了一个包含两个颜色名称的向量。有关函数 `c()` 如何生成向量的信息，请参见[对象](#objectstructure)页面）
 
-
-<span style="color: black;">**_NOTE:_** For arguments that you specify with both parts of the argument (e.g. `proportional = TRUE`), their order among all the arguments does not matter.</span>
-
+[**注释:** 对于使用参数指定方式的输入参数（例如,`proportional = TRUE`),它们在所有参数中的顺序是无关紧要的。]{style="color: black;"}
 
 ```{r message=FALSE, warning=FALSE, out.width = "75%", out.height="75%"}
 age_pyramid(
-  linelist,                    # use case linelist
-  "age_cat5",                  # age group column
-  "gender",                    # split by gender
-  proportional = TRUE,         # percents instead of counts
-  pal = c("orange", "purple")  # colors
+  linelist,                    # 用案例 linelist
+  "age_cat5",                  # 提供年龄组栏
+  "gender",                    # 用性别列来划分金字塔
+  proportional = TRUE,         # 显示比例而不是数量
+  pal = c("orange", "purple")  # 指定颜色
   )
 ```
 
-
-
 <!-- ======================================================= -->
 
-### Writing Functions {.unnumbered}  
+### 编写函数 {#编写函数 .unnumbered}
 
-R is a language that is oriented around functions, so you should feel empowered to write your own functions. Creating functions brings several advantages:  
+R 是一种面向函数的语言，因此您有能力编写自己的函数。 创建函数有几个优点：
 
-* To facilitate modular programming - the separation of code in to independent and manageable pieces  
-* Replace repetitive copy-and-paste, which can be error prone  
-* Give pieces of code memorable names  
+-   促进模块化编程 - 代码会被分成独立且可被管理的模块\
+-   不用重复地复制和粘贴，这很容易出错\
+-   给代码段起一个容易记住的名字
 
-How to write a function is covered in-depth in the [Writing functions] page.  
+如何编写函数在 [编写函数](#编写函数)页面中有深入的介绍。
 
 <!-- A function is given a name and defined with the assignment operator `<-` to a special **base** R function called `function()`. Within the parentheses, the arguments that the function will accept are defined. This is followed by curly brackets `{ }`, within which the actual code of the function is written.     -->
 
@@ -431,28 +386,39 @@ my_function <- function( ARGUMENTS HERE ){ CODE HERE }
 <!-- The arguments (inputs) and their default values will be:   -->
 
 <!-- * `daily_cases = NULL` The number of new COVID-19 cases per day   -->
+
 <!-- * `contacts_each = 5` The number contacts enumerated for each case   -->
+
 <!-- * `time_case = 0.5`  Number of hours to complete a case investigaton by phone   -->
+
 <!-- * `time_contact = 0.25`  Number of hours to complete a contact follow-up by phone   -->
+
 <!-- * `time_day = 8` The number of hours one staff works per day   -->
 
 <!-- Below, the function is created. The code ends with the special function `return()`, which is what the function produces.    -->
 
 <!-- ```{r message=FALSE, warning=FALSE, out.width = "75%", out.height="75%"} -->
+
 <!-- staff_calc <- function(daily_cases = NULL, contacts_each = 5, -->
+
 <!--                        time_case = 0.5, time_contact = 0.25, time_day = 8){ -->
 
 <!--   # Define total daily hours for calling cases -->
+
 <!--   case_hours <- daily_cases * time_case  -->
 
 <!--   # Define total daily hours for calling contacts -->
+
 <!--   contact_hours <- daily_cases * contacts_each * time_contact -->
 
 <!--   # Calculate number of staff required -->
+
 <!--   staff_required <- (case_hours + contact_hours)/time_day -->
 
 <!--   return(staff_required) -->
+
 <!-- } -->
+
 <!-- ``` -->
 
 <!-- Once this code is run, the function will be defined and will appear in the R Environment. We can run the function. Below all the default values are used and the `daily_cases = ` is set to 150.   -->
@@ -475,721 +441,721 @@ ggplot(case_incidence, aes(x = dates))+
 
 <!-- There are many other nuances to understand when writing functions, as discussed in the page [Writing functions].   -->
 
+<!-- ======================================================= -->
 
 <!-- ======================================================= -->
-<!-- ======================================================= -->
-## Packages {#packages}  
 
-**Packages contain functions.**  
+## Packages {#packages}
 
-An R package is a shareable bundle of code and documentation that contains pre-defined functions. Users in the R community develop packages all the time catered to specific problems, it is likely that one can help with your work! You will install and use hundreds of packages in your use of R.  
+**Packages 中包含函数**
 
-On installation, R contains **"base"** packages and functions that perform common elementary tasks. But many R users create specialized functions, which are verified by the R community and which you can download as a **package** for your own use. In this handbook, package names are written in **bold**. One of the more challenging aspects of R is that there are often many functions or packages to choose from to complete a given task.  
+R package 是包含预定义函数的可共享代码和文档包。 R 社区的用户一直在开发针对特定问题的 package ，这些 package 很可能会对您的工作有所帮助！ 在使用 R 时，您将安装和使用数百个 packages。
 
+在安装时，R 包含用于执行常见基本任务的 "**base**" packages 和函数。 但是许多 R 用户创建了专门的函数。这些函数经过 R 社区的验证后，您可以将其作为 **packages** 下载供自己使用。 在本指南中，packages 名称以**粗体**显示。在使用 R 时，具挑战性的方面之一是：有许多函数或 packages 可供选择来完成特定的任务。
 
-### Install and load {.unnumbered}  
+### 安装和加载 {.unnumbered}
 
-*Functions* are contained within **packages** which can be downloaded ("installed") to your computer from the internet. Once a package is downloaded, it is stored in your "library". You can then access the functions it contains during your current R session by "loading" the package.
+从网上下载并且安装到您的计算机的 **packages** 中包含函数。 下载包后，它会存储在您的"库"中。 然后，您可以在当前 R 会话中通过"加载" package 来访问它包含的函数。.
 
-*Think of R as your personal library*: When you download a package, your library gains a new book of functions, but each time you want to use a function in that book, you must borrow ("load") that book from your library.  
+R 可以被视为您的个人图书馆：当您下载一个包时，您的图书馆会获得一本新的函数书。但是每次您想使用该书中的函数时，您都必须从图书馆借用（"加载"）该函数书。
 
-In summary: to use the functions available in an R package, 2 steps must be implemented:  
+总之，要使用 R package 中包含的函数，必须完成2 个步骤：
 
-1) The package must be **installed** (once), *and*  
-2) The package must be **loaded** (each R session)  
+1)  package 必须被**安装** (一次)\
+2)  package 必须被**加载** (每个 R 会话)
 
+#### 库 {.unnumbered}
 
-#### Your library {.unnumbered}  
+您的"库"实际上是您计算机上的一个文件夹，其中包含每个已安装的 package 的文件夹。 要找到库的位置，先找出 R 在您的计算机中的安装位置，并查找名为"win-library"的文件夹。 例如：`R\win-library\4.0`（4.0 是 R 版本 - 您下载的 R 的每个版本都有不同的库）。
 
-Your "library" is actually a folder on your computer, containing a folder for each package that has been installed. Find out where R is installed in your computer, and look for a folder called "win-library". For example: `R\win-library\4.0` (the 4.0 is the R version - you'll have a different library for each R version you've downloaded).  
+您可以通过输入 `.libPaths()`（括号内为空）来打印库的文件路径。 如果使用 [网络驱动器上的 R]，这将变得尤为重要。
 
-You can print the file path to your library by entering `.libPaths()` (empty parentheses). This becomes especially important if working with [R on network drives].   
+#### 从 CRAN 安装 {.unnumbered}
 
+通常，R 用户从 CRAN 下载 packages 。 CRAN (Comprehensive R Archive Network) 是 R 社区成员发布的关于 R packages 的在线公共仓库。
 
-#### Install from CRAN {.unnumbered}  
+从 CRAN 下载 packages 时，您是否担心病毒和安全性？ 阅读有关该主题的[文章](https://support.rstudio.com/hc/en-us/articles/360042593974-R-and-R-Package-Security) 。
 
-Most often, R users download packages from CRAN. CRAN (Comprehensive R Archive Network) is an online public warehouse of R packages that have been published by R community members. 
+#### 如何安装和加载 {.unnumbered}
 
-Are you worried about viruses and security when downloading a package from CRAN? Read [this article](https://support.rstudio.com/hc/en-us/articles/360042593974-R-and-R-Package-Security) on the topic.  
- 
+在本指南中，我们建议使用 **pacman** package（"package manager"的缩写）。 它提供了一个方便的函数 `p_load()`。此函数会在必要时安装一个包并加载它以在当前 R 会话中使用。
 
-#### How to install and load {.unnumbered}  
-
-In this handbook, we suggest using the **pacman** package (short for "package manager"). It offers a convenient function `p_load()` which will install a package if necessary *and* load it for use in the current R session.  
-
-The syntax quite simple. Just list the names of the packages within the `p_load()` parentheses, separated by commas. This command will install the **rio**, **tidyverse**, and **here** packages if they are not yet installed, and will load them for use. This makes the `p_load()` approach convenient and concise if sharing scripts with others. Note that package names are case-sensitive. 
+其语法相当简单。 只需在`p_load()`括号内列出包的名称，用逗号分隔。 下述命令将安装 **rio**、**tidyverse** 和 **here** packages （如果尚未被安装），并将加载它们以供使用。 如果您与他人共享脚本，`p_load()` 方法即方便又简洁。 请注意，packages 名称区分大小写。
 
 ```{r}
-# Install (if necessary) and load packages for use
+# 安装（如有必要）并加载软件包以供使用
 pacman::p_load(rio, tidyverse, here)
 ```
 
-Note that we have used the syntax `pacman::p_load()` which explicitly writes the package name (**pacman**) prior to the function name (`p_load()`), connected by two colons `::`. This syntax is useful because it also loads the **pacman** package (assuming it is already installed).  
+请注意，我们使用了 `pacman::p_load()`语法，它在函数名称 (`p_load()`) 之前增加了packages 名称 (**pacman**)，并由两个冒号 :: 连接。 这个语法很有用，因为它还加载了 **pacman** 包（假设它已经安装）。
 
-There are alternative **base** R functions that you will see often. The **base** R function for installing a package is `install.packages()`. The name of the package to install must be provided in the parentheses *in quotes*. If you want to install multiple packages in one command, they must be listed within a character vector `c()`.   
+**base** R 中的替代函数也会被经常使用。 用于安装 package 的 **base** R 函数是 `install.packages()`。 要安装的package 的名称必须在括号中加上引号。 如果希望用一个命令安装多个 packages，它们必须列在字符向量 `c()`中。
 
-Note: this command *installs* a package, but does *not* load it for use in the current session.  
+[**注释:** 此命令会安装 packages 但不会加载 packages 在当前会话中使用。]{style="color: black;"}
 
 ```{r, eval=F}
-# install a single package with base R
+# 使用 base R 安装单个 package
 install.packages("tidyverse")
 
-# install multiple packages with base R
+# 使用 base R 安装多个 packages
 install.packages(c("tidyverse", "rio", "here"))
 ```
 
-Installation can also be accomplished point-and-click by going to the RStudio "Packages" pane and clicking "Install" and searching for the desired package name.  
+安装也可以通过点击进入RStudio"Packages"面板，点击"Install"并搜索所需的 package 名称来完成。
 
-The **base** R function to **load** a package for use (after it has been installed) is `library()`. It can load only one package at a time (another reason to use `p_load()`). You can provide the package name with or without quotes.    
+加载 package 以供使用（安装后）的 **base** R 函数是 `library()`。 它一次只能加载一个 package（使用 `p_load()`的另一个原因）。 package 名称可以带引号或不带引号。
 
 ```{r, eval=F}
-# load packages for use, with base R
+# 使用 base R 加载 package
 library(tidyverse)
 library(rio)
 library(here)
 ```
 
-To check whether a package in installed and/or loaded, you can view the Packages pane in RStudio. If the package is installed, it is shown there with version number. If its box is checked, it is loaded for the current session. 
+要检查 package 是否已被安装和/或已加载，您可以在 RStudio 中查看 package 面板。 如果安装了该package，则会在此面板处显示版本号。 如果package的框被选中，则当前会话已经加载它。
 
+**从 Github 安装**
 
+有时，您需要安装 CRAN 尚未提供的 package 。 或者该package 可能在 CRAN 上可用，但您想要具有新功能的**开发者**版本。 这些通常托管在 [github.com](https://github.com/) 网站上的一个免费的、面向公众的"资源库"中。 在 [版本控制和与 Git 和 Github 的协作] 的手册页面中阅读有关 Github 的更多信息。
 
-**Install from Github**
+要从 Github 下载 R packages ，您可以使用 **pacman** 的 `p_load_gh()` 函数。它会在必要时安装 package，并加载它以在您当前的 R 会话中使用。 安装的替代方法包括使用 **remotes** 或 **devtools** package。 在[package 文档](https://cran.r-project.org/web/packages/pacman/pacman.pdf)中阅读有关 **pacman** 中所有函数的详细信息。
 
-Sometimes, you need to install a package that is not yet available from CRAN. Or perhaps the package is available on CRAN but you want the *development version* with new features not yet offered in the more stable published CRAN version. These are often hosted on the website [github.com](https://github.com/) in a free, public-facing code "repository". Read more about Github in the handbook page on [Version control and collaboration with Git and Github].  
+要从 Github 安装，您必须提供更多信息。 您必须提供：
 
-To download R packages from Github, you can use the function `p_load_gh()` from **pacman**, which will install the package if necessary, and load it for use in your current R session. Alternatives to install include using the **remotes** or **devtools** packages. Read more about all the **pacman** functions in the [package documentation](https://cran.r-project.org/web/packages/pacman/pacman.pdf).  
+1)  资源库所有者的 Github ID
+2)  包含package 的资源库的名称
+3)  *(可选)* 您要下载的"分支"（特定开发版本）的名称
 
-To install from Github, you have to provide more information. You must provide:  
-
-1) The Github ID of the repository owner
-2) The name of the repository that contains the package  
-3) *(optional) The name of the "branch" (specific development version) you want to download*  
-
-In the examples below, the first word in the quotation marks is the Github ID of the repository owner, after the slash is the name of the repository (the name of the package).  
+在下面的示例中，引号中的第一个单词是资源库所有者的 Github ID，斜杠后面是资源库的名称（package的名称）。
 
 ```{r, eval=F}
-# install/load the epicontacts package from its Github repository
+# 从 Github 存储库安装/加载 epicontacts package
 p_load_gh("reconhub/epicontacts")
 ```
 
-If you want to install from a "branch" (version) other than the main branch, add the branch name after an "@", after the repository name.  
+如果要从主分支以外的"分支"（版本）安装，请在资源库名称之后，添加"\@"之后再加分支名称。
 
 ```{r, eval=F}
-# install the "timeline" branch of the epicontacts package from Github
+# 从 Github 安装来自"timeline"分支的 epicontacts package
 p_load_gh("reconhub/epicontacts@timeline")
 ```
 
-If there is no difference between the Github version and the version on your computer, no action will be taken. You can "force" a re-install by instead using `p_load_current_gh()` with the argument `update = TRUE`. Read more about **pacman** in this [online vignette](http://trinker.github.io/pacman/vignettes/Introduction_to_pacman.html)
+如果 Github 的 package 版本与您电脑上的版本没有差异，则不会执行任何操作。 您可以通过使用 `p_load_current_gh()`和参数 `update = TRUE` 来"强制"重新安装。 [在此](http://trinker.github.io/pacman/vignettes/Introduction_to_pacman.html)阅读有关 **pacman** 的更多信息。
 
+**从 ZIP 或 TAR 安装**
 
-**Install from ZIP or TAR**
-
-You could install the package from a URL:  
+您可以从 URL 安装 package ：
 
 ```{r, eval=F}
 packageurl <- "https://cran.r-project.org/src/contrib/Archive/dsr/dsr_0.2.2.tar.gz"
 install.packages(packageurl, repos=NULL, type="source")
 ```
 
-Or, download it to your computer in a zipped file:  
+或者将其以压缩文件的形式下载到您的计算机：
 
-Option 1: using `install_local()` from the **remotes** package  
+选项 1：使用 **remotes** package 中的 `install_local()`
 
 ```{r, eval=F}
 remotes::install_local("~/Downloads/dplyr-master.zip")
 ```
 
-Option 2: using `install.packages()` from **base** R, providing the file path to the ZIP file and setting `type = "source` and `repos = NULL`.    
+选项 2：使用 **base** R 中的 `install.packages()`，提供 ZIP 文件的文件路径并设置 `type = "source` 和 `repos = NULL`。
 
 ```{r, eval=F}
 install.packages("~/Downloads/dplyr-master.zip", repos=NULL, type="source")
 ```
 
+### 代码语法 {.unnumbered}
 
-### Code syntax {.unnumbered}  
+为了在本指南中表述清楚，有时会使用 :: 符号在函数前面加上 package 名，如下所示： `package_name::function_name()`。
 
-For clarity in this handbook, functions are sometimes preceded by the name of their package using the `::` symbol in the following way: `package_name::function_name()`  
-
-Once a package is loaded for a session, this explicit style is not necessary. One can just use `function_name()`. However writing the package name is useful when a function name is common and may exist in multiple packages (e.g. `plot()`). Writing the package name will also load the package if it is not already loaded. 
+如果会话已经加载了package ，就不需要这种样式。 可以只使用`function_name()`。 然而，当函数名很常见并且可能存在于多个package 中时（例如`plot()`），增加package 名很有用。 如果package 尚未加载，则写入package 名称也会加载该package 。
 
 ```{r eval=FALSE}
-# This command uses the package "rio" and its function "import()" to import a dataset
+# 此命令使用package “rio”及其函数“import()”来导入数据集
 linelist <- rio::import("linelist.xlsx", which = "Sheet1")
 ```
 
+### 函数的帮助文档 {.unnumbered}
 
+要了解有关函数的更多信息，您可以在右下角 RStudio 的"帮助"选项卡中搜索它。 您还可以运行类似`?thefunctionname`的命令（将函数名称放在问号之后），帮助页面将出现在帮助面板中。 最后，还可以尝试在线搜索。
 
-### Function help {.unnumbered}  
+### 升级 packages {.unnumbered}
 
-To read more about a function, you can search for it in the Help tab of the lower-right RStudio. You can also run a command like  `?thefunctionname` (put the name of the function after a question mark) and the Help page will appear in the Help pane. Finally, try searching online for resources.  
+您可以通过重新安装来更新 packages。 您还可以单击 RStudio package 面板中的绿色"更新"按钮来查看哪些 packages有新版本。 请注意，如果函数的工作方式进行了重大修改，您的旧代码可能需要更新！
 
+### 删除 packages {.unnumbered}
 
+使用 **pacman** 中的 `p_delete()` 或 **base** R 中的 `remove.packages()`。或者，您可以找到包含您的packages 的文件夹并手动删除该文件夹。
 
-### Update packages {.unnumbered}  
+### 从属性 {.unnumbered}
 
-You can update packages by re-installing them. You can also click the green "Update" button in your RStudio Packages pane to see which packages have new versions to install. Be aware that your old code may need to be updated if there is a major revision to how a function works!  
+packages 通常依赖于其他 packages 才能工作。 这被称为从属性。 如果被依赖的 packages 无法安装，那么依赖它的 packages 也可能无法安装。
 
+使用 `p_depends()` 查看 package 依赖哪些 packages ，使用 `p_depends_reverse()`查看哪些 packages 依赖它。
 
-### Delete packages {.unnumbered}
-Use `p_delete()` from **pacman**, or `remove.packages()` from **base** R. Alternatively, go find the folder which contains your library and manually delete the folder.
+### 屏蔽函数 {.unnumbered}
 
+两个或多个 packages 包含相同的函数名的情况并不少见。 例如，package **dplyr** 有一个 `filter()`函数，但 package **stats** 也有。 默认的`filter()`函数来源取决于这些 packages 在 R 会话中第一次加载的顺序------后者将是命令 `filter()`的默认来源。
 
-
-### Dependencies {.unnumbered}  
-
-Packages often depend on other packages to work. These are called dependencies. If a dependency fails to install, then the package depending on it may also fail to install.  
-
-See the dependencies of a package with `p_depends()`, and see which packages depend on it with `p_depends_reverse()`  
-
-
-
-### Masked functions {.unnumbered}  
-
-It is not uncommon that two or more packages contain the same function name. For example, the package **dplyr** has a `filter()` function, but so does the package **stats**. The default `filter()` function depends on the order these packages are first loaded in the R session - the later one will be the default for the command `filter()`. 
-
-You can check the order in your Environment pane of R Studio - click the drop-down for "Global Environment" and see the order of the packages. Functions from packages *lower* on that drop-down list will mask functions of the same name in packages that appear higher in the drop-down list. When first loading a package, R will warn you in the console if masking is occurring, but this can be easy to miss.  
+您可以在 R Studio 的环境面板中检查顺序 - 单击"全局环境"下拉列表并查看 packages 的顺序。 该下拉列表中较低的 package 中的函数将屏蔽在下拉列表中较高的 package 中的同名函数。 首次加载 package 时，如果发生屏蔽，R 会在控制台中警告您，但这很容易被忽略。
 
 ```{r out.width = "50%", fig.align = "center", echo=F}
 knitr::include_graphics(here::here("images", "masking_functions.png"))
 ```
 
-Here are ways you can fix masking:  
+以下是修复屏蔽的方法：
 
-1) Specify the package name in the command. For example, use `dplyr::filter()`  
-2) Re-arrange the order in which the packages are loaded (e.g. within `p_load()`), and **start a new R session**  
+1)  在命令中指定 package 名称。 例如，使用 `dplyr::filter()`
+2)  重新安排 packages 的加载顺序（例如在`p_load()`) 内），并**开始一个新的 R 会话**
 
+### 分离/卸载 {.unnumbered}
 
-
-### Detach / unload {.unnumbered}  
-
-To detach (unload) a package, use this command, with the correct package name and only one colon. Note that this may not resolve masking.  
+要分离（卸载）package，请使用下述命令，使用正确的package名称和一个冒号。 请注意，这可能无法解决屏蔽问题。
 
 ```{r, eval=F}
 detach(package:PACKAGE_NAME_HERE, unload=TRUE)
 ```
 
+### 安装旧版本 {.unnumbered}
 
-### Install older version {.unnumbered}  
+请参阅本[指南](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages)以安装特定 package 的旧版本。
 
-See this [guide](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages) to install an older version of a particular package.  
+### 推荐的packages {.unnumbered}
 
-
-### Suggested packages {.unnumbered}  
-
-See the page on [Suggested packages] for a listing of packages we recommend for everyday epidemiology.  
-
-
-
-
-
-
+有关我们为日常流行病学推荐的 packages 列表，请参阅 [推荐的 packages ] 页面。
 
 <!-- ======================================================= -->
-## Scripts {#scripts}
 
-Scripts are a fundamental part of programming. They are documents that hold your commands (e.g. functions to create and modify datasets, print visualizations, etc). You can save a script and run it again later. There are many advantages to storing and running your commands from a script (vs. typing commands one-by-one into the R console "command line"):  
+## 脚本 {#scripts}
 
-* Portability - you can share your work with others by sending them your scripts  
-* Reproducibility - so that you and others know exactly what you did  
-* Version control - so you can track changes made by yourself or colleagues  
-* Commenting/annotation - to explain to your colleagues what you have done  
+脚本是编程的基本组成部分。 它们是保存您的命令的文档（例如创建和修改数据集的函数、可视化等）。 您可以保存脚本并稍后再次运行。 从脚本中存储和运行命令有很多优点（与在 R 控制台"命令行"中输入命令相比）：
 
-### Commenting {.unnumbered}  
+-   可移植性 - 您可以通过向他人发送您的脚本来与他们分享您的工作\
+-   再现性 - 您和其他人能确切地知道您做了什么\
+-   版本控制 - 您可以跟踪自己或同事所做的更改\
+-   评论/注释 - 向您的同事解释您做了什么
 
-In a script you can also annotate ("comment") around your R code. Commenting is helpful to explain to yourself and other readers what you are doing. You can add a comment by typing the hash symbol (#) and writing your comment after it. The commented text will appear in a different color than the R code.  
+### 注解 {.unnumbered}
 
-Any code written after the # will not be run. Therefore, placing a # before code is also a useful way to temporarily block a line of code ("comment out") if you do not want to delete it). You can comment out/in multiple lines at once by highlighting them and pressing Ctrl+Shift+c (Cmd+Shift+c in Mac).  
+在脚本中，您可以在 R 代码周围注释。 注释有助于向您自己和其他读者解释您在做什么。 您可以通过键入井号 (\#) 并在其后写下您的注释来添加注释。 注释文本将以与 R 代码不同的颜色显示。
 
+在 \# 之后编写的任何代码都不会运行。 因此，如果不想删除某行代码，则在代码前放置 \# 也是一种临时阻止代码行（"注释掉"）的有用方法。 您可以通过突出显示它们并按 Ctrl+Shift+c（在 Mac 中为 Cmd+Shift+c）来一次注释掉/回多行。
 
 ```{r, eval = F}
-# A comment can be on a line by itself
-# import data
-linelist <- import("linelist_raw.xlsx") %>%   # a comment can also come after code
-# filter(age > 50)                          # It can also be used to deactivate / remove a line of code
+# 注释可以单独在一行上
+# 导入数据
+linelist <- import("linelist_raw.xlsx") %>%   # 注释也可以在代码之后
+# filter(age > 50)                          # 注释还可用于停用/阻止一行代码
   count()
 
 ```
 
-* Comment on *what* you are doing *and on **why** you are doing it*.  
-* Break your code into logical sections  
-* Accompany your code with a text step-by-step description of what you are doing (e.g. numbered steps)  
+-   注释您在做什么以及您**为什么**这样做\
+-   将您的代码基于逻辑来分解\
+-   为您的代码附上您正在执行的操作的每步的文本说明（例如编号的步骤）
 
-### Style {.unnumbered}  
+### 格式 {.unnumbered}
 
-It is important to be conscious of your coding style - especially if working on a team. We advocate for the **tidyverse** [style guide](https://style.tidyverse.org/). There are also packages such as **styler** and **lintr** which help you conform to this style.  
+您的编码格式很重要 - 特别是在团队中工作时。 我们提倡 **tidyverse** [格式指南](https://style.tidyverse.org/)。 还有诸如 **styler** 和 **lintr** 之类的packages 可以帮助您符合这种格式。
 
-A few very basic points to make your code readable to others:  
-  * When naming objects, use only lowercase letters, numbers, and underscores `_`, e.g. `my_data`  
-  * Use frequent spaces, including around operators, e.g. `n = 1` and `age_new <- age_old + 3`  
+使您的代码对其他人可读的一些要点：\
+\*命名对象时，仅使用小写字母、数字和下划线 `_`，例如 `my_data`\
+\* 频繁地使用空格，包括运算符周围，例如 `n = 1` 和`age_new <- age_old + 3`
 
+### 示例脚本 {.unnumbered}
 
-### Example Script {.unnumbered}  
-
-Below is an example of a short R script. Remember, the better you succinctly explain your code in comments, the more your colleagues will like you!  
+下面是一个简短的 R 脚本示例。 请记住，您在注释中越简洁地解释您的代码，您的同事就会越喜欢您的代码！
 
 ```{r out.width = "100%", fig.align = "center", echo=F}
 knitr::include_graphics(here::here("images", "example_script.png"))
 ```
 
 <!-- ======================================================= -->
+
 ### R markdown {.unnumbered}
 
-An R markdown script is a type of R script in which the script itself *becomes* an output document (PDF, Word, HTML, Powerpoint, etc.). These are incredibly useful and versatile tools often used to create dynamic and automated reports. Even this website and handbook is produced with R markdown scripts!  
+R markdown 脚本是一种 R 脚本，其中脚本本身成为输出文档（PDF、Word、HTML、Powerpoint 等）。 R markdown 脚本通常用于创建动态和自动化报告。 本网站和指南也是用 R markdown 脚本制作的！
 
-It is worth noting that beginner R users can also use R Markdown - do not be intimidated! To learn more, see the handbook page on [Reports with R Markdown] documents.  
-
+值得注意的是，初学者 R 用户也可以使用 R Markdown - 不要被吓倒！ 要了解更多信息，请参阅 [报告和 R Markdown] 页。
 
 <!-- ======================================================= -->
+
 ### R notebooks {.unnumbered}
 
-There is no difference between writing in a Rmarkdown vs an R notebook. However the execution of the document differs slightly. See this [site](http://uc-r.github.io/r_notebook) for more details.
+在 R Markdown 和 R notebook 中写作没有区别。 但是，文档的执行方式略有不同。 有关更多详细信息，请参阅此[站点](http://uc-r.github.io/r_notebook)。
 
 <!-- ======================================================= -->
+
 ### Shiny {.unnumbered}
 
-Shiny apps/websites are contained within one script, which must be named `app.R`. This file has three components:  
+Shiny 的应用程序/网站包含在一个脚本中，该脚本必须命名为 `app.R`。 该文件包含三个组成部分：
 
-1) A user interface (ui)  
-2) A server function  
-3) A call to the `shinyApp` function  
+1)  用户界面 (ui)\
 
-See the handbook page on [Dashboards with Shiny], or this online tutorial: [Shiny tutorial](https://shiny.rstudio.com/tutorial/written-tutorial/lesson1/)
+2)  服务器函数\
 
-*In older times, the above file was split into two files (`ui.R` and `server.R`)*
+3)  调用 `shinyApp` 函数
 
+请参阅 [控制面板和 Shiny] 的指南页面，或此在线教程：[Shiny 教程](https://shiny.rstudio.com/tutorial/written-tutorial/lesson1/)
 
-### Code folding {.unnumbered}  
+在旧版本中，上述文件被拆分为两个文件（*`ui.R`* 和 *`server.R`*）
 
-You can collapse portions of code to make your script easier to read.  
+### 代码折叠 {.unnumbered}
 
-To do this, create a text header with #, write your header, and follow it with at least 4 of either dashes (-), hashes (#) or equals (=). When you have done this, a small arrow will appear in the "gutter" to the left (by the row number). You can click this arrow and the code below until the next header will collapse and a dual-arrow icon will appear in its place.  
+您可以折叠部分代码以使脚本更易于阅读。
 
-To expand the code, either click the arrow in the gutter again, or the dual-arrow icon. There are also keyboard shortcuts as explained in the [RStudio section](#rstudio) of this page.   
+如果要折叠代码，请创建一个带有 \# 的文本标题，写下您的标题，并在其后至少使用 4 个短划线 (-)、散列 (\#) 或等号 (=)。 完成此操作后，左侧的"装订线"中会出现一个小箭头（按行号）。 您可以单击此箭头和下面的代码，直到下一个标题将折叠并且双箭头图标将出现在其位置。
 
-By creating headers with #, you will also activate the Table of Contents at the bottom of your script (see below) that you can use to navigate your script. You can create sub-headers by adding more # symbols, for example # for primary, ## for seconary, and ### for tertiary headers.  
+要展开代码，请再次单击装订线中的箭头或双箭头图标。 有一些键盘快捷键也能实现此功能，如本页 [RStudio](#rstudio) 部分所述。
 
-Below are two versions of an example script. On the left is the original with commented headers. On the right, four dashes have been written after each header, making them collapsible. Two of them have been collapsed, and you can see that the Table of Contents at the bottom now shows each section.  
+通过使用 \# 创建标题，您还将激活脚本底部的目录（见下文），您可以使用它来导航脚本。 您可以通过添加更多 \# 符号来创建子标题，例如，\# 表示一级标题，\#\# 表示二级标题，\#\#\# 表示三级标题。
+
+下面是示例脚本的两个版本。 左边是带有注释标题的原件。 在右侧，每个标题后面都写了四个破折号，使它们可以折叠。 其中两个已折叠，您可以看到底部的目录现在显示了每个部分。
 
 ```{r, out.width = c('50%'), fig.show='hold', echo=F}
 knitr::include_graphics(here::here("images", "code_folding1.png"))
 knitr::include_graphics(here::here("images", "code_folding2.png"))
 ```
 
-Other areas of code that are automatically eligible for folding include "braced" regions with brackets `{ }` such as function definitions or conditional blocks (if else statements). You can read more about code folding at the RStudio [site](https://support.rstudio.com/hc/en-us/articles/200484568-Code-Folding-and-Sections).  
-
-
+自动符合折叠条件的其他代码区域包括带括号`{ }`的区域，例如函数定义或条件块（if else 语句）。 您可以在 RStudio [站点](https://support.rstudio.com/hc/en-us/articles/200484568-Code-Folding-and-Sections)上阅读有关代码折叠的更多信息。
 
 <!-- ======================================================= -->
-<!-- ======================================================= -->
-<!-- ======================================================= -->
-## Working directory  
 
-The working directory is the root folder location used by R for your work - where R looks for and saves files by default. By default, it will save new files and outputs to this location, and will look for files to import (e.g. datasets) here as well.  
+<!-- ======================================================= -->
 
-The working directory appears in grey text at the top of the RStudio Console pane. You can also print the current working directory by running `getwd()` (leave the parentheses empty).  
+<!-- ======================================================= -->
+
+## 工作目录
+
+工作目录是在使用 R 时的根文件夹位置 - 默认情况下，R 会在其中查找和保存文件。 默认情况下，它会将新文件和输出保存到此位置，并将在此处查找要导入的文件（例如数据集）。
+
+工作目录以灰色文本显示在 RStudio 控制台面板的顶部。 您还可以通过运行 `getwd()` （括号内为空）输出当前工作目录。
 
 ```{r out.width = "100%", fig.align = "center", echo=F}
 knitr::include_graphics(here::here("images", "working_directory_1.png"))
 ```
 
+### 管理方法推荐 {.unnumbered}
 
-### Recommended approach {.unnumbered}  
+**有关我们推荐的用于管理工作目录的方法，请参阅 [R 项目] 页面。**
 
-**See the page on [R projects] for details on our recommended approach to managing your working directory.**  
-A common, efficient, and trouble-free way to manage your working directory and file paths is to combine these 3 elements in an [R project][R projects]-oriented workflow:  
+\
+一种常见、高效且无故障的管理工作目录和文件路径的方法是之下3个步骤组成的工作流：
 
-1) An R Project to store all your files (see page on [R projects])  
-2) The **here** package to locate files (see page on [Import and export])  
-3) The **rio** package to import/export files (see page on [Import and export])  
-
+1)  R 项目用于存储所有文件（请参阅 [R 项目] 页面）\
+2)  **here** package 用于定位文件（请参阅 [导入和导出] 页面）\
+3)  **rio** package 用于导入/导出文件（请参阅 [导入和导出] 页面）
 
 <!-- ======================================================= -->
-### Set by command {.unnumbered}
 
-Until recently, many people learning R were taught to begin their scripts with a `setwd()` command. Please instead consider using an [R project][R projects]-oriented workflow and read the [reasons for not using `setwd()`](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/). In brief, your work becomes specific to your computer, file paths used to import and export files become "brittle", and this severely hinders collaboration and use of your code on any other computer. There are easy alternatives!  
+### 通过命令设置工作目录 {.unnumbered}
 
-As noted above, although we do not recommend this approach in most circumstances, you can use the command `setwd()` with the desired folder file path in quotations, for example:  
+迄今为止，许多学习 R 的人都被教导用 `setwd()` 命令开始他们的脚本。 请考虑使用面向 [R 项目] 的工作流程并阅读不建议使用 `setwd()` 的[原因](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/)。 简单来说，使用`setwd()`后，您的工作变得只适用于您的计算机。用于导入和导出文件的文件路径变得"脆弱"，这严重阻碍了您的代码在其他计算机上的协作和使用。 更何况有简单的替代方案！
+
+虽然我们在大多数情况下不推荐这种方法，但您可以使用命令 `setwd()`并在引号中使用所需的文件路径，例如：
+
+如果文件路径特定于一台计算机，则使用 setwd() 设置工作目录可能会"脆弱"
 
 ```{r, eval=F}
 setwd("C:/Documents/R Files/My analysis")
 ```
 
-<span style="color: red;">**_DANGER:_** Setting a working directory with `setwd()` *can* be "brittle" if the file path is specific to one computer. Instead, use file paths relative to an R Project root directory (with the **here** package). </span>  
-
-
+[**警告:** 如果用 `setwd()`设置工作目录，会使得文件路径基于特定的电脑并且很"脆弱"。取而代之的是，用 **here** package 可以设置相对R项目根目录的文件路径。]{style="color: red;"}
 
 <!-- ======================================================= -->
-### Set manually {.unnumbered}  
 
-To set the working directory manually (the point-and-click equivalent of `setwd()`), click the Session drop-down menu and go to "Set Working Directory" and then "Choose Directory". This will set the working directory for that specific R session. Note: if using this approach, you will have to do this manually each time you open RStudio.  
+### 手动设置工作目录 {.unnumbered}
 
-
-<!-- ======================================================= -->
-### Within an R project {.unnumbered}
-
-If using an R project, the working directory will default to the R project root folder that contains the ".rproj" file. This will apply if you open RStudio by clicking open the R Project (the file with ".rproj" extension).  
-
+要手动设置工作目录（相当于 `setwd()` 的点击式设置），请单击会话 （session）下拉菜单并转到"设置工作目录"，然后转到"选择目录"。 这将为该 R 会话设置工作目录。 注意：如果使用这种方法，每次打开 RStudio 时都必须手动执行此操作。
 
 <!-- ======================================================= -->
-### Working directory in an R markdown {.unnumbered}
 
-In an R markdown script, the default working directory is the folder the Rmarkdown file (`.Rmd`) is saved within. If using an R project and **here** package, this does not apply and the working directory will be `here()` as explained in the [R projects] page.  
+### R项目中的工作目录 {.unnumbered}
 
-If you want to change the working directory of a stand-alone R markdown (not in an R project), if you use `setwd()` this will only apply to that specific code chunk. To make the change for all code chunks in an R markdown, edit the setup chunk to add the `root.dir = ` parameter, such as below:
+如果使用 R 项目，工作目录将默认为包含".rproj"文件的 R 项目根文件夹。 如果您通过单击R 项目文件（带有".rproj"扩展名的文件）来打开 RStudio，工作目录也将默认为 R 项目根文件夹。
+
+<!-- ======================================================= -->
+
+### R markdown 中的工作目录 {.unnumbered}
+
+在 R markdown 脚本中，默认工作目录是保存 Rmarkdown 文件 (.Rmd) 的文件夹。 如果使用 R 项目和 **here** package，工作目录将是 `here()`，正如 [R 项目] 页面中所述。
+
+如果您想更改为独立的 R markdown 的工作目录（不在 R 项目中），使用`setwd()`是不可行的，这将仅适用于该特定代码块。 要对 R markdown 中的所有代码块进行更改，请在设置块添加`root.dir =` 参数，如下所示：
 
 ```{r, eval=F}
 knitr::opts_knit$set(root.dir = 'desired/directorypath')
 ```
 
-It is much easier to just use the R markdown within an R project and use the **here** package.  
-
-
+在 R 项目中使用 R markdown 和 **here** package 要容易得多。
 
 <!-- ======================================================= -->
-### Providing file paths {.unnumbered}  
 
-Perhaps the most common source of frustration for an R beginner (at least on a Windows machine) is typing in a file path to import or export data. There is a thorough explanation of how to best input file paths in the [Import and export] page, but here are a few key points:  
+### 提供文件路径 {.unnumbered}
 
-**Broken paths**  
+对于 R 初学者（至少在 Windows 机器上）来说，最常见的失败可能来自于输入文件路径以导入或导出数据。 在[导入和导出]页面中有关于如何输入文件路径的详尽解释，但这里有几个关键点：
 
-Below is an example of an "absolute" or "full address" file path. These will likely break if used by another computer. One exception is if you are using a shared/network drive.  
+**不可用的路径**
 
-```
-C:/Users/Name/Document/Analytic Software/R/Projects/Analysis2019/data/March2019.csv  
-```
+以下是"绝对"或"完整"的文件路径的示例。 如果被另一台计算机使用，此路径可能不可用。 一个例外是使用的是共享/网络驱动器的时候。
 
-**Slash direction**  
+    C:/Users/Name/Document/Analytic Software/R/Projects/Analysis2019/data/March2019.csv  
 
-*If typing in a file path, be aware the direction of the slashes.* Use *forward slashes* (`/`) to separate the components ("data/provincial.csv"). For Windows users, the default way that file paths are displayed is with *back slashes* (\\) - so you will need to change the direction of each slash. If you use the **here** package as described in the [R projects] page the slash direction is not an issue.  
+**斜线方向**
 
-**Relative file paths**  
+当手动输入文件路径时，请注意斜线的方向。 使用正斜杠 (`/`) 分隔组件 ("data/provincial.csv")。 对于 Windows 用户，文件路径的默认显示方式是使用反斜杠 (\\) - 因此您需要更改每个斜杠的方向。 如果您按照 [R 项目] 页面中的描述使用 **here** package ，则可忽略斜线方向问题。
 
-We generally recommend providing "relative" filepaths instead - that is, the path *relative to* the root of your R Project. You can do this using the **here** package as explained in the [R projects] page. A relativel filepath might look like this:  
+**相对文件路径**
+
+我们通常建议提供"相对的"文件路径，即相对于 R 项目根目录的路径。 您可以按照 [R 项目] 页面中的说明使用 **here** package 创建路径。 相对文件路径如下所示：
 
 ```{r, eval=F}
-# Import csv linelist from the data/linelist/clean/ sub-folders of an R project
+# 导入 csv linelist 来自于R项目的 data/linelist/clean/ sub-folders 文件
 linelist <- import(here("data", "clean", "linelists", "marin_country.csv"))
 ```
 
-Even if using relative file paths within an R project, you can still use absolute paths to import/export data  outside your R project.  
-
-
-
-
+即使在 R 项目中使用相对文件路径，您仍然可以使用绝对路径在 R 项目之外导入/导出数据。
 
 <!-- ======================================================= -->
-## Objects {#objects}
 
-Everything in R is an object, and R is an "object-oriented" language. These sections will explain:  
+## 对象 {#objects}
 
-* How to create objects (`<-`) 
-* Types of objects (e.g. data frames, vectors..)  
-* How to access subparts of objects (e.g. variables in a dataset)  
-* Classes of objects (e.g. numeric, logical, integer, double, character, factor)  
+R 中的一切都是对象，而 R 是一种"面向对象"语言。 本模块将解释：
 
-
-
-<!-- ======================================================= -->
-### Everything is an object {.unnumbered} 
-
-*This section is adapted from the [R4Epis project](https://r4epis.netlify.app/training/r_basics/objects/).*  
-Everything you store in R - datasets, variables, a list of village names, a total population number, even outputs such as graphs - are **objects** which are **assigned a name** and **can be referenced** in later commands.  
-
-An object exists when you have assigned it a value (see the assignment section below). When it is assigned a value, the object appears in the Environment (see the upper right pane of RStudio). It can then be operated upon, manipulated, changed, and re-defined.
-
+-   如何创建对象 (`<-`)
+-   对象的结构种类（例如数据框、向量...）
+-   如何访问对象的子部分（例如数据集中的变量）
+-   对象的类（例如数字、逻辑、整数、双精度、字符、因子）
 
 <!-- ======================================================= -->
-### Defining objects (`<-`) {.unnumbered}
 
-**Create objects *by assigning them a value* with the <- operator.**  
-You can think of the assignment operator `<-` as the words "is defined as". Assignment commands generally follow a standard order:
- 
-**object_name**  <-  **value** (or process/calculation that produce a value)
+### 一切内容皆是对象 {.unnumbered}
 
-For example, you may want to record the current epidemiological reporting week as an object for reference in later code. In this example, the object `current_week` is created when it is assigned the value `"2018-W10"` (the quote marks make this a character value). The object `current_week` will then appear in the RStudio Environment pane (upper-right) and can be referenced in later commands.  
+本节改编自 [*R4Epis*](https://r4epis.netlify.app/training/r_basics/objects/) 项目。
 
-See the R commands and their output in the boxes below. 
+您在 R 中存储的所有内容------数据集、变量、村庄名称列表、总人口数，甚至诸如图表之类的输出------都是被分配了名称的对象，可以在以后的命令中引用。
+
+当你给它赋值时，一个对象就存在了（参见下面的赋值部分）。 当它被赋值时，对象出现在环境面板中（参见 RStudio 的右上面板）。 然后用户可以对其进行操作、更改和重新定义。.
+
+<!-- ======================================================= -->
+
+### 定义对象 (`<-`) {.unnumbered}
+
+**通过使用 \<- 运算符为对象赋值来创建对象。**\
+您可以将赋值运算符 `<-`视为词语"被定义为"。 赋值命令通常遵循标准顺序：
+
+**对象名称** \<- **被赋予的值**（或产生值的过程与计算）
+
+例如，您可能希望将当前的流行病学报告周作为对象，以便在以后的代码中进行引用。 在此示例中，对象 `current_week` 在被分配值`"2018-W10"`时创建（引号使其成为字符值）。 然后对象 `current_week` 将出现在 RStudio 环境面板（右上角）中，并且可以在以后的命令中引用。.
+
+请参阅下面框中的 R 命令及其输出。
 
 ```{r basics_objects_assignment}
-current_week <- "2018-W10"   # this command creates the object current_week by assigning it a value
-current_week                 # this command prints the current value of current_week object in the console
+current_week <- "2018-W10"   # 此命令通过为其赋予一个值来创建对象 current_week
+current_week                 # 此命令在控制台中打印 current_week 对象的当前值
 ```
 
-<span style="color: black;">**_NOTE:_** Note the `[1]` in the R console output is simply indicating that you are viewing the first item of the output</span>
+[**注释:** R 控制台输出的`[1]`只是表明您正在查看的是输出的第一项]{style="color: black;"}
 
+[**警示*:*** 通过运行复制命令重新对对象进行赋值，可以随时**覆盖对象的值。** 因此，**命令的顺序是极其重要的**。]{style="color: orange;"}
 
-<span style="color: orange;">**_CAUTION:_** **An object's value can be over-written** at any time by running an assignment command to re-define its value. Thus, the **order of the commands run is very important**.</span>
-
-The following command will re-define the value of `current_week`: 
+以下命令将重新定义 `current_week`的值：
 
 ```{r basics_objects_reassignment}
-current_week <- "2018-W51"   # assigns a NEW value to the object current_week
-current_week                 # prints the current value of current_week in the console
+current_week <- "2018-W51"   # 为对象 current_week分配一个新值
+current_week                 # 在控制台中打印 current_week 的当前值
 ```
 
-**Equals signs `=`**  
+**等号 `=`**
 
-You will also see equals signs in R code:  
+您在 R 代码中也会看到等号：
 
-* A double equals sign `==` between two objects or values asks a logical *question*: "is this equal to that?".  
-* You will also see equals signs within functions used to specify values of function arguments (read about these in sections below), for example `max(age, na.rm = TRUE)`.  
-* You *can* use a single equals sign `=` in place of `<-` to create and define objects, but this is discouraged. You can read about why this is discouraged [here](https://renkun.me/2014/01/28/difference-between-assignment-operators-in-r/).  
+-   两个对象或值之间的双等号`==` 代表一个逻辑问题："这两个对象或值相等吗？"。.\
+-   您还将在函数中指定函数参数值的时候看到等号（在下面的章节中会有相关内容），例如 `max(age, na.rm = TRUE)`。\
+-   您可以使用单个等号 `=` 代替 `<-` 来创建和定义对象，但用户不被鼓励这样做。 您可以在[此处](https://renkun.me/2014/01/28/difference-between-assignment-operators-in-r/)阅读有关信息。
 
+**数据集**
 
-**Datasets**  
-
-Datasets are also objects (typically "dataframes") and must be assigned names when they are imported. In the code below, the object `linelist` is created and assigned the value of a CSV file imported with the **rio** package and its `import()` function.  
+数据集也是对象（通常也被称作"数据框"），在导入时必须被指定名称。 在下面的代码中，创建了对象 `linelist` 并使用 **rio** package 及 `import()`函数为其分配了CSV 文件的值。
 
 ```{r basics_objects_dataframes, eval=FALSE}
-# linelist is created and assigned the value of the imported CSV file
+# 已创建 linelist 并为其分配导入的 CSV 文件的值
 linelist <- import("my_linelist.csv")
 ```
 
-You can read more about importing and exporting datasets with the section on [Import and export].
+您可以在 [导入和导出] 部分阅读有关导入和导出数据集的更多信息。
 
-<span style="color: orange;">**_CAUTION:_** A quick note on naming of objects:</span>
+[**警示:** 关于对象命名的快速说明:]{style="color: orange;"}
 
-  * Object names must not contain spaces, but you should use underscore (_) or a period (.) instead of a space.  
-  * Object names are case-sensitive (meaning that Dataset_A is different from dataset_A). 
-  * Object names must begin with a letter (cannot begin with a number like 1, 2 or 3). 
+-   对象名称不得包含空格，您可以使用下划线 (\_) 或句点 (.)代替空格。
+-   对象名称区分大小写（意味着 Dataset_A 与 dataset_A 是不同的对象）。
+-   对象名称必须以字母开头（不能以 1、2 或 3 之类的数字开头）。
 
-**Outputs**  
+**输出**
 
-Outputs like tables and plots provide an example of how outputs can be saved as objects, or just be printed without being saved. A cross-tabulation of gender and outcome using the **base** R function `table()` can be printed directly to the R console (*without* being saved).
+表格和绘图等输出选项可以将输出另存为对象或仅打印而不保存。 使用 **base** R 的函数 `table()` 可以将性别和结果交叉表直接打印到 R 控制台（不会被保存）。
 
 ```{r}
-# printed to R console only
+# 仅打印到 R 控制台
 table(linelist$gender, linelist$outcome)
 ```
 
-But the same table can be saved as a named object. Then, optionally, it can be printed.
+但是同一个表可以被保存为命名对象。 然后它可以可选地被打印。
 
 ```{r}
-# save
+# 保存
 gen_out_table <- table(linelist$gender, linelist$outcome)
 
-# print
+# 打印
 gen_out_table
 ```
 
-**Columns**  
+**列**
 
-Columns in a dataset are also objects and can be defined, over-written, and created as described below in the section on Columns. 
+数据集内的列也是对象，可以按照下面关于列的部分中的描述进行定义、覆盖和创建。
 
-You can use the assignment operator from **base** R to create a new column. Below, the new column `bmi` (Body Mass Index) is created, and for each row the new value is result of a mathematical operation on the row's value in the `wt_kg` and `ht_cm` columns.  
+您可以使用 **base** R 中的赋值运算符来创建新列。 以下示例创建了新列 `bmi`（身体质量指数），对于每一行，其值是对 `wt_kg` 和 `ht_cm` 列中的行值进行数学运算的结果。
 
 ```{r, eval=F}
-# create new "bmi" column using base R syntax
+# 使用base R 创建新的“bmi”列
 linelist$bmi <- linelist$wt_kg / (linelist$ht_cm/100)^2
 ```
 
-However, in this handbook, we emphasize a different approach to defining columns, which uses the function `mutate()` from the **dplyr** package and *piping* with the pipe operator (`%>%`). The syntax is easier to read and there are other advantages explained in the page on [Cleaning data and core functions]. You can read more about *piping* in the Piping section below.  
+然而，在本手册中，我们倾向用另一种定义列，使用 **dplyr** package 中的函数 `mutate()` 和管道运算符 (%\>%)。 这样语法更易于阅读，并且在 [清理数据和核心功能] 页面中解释了其他优点。 您可以在下面的管道部分阅读有关管道运算的更多信息。
 
-```{r, eval=F} 
-# create new "bmi" column using dplyr syntax
+```{r, eval=F}
+# 使用 dplyr 创建新的“bmi”列
 linelist <- linelist %>% 
   mutate(bmi = wt_kg / (ht_cm/100)^2)
 ```
 
-
 <!-- ======================================================= -->
-### Object structure {.unnumbered}  
 
-**Objects can be a single piece of data (e.g. `my_number <- 24`), or they can consist of structured data.**  
+### 对象结构 {.unnumbered}
 
-The graphic below is borrowed from [this online R tutorial](http://venus.ifca.unican.es/Rintro/dataStruct.html). It shows some common data structures and their names. Not included in this image is spatial data, which is discussed in the [GIS basics] page.  
+**对象可以是单条数据（例如 `my_number <- 24`），也可以由结构化数据组成。**
 
+下图是来自一个在线 [R 教程](http://venus.ifca.unican.es/Rintro/dataStruct.html) 。 它显示了一些常见的数据结构及其名称。 此图像中未包含空间数据，其会在 [GIS 基础] 页面中进行讨论
 
 ```{r basics_objects_structures, echo=F, out.width = "75%", out.height="50%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "R_data_structures.png"))
-```  
+```
 
-In epidemiology (and particularly field epidemiology), you will *most commonly* encounter data frames and vectors:  
+在流行病学（尤其是现场流行病学）中，您最常会遇到数据框和向量：
 
++----------+------------------------------------------------------------------+------------------------------------------------------+
+| 通用结构 | 解释                                                             | 例子                                                 |
++==========+==================================================================+======================================================+
+| 向量     | 一个单一对象序列的容器，即所有对象都属于同一类（例如数字、字符） | 数据框中的"变量"（列）是向量（例如列 `age_years`）。 |
++----------+------------------------------------------------------------------+------------------------------------------------------+
+| 数据框   | 绑定在一起的向量（例如列），且列都具有相同的行数。               | `linelist` 是一个数据框                              |
++----------+------------------------------------------------------------------+------------------------------------------------------+
 
-Common structure | Explanation | Example
-------------------- | ------------------------------------ | ------------------------  
-Vectors | A container for a sequence of singular objects, all of the same class (e.g. numeric, character). | **"Variables" (columns) in data frames are vectors** (e.g. the column `age_years`).  
-Data Frames | Vectors (e.g. columns) that are bound together that all have the same number of rows. | `linelist` is a data frame.
+请注意，要创建一个"独立"的向量（不是数据框的一部分），可以用函数 `c()`组合不同的元素。 例如，如果创建颜色图的色标向量：
 
-Note that to create a vector that "stands alone" (is not part of a data frame) the function `c()` is used to combine the different elements. For example, if creating a vector of colors plot's color scale: 
-`vector_of_colors <- c("blue", "red2", "orange", "grey")`  
-
+`vector_of_colors <- c("blue", "red2", "orange", "grey")`
 
 <!-- ======================================================= -->
-### Object classes  {.unnumbered}
 
-All the objects stored in R have a *class* which tells R how to handle the object. There are many possible classes, but common ones include:
+### 对象的类 {.unnumbered}
 
-Class |	Explanation | Examples
------- | ------------------------------------------ |  -----------------------------
-Character	| These are text/words/sentences **"within quotation marks"**. Math cannot be done on these objects.	| "Character objects are in quotation marks"  
-Integer | Numbers that are **whole only** (no decimals) | -5, 14, or 2000  
-Numeric	| These are numbers and **can include decimals**. If within quotation marks they will be considered character class. | 23.1 or 14  
-Factor | These are vectors that have a **specified order** or hierarchy of values | An variable of economic status with ordered values  
-Date | **Once R is told that certain data are Dates**, these data can be manipulated and displayed in special ways. See the page on [Working with dates] for more information. | 2018-04-12 or 15/3/1954 or Wed 4 Jan 1980  
-Logical | Values must be one of the two special values TRUE or FALSE (note these are **not** "TRUE" and "FALSE" in quotation marks) | TRUE or FALSE  
-data.frame | A data frame is how R stores a **typical dataset**. It consists of vectors (columns) of data bound together, that all have the same number of observations (rows). | The example AJS dataset named `linelist_raw` contains 68 variables with 300 observations (rows) each.  
-tibble | tibbles are a variation on data frame, the main operational difference being that they print more nicely to the console (display first 10 rows and only columns that fit on the screen) | Any data frame, list, or matrix can be converted to a tibble with `as_tibble()`  
-list | A list is like vector, but holds other objects that can be other different classes | A list could hold a single number, and a dataframe, and a vector, and even another list within it!  
+R 中存储的所有对象都有一个类型，它能告诉 R 如何处理对象。 R 中有许多类，但常见的包括：
 
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| 类             | 解释                                                                                                            | 例子                                                                                 |
++================+=================================================================================================================+======================================================================================+
+| Character 字符 | 这些是"**引号内**"的文本/单词/句子。 无法对这些对象进行数学运算。                                               | "Character objects are in quotation marks"                                           |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| Integer        | **只有整数**的数字（没有小数）                                                                                  | -5, 14, 或 2000                                                                      |
+|                |                                                                                                                 |                                                                                      |
+| 整数           |                                                                                                                 |                                                                                      |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| Numeric        | 数字类型，**可以包括小数**。 如果在引号内，它们将被视为字符类。                                                 | 23.1 或 14                                                                           |
+|                |                                                                                                                 |                                                                                      |
+| 数值           |                                                                                                                 |                                                                                      |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| Factor         | 这些是具有**指定顺序或值层次结构**的向量                                                                        | 具有有序值的经济状况变量                                                             |
+|                |                                                                                                                 |                                                                                      |
+| 因素           |                                                                                                                 |                                                                                      |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| Date           | 一旦 R 被告知某些数据是日期，这些数据就可以以特殊的方式进行操作和显示。 有关详细信息，请参阅页面 [日期的使用]。 | 2018-04-12 或 15/3/1954 或 Wed 4 Jan 1980                                            |
+|                |                                                                                                                 |                                                                                      |
+| 日期           |                                                                                                                 |                                                                                      |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| Logical        | 值必须是两个特殊值 TRUE 或 FALSE 之一（注意这些**不是**引号中的"TRUE"和"FALSE"）                                | TRUE 或 FALSE                                                                        |
+|                |                                                                                                                 |                                                                                      |
+| 逻辑           |                                                                                                                 |                                                                                      |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| data.frame     | 数据框是 R 典型的存储数据集的方式。 它由绑定在一起的数据向量（列）组成，它们都具有相同数量的观察（行）。        | 名为 `linelist_raw` 的示例 AJS 数据集包含 68 个变量，每个变量有 300 个观察值（行）。 |
+|                |                                                                                                                 |                                                                                      |
+| 数据框         |                                                                                                                 |                                                                                      |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| tibble         | tibbles 是数据框的一种变体，主要的操作区别在于它们可以更好地打印到控制台（显示前 10 行，仅显示适合屏幕的列）    | 任何数据框、列表或矩阵都可以使用 `as_tibble()` 转换为 tibble                         |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| list           | 列表类似于向量，但可以包含其他不同类的对象                                                                      | 一个列表可以包含一个数字、一个数据框、一个向量，甚至是另一个列表！                   |
+|                |                                                                                                                 |                                                                                      |
+| 列表           |                                                                                                                 |                                                                                      |
++----------------+-----------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+
 
-**You can test the class of an object by providing its name to the function `class()`**. Note: you can reference a specific column within a dataset using the `$` notation to separate the name of the dataset and the name of the column.
+您可以通过向函数**`class()`** 提供其名称来测试对象的类。 注意：您可以使用 \$ 符号来引用数据集中的特定列，以分隔数据集名称和列名称。
 
 ```{r, echo=TRUE,}
-class(linelist)         # class should be a data frame or tibble
+class(linelist)         # 类应该是数据框或 tibble
 
-class(linelist$age)     # class should be numeric
+class(linelist$age)     # 类应该是数值
 
-class(linelist$gender)  # class should be character
+class(linelist$gender)  # 类应该是字符
 ```
 
-Sometimes, a column will be converted to a different class automatically by R. Watch out for this! For example, if you have a vector or column of numbers, but a character value is inserted... the entire column will change to class character.  
+有时，R 会自动将列转换为不同的类。请注意这一点！ 例如，如果您有一个向量或一列数字，但插入了一个字符值......整个列将更改为字符类。
 
 ```{r}
-num_vector <- c(1,2,3,4,5) # define vector as all numbers
-class(num_vector)          # vector is numeric class
-num_vector[3] <- "three"   # convert the third element to a character
-class(num_vector)          # vector is now character class
+num_vector <- c(1,2,3,4,5) # 将向量定义为数字
+class(num_vector)          # 向量是数值类
+num_vector[3] <- "three"   # 将第三个元素转换为字符
+class(num_vector)          # 向量现在是字符类
 ```
 
+一个常见的例子是在操作数据框以打印表格时 - 如果您将所有行合并在一起并尝试将百分比与数字（例如 `23 (40%)`）粘贴/粘合在同一单元格中，则整个数字所在的列将转换为字符类，不能再用于数学计算。**有时，您需要将对象或列转换为另一个类。**
 
-One common example of this is when manipulating a data frame in order to print a table - if you make a total row and try to paste/glue together percents in the same cell as numbers (e.g. `23 (40%)`), the entire numeric column above will convert to character and can no longer be used for mathematical calculations.**Sometimes, you will need to convert objects or columns to another class.**
++------------------+-------------------------------------------------------------+
+| 函数             | 作用                                                        |
++==================+=============================================================+
+| `as.character()` | 转换为字符类                                                |
++------------------+-------------------------------------------------------------+
+| `as.numeric()`   | 转换为数值类                                                |
++------------------+-------------------------------------------------------------+
+| `as.integer()`   | 转换为整数类                                                |
++------------------+-------------------------------------------------------------+
+| `as.Date()`      | 转换为日期类 - 注意：有关详细信息，请参阅[日期](#dates)部分 |
++------------------+-------------------------------------------------------------+
+| `factor()`       | 转换为因素类 - 注意：重新定义值的顺序需要额外的参数         |
++------------------+-------------------------------------------------------------+
 
-Function | Action  
------------------ | --------------------------------------------------------------    
-`as.character()` | Converts to character class  
-`as.numeric()` | Converts to numeric class  
-`as.integer()` | Converts to integer class
-`as.Date()` | Converts to Date class - Note: see section on [dates](#dates) for details  
-`factor()` | Converts to factor - Note: re-defining order of value levels requires extra arguments
+与此同时，有一些 **base** R 的函数来检查对象是否属于特定类，例如
 
-Likewise, there are **base** R functions to check whether an object IS of a specific class, such as `is.numeric()`, `is.character()`, `is.double()`, `is.factor()`, `is.integer()`
-
-Here is [more online material on classes and data structures in R](https://swcarpentry.github.io/r-novice-inflammation/13-supp-data-structures/).
-
+[更多关于类和数据结构的在线资料。](https://swcarpentry.github.io/r-novice-inflammation/13-supp-data-structures/)
 
 <!-- ======================================================= -->
-### Columns/Variables (`$`) {.unnumbered}  
 
-**A column in a data frame is technically a "vector" (see table above)** - a series of values that must all be the same class (either character, numeric, logical, etc).  
+### 列/变量 (`$`) {.unnumbered}
 
-A vector can exist independent of a data frame, for example a vector of column names that you want to include as explanatory variables in a model. To create a "stand alone" vector, use the `c()` function as below:  
+**数据框中的一列在技术上是一个"向量"（见上表）**------一列必须包含属于同一类的值（字符、数字、逻辑等）。
+
+向量可以独立于数据框而存在。例如，您希望得到在模型中作为解释的列名称向量。 要创建"独立"向量，请使用 `c()` 函数，如下所示：
 
 ```{r, warning=F, message=F}
-# define the stand-alone vector of character values
+# 定义独立的字符值向量
 explanatory_vars <- c("gender", "fever", "chills", "cough", "aches", "vomit")
 
-# print the values in this named vector
+# 打印此向量中的值
 explanatory_vars
 ```
 
-**Columns in a data frame are also vectors and can be called, referenced, extracted, or created using the `$` symbol.** The `$` symbol connects the name of the column to the name of its data frame. In this handbook, we try to use the word "column" instead of "variable".  
-
+**数据框中的列也是向量，可以使用 \$ 符号调用、引用、提取或创建。** \$ 符号将列的名称与其数据框的名称连接起来。 在本手册中，我们尝试使用"列"一词而不是"变量"。
 
 ```{r basics_objects_call, eval=F}
-# Retrieve the length of the vector age_years
-length(linelist$age) # (age is a column in the linelist data frame)
+# 检索向量 age_years 的长度
+length(linelist$age) # (age 是 linelist 数据框中的一列)
 
 ```
 
-By typing the name of the dataframe followed by `$` you will also see a drop-down menu of all columns in the data frame. You can scroll through them using your arrow key, select one with your Enter key, and avoid spelling mistakes!  
+通过在数据框的名称后面写入 \$，您还将看到包含数据框中所有列的下拉菜单。 您可以使用箭头键滚动浏览它们，使用 Enter 键选择一个，这样避免拼写错误！
 
 ```{r echo=F, out.width = "100%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "Calling_Names.gif"))
-```  
-
-
-
-<span style="color: darkgreen;">**_ADVANCED TIP:_** Some more complex objects (e.g. a list, or an `epicontacts` object) may have multiple levels which can be accessed through multiple dollar signs. For example `epicontacts$linelist$date_onset`</span>
-
-
-
-<!-- ======================================================= -->
-### Access/index with brackets (`[ ]`) {.unnumbered}  
-
-You may need to view parts of objects, also called "indexing", which is often done using the square brackets `[ ]`. Using `$` on a dataframe to access a column is also a type of indexing.  
-
-```{r}
-my_vector <- c("a", "b", "c", "d", "e", "f")  # define the vector
-my_vector[5]                                  # print the 5th element
 ```
 
-Square brackets also work to return specific parts of an returned output, such as the output of a `summary()` function: 
+一些更复杂的对象（例如列表或epicontacts 对象）可能有多个级别，可以通过多个美元符号访问。 例如
+
+[**高级提示:** 一些更复杂的对象（例如列表或者`epicontacts` 对象）可能存在多个级别，用户可以通过多个美元符号来访问。例如：]{style="color: darkgreen;"}
+
+<!-- ======================================================= -->
+
+### 使用方括号(`[ ]`)访问/索引 {.unnumbered}
+
+您可能需要查看对象的一部分，也称为"索引"，这通常使用方括号 `[ ]`完成。 在数据帧上使用 `$` 来访问列也是一种索引。
 
 ```{r}
-# All of the summary
+my_vector <- c("a", "b", "c", "d", "e", "f")  # 定义向量
+my_vector[5]                                  # 打印第5个元素
+```
+
+方括号还可用于返回输出的特定部分，例如 `summary()` 函数的输出：
+
+```{r}
+# 所有的linelist$age的统计集合
 summary(linelist$age)
 
-# Just the second element of the summary, with name (using only single brackets)
+# 只是统计集合的第二个元素，带有名称（仅使用单括号）
 summary(linelist$age)[2]
 
-# Just the second element, without name (using double brackets)
+# 只是统计集合的第二个元素，不带名称（使用双括号）
 summary(linelist$age)[[2]]
 
-# Extract an element by name, without showing the name
+# 按名称提取元素，不显示名称
 summary(linelist$age)[["Median"]]
 
 ```
 
-Brackets also work on data frames to view specific rows and columns. You can do this using the syntax `dataframe[rows, columns]`:  
+括号还可用于数据框以查看特定的行和列。 您可以使用语法`dataframe[rows, columns]`:
 
 ```{r basics_objects_access, eval=F}
-# View a specific row (2) from dataset, with all columns (don't forget the comma!)
+# 查看数据集中的第2行，包含所有列（不要忘记逗号！）
 linelist[2,]
 
-# View all rows, but just one column
+# 查看所有行，但只看"date_onset"列
 linelist[, "date_onset"]
 
-# View values from row 2 and columns 5 through 10
+# 查看第 2 行中第 5 到 10 列的值
 linelist[2, 5:10] 
 
-# View values from row 2 and columns 5 through 10 and 18
+# 查看第 2 行中第 5 到 10 列再加上第18列的值
 linelist[2, c(5:10, 18)] 
 
-# View rows 2 through 20, and specific columns
+# 查看第 2 到 20 行中特定列的值
 linelist[2:20, c("date_onset", "outcome", "age")]
 
-# View rows and columns based on criteria
-# *** Note the dataframe must still be named in the criteria!
+# 根据条件查看行和列
+# *** 请注意，数据框名字必须在条件中！
 linelist[linelist$age > 25 , c("date_onset", "outcome", "age")]
 
-# Use View() to see the outputs in the RStudio Viewer pane (easier to read) 
-# *** Note the capital "V" in View() function
+# 使用 View() 在 RStudio Viewer 面板中查看输出（更易于阅读）
+# *** 注意 View() 函数中的大写“V”
 View(linelist[2:20, "date_onset"])
 
-# Save as a new object
+# 另存为新对象
 new_table <- linelist[2:20, c("date_onset")] 
 ```
 
-Note that you can also achieve the above row/column indexing on data frames and tibbles using **dplyr** syntax (functions `filter()` for rows, and `select()` for columns). Read more about these core functions in the [Cleaning data and core functions] page.  
+请注意，您还可以使用 **dplyr** 语法（针对行的函数 `filter()`和针对列的函数 `select()`）在数据框和tibbles 上实现上述行/列的索引。 在 [清理数据和核心功能] 页面中阅读有关这些功能的更多信息。
 
-To filter based on "row number", you can use the **dplyr** function `row_number()` with open parentheses as part of a logical filtering statement. Often you will use the `%in%` operator and a range of numbers as part of that logical statement, as shown below. To see the *first* N rows, you can also use the special **dplyr** function `head()`.   
+要根据"行号"进行过滤，您可以使用带有左括号的 **dplyr** 函数 `row_number()`作为逻辑过滤语句的一部分。 通常来说，您将使用 `%in%` 运算符和一系列数字作为该逻辑语句的一部分，如下所示。 要查看前 N 行，您还可以使用特殊的 **dplyr** 函数 `head()`。
 
 ```{r, eval=F}
-# View first 100 rows
+# 查看前100行
 linelist %>% head(100)
 
-# Show row 5 only
+# 仅显示第 5 行
 linelist %>% filter(row_number() == 5)
 
-# View rows 2 through 20, and three specific columns (note no quotes necessary on column names)
+# 查看第 2 行到第 20 行其中三个特定的列（注意列名不需要引号）
 linelist %>% filter(row_number() %in% 2:20) %>% select(date_onset, outcome, age)
 ```
 
+当索引一个 **list** 列表的对象时，单括号总是与列表一起返回，即使只返回一个对象。 但是，双括号可用于访问单个元素并返回与列表不同的类。
 
-When indexing an object of class **list**, single brackets always return with class list, even if only a single object is returned. Double brackets, however, can be used to access a single element and return a different class than list.  
-Brackets can also be written after one another, as demonstrated below.  
+括号也可以被顺序地书写，如下所示。
 
-This [visual explanation of lists indexing, with pepper shakers](https://r4ds.had.co.nz/vectors.html#lists-of-condiments) is humorous and helpful.
+这个关于列表索引和胡椒瓶的[可视化示例](https://r4ds.had.co.nz/vectors.html#lists-of-condiments)非常幽默且有用。
 
 ```{r}
-# define demo list
+# 定义一个用于演示的列表
 my_list <- list(
-  # First element in the list is a character vector
+  # 列表中的第一个元素是一个字符向量
   hospitals = c("Central", "Empire", "Santa Anna"),
   
-  # second element in the list is a data frame of addresses
+  # 列表中的第二个元素是地址的数据框
   addresses   = data.frame(
     street = c("145 Medical Way", "1048 Brown Ave", "999 El Camino"),
     city   = c("Andover", "Hamilton", "El Paso")
@@ -1197,111 +1163,111 @@ my_list <- list(
   )
 ```
 
-Here is how the list looks when printed to the console. See how there are two named elements:  
+这是打印到控制台时列表的外观。 看看有两个被命名的元素
 
-* `hospitals`, a character vector  
-* `addresses`, a data frame of addresses
+-   `hospitals`, 一个字符向量
+-   `addresses`, 一个地址的数据框
 
 ```{r}
 my_list
 ```
-Now we extract, using various methods:  
+
+现在我们用不同方法提取对象：
 
 ```{r}
-my_list[1] # this returns the element in class "list" - the element name is still displayed
+my_list[1] # 这将返回“list”类中的元素 - 元素名称仍然显示
 
-my_list[[1]] # this returns only the (unnamed) character vector
+my_list[[1]] # 这仅返回（未命名的）字符向量
 
-my_list[["hospitals"]] # you can also index by name of the list element
+my_list[["hospitals"]] # 您还可以按列表元素的名称索引
 
-my_list[[1]][3] # this returns the third element of the "hospitals" character vector
+my_list[[1]][3] # 这将返回“医院”字符向量的第三个元素
 
-my_list[[2]][1] # This returns the first column ("street") of the address data frame
+my_list[[2]][1] # 这将返回地址数据框的第一列（“街道”）
 
 ```
 
-
-
 <!-- ======================================================= -->
-### Remove objects {.unnumbered} 
 
-You can remove individual objects from your R environment by putting the name in the `rm()` function (no quote marks):  
+### 移除对象 {.unnumbered}
+
+您可以通过将名称放在`rm()` 函数中（无引号）从 R 环境中删除单个对象：
 
 ```{r, eval=F}
 rm(object_name)
 ```
 
-You can remove all objects (clear your workspace) by running:  
+您可以通过运行以下命令删除所有对象（清除工作区）：
 
 ```{r, eval=F}
 rm(list = ls(all = TRUE))
 ```
 
-
+<!-- ======================================================= -->
 
 <!-- ======================================================= -->
-<!-- ======================================================= -->
-<!-- ======================================================= -->
-## Piping (`%>%`)  
-
-**Two general approaches to working with objects are:**  
-
-1) **Pipes/tidyverse** - pipes send an object from function to function - emphasis is on the *action*, not the object  
-2) **Define intermediate objects** - an object is re-defined again and again - emphasis is on the object  
-
 
 <!-- ======================================================= -->
-### **Pipes** {.unnumbered}
 
-**Simply explained, the pipe operator (`%>%`) passes an intermediate output from one function to the next.**  
-You can think of it as saying "then". Many functions can be linked together with `%>%`.  
+## 管道 (`%>%`)
 
-* **Piping emphasizes a sequence of actions, not the object the actions are being performed on**  
-* Pipes are best when a sequence of actions must be performed on one object  
-* Pipes come from the package **magrittr**, which is automatically included in packages **dplyr** and **tidyverse**
-* Pipes can make code more clean and easier to read, more intuitive
+**一般用来处理对象的两种方法是：**
 
-Read more on this approach in the tidyverse [style guide](https://style.tidyverse.org/pipes.html)  
+1)  **Pipes/tidyverse** - 管道从一个函数发送一个对象到另一个函数------重点是动作，而不是对象\
+2)  **定义中间对象** - 一个对象一次又一次地被重新定义------重点是在这个对象上
 
-Here is a fake example for comparison, using fictional functions to "bake a cake". First, the pipe method:  
+<!-- ======================================================= -->
+
+### 管道 {.unnumbered}
+
+**简单解释一下，管道运算符 (`%>%`) 将中间输出从一个函数传递到下一个函数。**\
+你可以把它想象成说"then"。 许多函数可以用 %\>% 链接在一起。
+
+-   **管道强调一系列动作，而不是正在执行动作的对象**
+-   当必须对一个对象执行一系列操作时，管道是最好用的
+-   管道来自package **magrittr**，它自动包含在packages **dplyr** 和 **tidyverse** 中
+-   管道可以使代码更干净、更易于阅读、更直观
+
+在 tidyverse [指南](https://style.tidyverse.org/pipes.html)中阅读有关此方法的更多信息
+
+这里有一个用于比较的假设示例，使用虚构的函数"bake a cake 烘培蛋糕"。首先是用管道的方法：
 
 ```{r piping_example_pipe, eval=F}
-# A fake example of how to bake a cake using piping syntax
+# 如何使用管道语法bake a cake烘培蛋糕的假示例
 
-cake <- flour %>%       # to define cake, start with flour, and then...
-  add(eggs) %>%   # add eggs
-  add(oil) %>%    # add oil
-  add(water) %>%  # add water
-  mix_together(         # mix together
+cake <- flour %>%       # 要定义蛋糕，先从面粉开始，然后…
+  add(eggs) %>%   # 加鸡蛋
+  add(oil) %>%    # 加黄油
+  add(water) %>%  # 加水
+  mix_together(         # 混合
     utensil = spoon,
     minutes = 2) %>%    
-  bake(degrees = 350,   # bake
+  bake(degrees = 350,   # 烘培
        system = "fahrenheit",
        minutes = 35) %>%  
-  let_cool()            # let it cool down
+  let_cool()            # 冷却
 ```
 
-Here is another [link](https://cfss.uchicago.edu/notes/pipes/#:~:text=Pipes%20are%20an%20extremely%20useful,code%20and%20combine%20multiple%20operations) describing the utility of pipes.  
+此[链接](https://cfss.uchicago.edu/notes/pipes/#:~:text=Pipes%20are%20an%20extremely%20useful,code%20and%20combine%20multiple%20operations)也描述管道的效用。
 
-Piping is not a **base** function. To use piping, the **magrittr** package must be installed and loaded (this is typically done by loading **tidyverse** or **dplyr** package which include it). You can [read more about piping in the magrittr documentation](https://magrittr.tidyverse.org/).
+管道不是 **base** 的函数。 要使用管道，必须安装并加载 **magrittr** package（这通常通过加载包含它的 **tidyverse**或 **dplyr** package 来完成）。 您可以在[magrittr 文档](https://magrittr.tidyverse.org/)中阅读更多有关管道的信息。
 
-Note that just like other R commands, pipes can be used to just display the result, or to save/re-save an object, depending on whether the assignment operator `<-` is involved. See both below:  
+请注意，就像其他 R 命令一样，管道可用于仅显示结果，或保存/重新保存对象，具体取决于是否涉及赋值运算符 `<-` 。 请比较以下两者：
 
 ```{r, eval=F}
-# Create or overwrite object, defining as aggregate counts by age category (not printed)
+# 创建或覆盖对象，定义为按年龄类别的聚合计数(不打印)
 linelist_summary <- linelist %>% 
   count(age_cat)
 ```
 
 ```{r}
-# Print the table of counts in the console, but don't save it
+# 在控制台打印计数表，但不保存
 linelist %>% 
   count(age_cat)
 ```
 
-
-**`%<>%`**  
-This is an "assignment pipe" from the **magrittr** package, which *pipes an object forward and also re-defines the object*. It must be the first pipe operator in the chain. It is shorthand. The below two commands are equivalent:  
+**`%<>%`**\
+这是来自 magrittr package的"分配管道"，它通向前一个对象，并重新定义该对象。 它必须是链中的第一个管道操作符。 它是简写的。 以下两个命令是等效的：
 
 ```{r, eval=F}
 linelist <- linelist %>%
@@ -1310,28 +1276,27 @@ linelist <- linelist %>%
 linelist %<>% filter(age > 50)
 ```
 
-
 <!-- ======================================================= -->
-### Define intermediate objects {.unnumbered}
 
-This approach to changing objects/dataframes may be better if:  
+### 定义中间对象 {.unnumbered}
 
-* You need to manipulate multiple objects  
-* There are intermediate steps that are meaningful and deserve separate object names
+在以下情况下，这种更改对象/数据框的方法可能会更好：
 
+-   您需要操作多个对象\
+-   有一些有意义的中间步骤，需要单独的对象名称
 
-**Risks:**  
+**风险:**
 
-* Creating new objects for each step means creating lots of objects. If you use the wrong one you might not realize it!  
-* Naming all the objects can be confusing  
-* Errors may not be easily detectable  
+-   为每一步创建新对象意味着要创建大量对象。 如果你用错了某个对象，你可能不会意识到！\
+-   命名所有对象可能会令人困惑\
+-   错误可能不容易检测到
 
-Either name each intermediate object, or overwrite the original, or combine all the functions together. All come with their own risks.  
+要么命名每个中间对象，要么覆盖原始对象，或者将所有函数组合在一起。 每个方法都有自己的风险。
 
-Below is the same fake "cake" example as above, but using this style:  
+下面是与上面相同的假"蛋糕"示例，但使用现在的样式：
 
 ```{r piping_example_redefine, eval=F}
-# a fake example of how to bake a cake using this method (defining intermediate objects)
+# 如何使用此方法烘焙蛋糕的虚拟示例（定义中间对象）
 batter_1 <- left_join(flour, eggs)
 batter_2 <- left_join(batter_1, oil)
 batter_3 <- left_join(batter_2, water)
@@ -1343,53 +1308,53 @@ cake <- bake(batter_4, degrees = 350, system = "fahrenheit", minutes = 35)
 cake <- let_cool(cake)
 ```
 
-Combine all functions together - this is difficult to read:  
+将所有函数组合在一起 - 这很难阅读：
 
 ```{r eval=F}
-# an example of combining/nesting mutliple functions together - difficult to read
+# 将多个函数组合/嵌套在一起的示例 - 难以阅读
 cake <- let_cool(bake(mix_together(batter_3, utensil = spoon, minutes = 2), degrees = 350, system = "fahrenheit", minutes = 35))
 ```
 
+<!-- ======================================================= -->
+
+## 关键运算符和函数 {#operators}
+
+本节详细介绍 R 中的运算符，例如：
+
+-   赋值运算符
+
+-   关系运算符（小于，等于..）\
+
+-   逻辑运算符（和，或...）
+
+-   处理缺失值\
+
+-   数学运算符和函数（+/-、\>、sum()、median()、...）\
+
+-   %in% 运算符
 
 <!-- ======================================================= -->
-## Key operators and functions {#operators}
 
-This section details operators in R, such as:  
+### 赋值运算符 {.unnumbered}
 
-* Definitional operators  
-* Relational operators (less than, equal too..)  
-* Logical operators (and, or...)  
-* Handling missing values  
-* Mathematical operators and functions (+/-, >, sum(), median(), ...)  
-* The `%in%` operator  
+**`<-`**
 
+R 中的基本赋值运算符是 `<-`，例如 `object_name <- value`。这个赋值运算符也可以写成`=`。 我们建议在R中一般使用 `<-` 。我们还建议将此类运算符周围增加空格，以提高可读性。
 
+**`<<-`**
 
-<!-- ======================================================= -->
-### Assignment operators {.unnumbered}  
+如果需要 [编写函数](#编写函数)，或以交互方式使用 R 与源脚本，那么您可能需要使用此赋值运算符 `<<-`（来自**base** R）。 此运算符用于在更高的"父级"R 环境中定义对象。 请参阅[在线参考资料](https://stat.ethz.ch/R-manual/R-devel/library/base/html/assignOps.html)。
 
-**`<-`**  
+**`%<>%`**
 
-The basic assignment operator in R is `<-`. Such that `object_name <- value`.  
-This assignment operator can also be written as `=`. We advise use of `<-` for general R use.  
-We also advise surrounding such operators with spaces, for readability.  
-
-
-**`<<-`**  
-
-If [Writing functions], or using R in an interactive way with sourced scripts, then you may need to use this assignment operator `<<-` (from **base** R). This operator is used to define an object in a higher 'parent' R Environment. See this [online reference](https://stat.ethz.ch/R-manual/R-devel/library/base/html/assignOps.html).
-
-
-**`%<>%`**  
-
-This is an "assignment pipe" from the **magrittr** package, which pipes an object forward and *also re-defines the object*. It must be the first pipe operator in the chain. It is shorthand, as shown below in two equivalent examples:  
+这是来自 magrittr package的"分配管道"，它通向前一个对象，并重新定义该对象。 它必须是链中的第一个管道操作符。 它是简写的。 以下两个命令是等效的：
 
 ```{r, eval=F}
 linelist <- linelist %>% 
   mutate(age_months = age_years * 12)
-```  
+```
 
-The above is equivalent to the below:  
+上面命令的等效于下面的：
 
 ```{r, eval=F}
 linelist %<>% mutate(age_months = age_years * 12)
@@ -1397,37 +1362,47 @@ linelist %<>% mutate(age_months = age_years * 12)
 
 **`%<+%`**
 
-This is used to add data to phylogenetic trees with the **ggtree** package. See the page on [Phylogenetic trees] or this online [resource book](https://yulab-smu.top/treedata-book/).  
-
-
- 
+这用于使用 **ggtree** package 将数据添加到系统发育树。 请参阅 [系统发育树] 上的页面或此[在线资源](https://yulab-smu.top/treedata-book/)。
 
 <!-- ======================================================= -->
-### Relational and logical operators {.unnumbered}  
 
-Relational operators compare values and are often used when defining new variables and subsets of datasets. Here are the common relational operators in R:  
+### 关系和逻辑运算符 {.unnumbered}
 
-Meaning                 |Operator     |Example       |Example Result
-------------------------|-------------|--------------|---------------------------
-Equal to                |`==`         |`"A" == "a"`  |`FALSE` (because R is case sensitive) *Note that == (double equals) is different from = (single equals), which acts like the assignment operator `<-`*
-Not equal to            |`!=`         |`2 != 0`      |`TRUE`
-Greater than            |`>`          |`4 > 2`       |`TRUE`
-Less than               |`<`          |`4 < 2`       |`FALSE`
-Greater than or equal to|`>=`         |`6 >= 4`      |`TRUE`
-Less than or equal to   |`<=`         |`6 <= 4`      |`FALSE`
-Value is missing        |`is.na()`    |`is.na(7)`    |`FALSE` (see page on [Missing data])
-Value is not missing    |`!is.na()`   |`!is.na(7)`   |`TRUE`
+关系运算符比较数值，通常在定义新变量和数据集子集时使用。 以下是 R 中常见的关系运算符：
 
-Logical operators, such as AND and OR, are often used to connect relational operators and create more complicated criteria. Complex statements might require parentheses ( ) for grouping and order of application.  
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 含义         | 运算符     | 例子         | 例子结果                                                                                          |
++==============+============+==============+===================================================================================================+
+| 等于？       | `==`       | `"A" == "a"` | `FALSE` 因为 R 区分大小写）请注意 ==（双等号）与 =（单等号）不同，后者的作用类似于赋值操作 *`<-`* |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 不等于？     | `!=`       | `2 != 0`     | `TRUE`                                                                                            |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 大于？       | `>`        | `4 > 2`      | `TRUE`                                                                                            |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 小于？       | `<`        | `4 < 2`      | `FALSE`                                                                                           |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 大于或等于？ | `>=`       | `6 >= 4`     | `TRUE`                                                                                            |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 小于或等于？ | `<=`       | `6 <= 4`     | `FALSE`                                                                                           |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 缺失值？     | `is.na()`  | `is.na(7)`   | `FALSE` (见[缺失数据]页面)                                                                        |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
+| 不缺失值？   | `!is.na()` | `!is.na(7)`  | `TRUE`                                                                                            |
++--------------+------------+--------------+---------------------------------------------------------------------------------------------------+
 
-Meaning    |Operator
------------|------------------------
-AND        |`&`
-OR         |`|` (vertical bar)
-Parentheses|`( )` Used to group criteria together and clarify order  of operations
+逻辑运算符，例如 AND（和） 和 OR（或），通常用于连接关系运算符并创建更复杂的条件。 复杂的语句可能需要括号 ( ) 来进行分组和确定顺序。
 
++----------+-----------------------------------------------------------+
+| 含义     | 运算符                                                    |
++==========+===========================================================+
+| 和       | `&`                                                       |
++----------+-----------------------------------------------------------+
+| 或       | `|` (垂直线条)                                            |
++----------+-----------------------------------------------------------+
+| 括号包含 | `( )` 用于将标准组合在一起并阐明操作顺序                  |
++----------+-----------------------------------------------------------+
 
-For example, below, we have a linelist with two variables we want to use to create our case definition, `hep_e_rdt`, a test result and `other_cases_in_hh`, which will tell us if there are other cases in the household. The command below uses the function `case_when()` to create the new variable `case_def` such that:
+例如，在下面，我们有一个包含两个变量的行列表，我们想用它来创建我们的案例，`hep_e_rdt`，一个测试结果和 `other_cases_in_hh`，它将告诉我们家庭中是否还有其他案例。 下面的命令使用函数 `case_when()` 创建新变量 `case_def`：
 
 ```{r eval=FALSE}
 linelist_cleaned <- linelist %>%
@@ -1439,151 +1414,144 @@ linelist_cleaned <- linelist %>%
   ))
 ```
 
-Criteria in example above               | Resulting value in new variable "case_def"
-----------------------------------------|-------------------------------------
-If the value for variables `rdt_result` and `other_cases_in_home` are missing | `NA` (missing)  
-If the value in `rdt_result` is "Positive" | "Confirmed"  
-If the value in `rdt_result` is NOT "Positive" AND the value in `other_cases_in_home` is "Yes" | "Probable"  
-If one of the above criteria are not met | "Suspected"  
++------------------------------------------------------------------------------+----------------------------+
+| 以上例子中的条件                                                             | 新变量"case_def"中的结果值 |
++==============================================================================+============================+
+| 如果变量 `rdt_result` 和 `other_cases_in_home` 的值丢失                      | `NA` (missing)             |
++------------------------------------------------------------------------------+----------------------------+
+| 如果 `rdt_result` 中的值为"Positive"                                         | "Confirmed"                |
++------------------------------------------------------------------------------+----------------------------+
+| 如果`rdt_result`中的值不是"Positive"并且 `other_cases_in_home` 中的值是"Yes" | "Probable"                 |
++------------------------------------------------------------------------------+----------------------------+
+| 如果不满足上述条件之一                                                       | "Suspected"                |
++------------------------------------------------------------------------------+----------------------------+
 
+请注意，R 区分大小写，因此"Positive"与"positive"不同......
 
-*Note that R is case-sensitive, so "Positive" is different than "positive"...*  
-
- 
 <!-- ======================================================= -->
-### Missing values {.unnumbered}
 
-In R, missing values are represented by the special value `NA` (a "reserved" value) (capital letters N and A - not in quotation marks). If you import data that records missing data in another way (e.g. 99, "Missing", or .), you may want to re-code those values to `NA`. How to do this is addressed in the [Import and export] page.  
+### 缺失值 {.unnumbered}
 
-**To test whether a value is `NA`, use the special function `is.na()`**, which returns `TRUE` or `FALSE`.
+在 R 中，缺失值由特殊值 NA（"保留"值）（大写字母 N 和 A 且不在引号中）表示。 如果您以其他方式导入记录缺失值的数据（例如 99、"Missing"或 .），您可能需要将这些值重新编码为 NA。 [导入和导出]页面中介绍了如何执行此操作。
+
+要测试值是否为 **`NA`**，请使用特殊函数**`is.na()`**，它返回 `TRUE` 或 `FALSE`。
 
 ```{r basics_operators_missing}
-rdt_result <- c("Positive", "Suspected", "Positive", NA)   # two positive cases, one suspected, and one unknown
-is.na(rdt_result)  # Tests whether the value of rdt_result is NA
+rdt_result <- c("Positive", "Suspected", "Positive", NA)   # 两例阳性，一例疑似，一例未知
+is.na(rdt_result)  # 测试 rdt_result 的值是否为 NA
 ```
 
-Read more about missing, infinite, `NULL`, and impossible values in the page on [Missing data]. Learn how to convert missing values when importing data in the page on [Import and export].  
-
-
+在 [缺失数据] 页面中有关于缺失值、无限值、`NULL` 和不可能值的更多信息。 在[导入导出]页面了解导入数据时如何转换缺失值。
 
 <!-- ======================================================= -->
-### Mathematics and statistics {.unnumbered}  
 
-All the operators and functions in this page are automatically available using **base** R.  
+### 数学和统计运算符 {.unnumbered}
 
-#### Mathematical operators {.unnumbered} 
+此页面中的所有运算符和函数均可基于**base** R使用。
 
-These are often used to perform addition, division, to create new columns, etc. Below are common mathematical operators in R. Whether you put spaces around the operators is not important.  
+#### 数学运算符 {.unnumbered}
 
+这些运算符通常用于执行加法、除法、创建新列等。以下是 R 中常见的数学运算符。是否在运算符周围放置空格并不影响结果。
 
-Purpose            |Example in R
--------------------|-------------
-addition           | 2 + 3
-subtraction        | 2 - 3
-multiplication     | 2 * 3
-division           | 30 / 5
-exponent           | 2^3
-order of operations| ( )
+| 目的     | 例子   |
+|----------|--------|
+| 加法     | 2 + 3  |
+| 减法     | 2 - 3  |
+| 乘法     | 2 \* 3 |
+| 除法     | 30 / 5 |
+| 指数运算 | 2\^3   |
+| 操作顺序 | ( )    |
 
+#### 数学函数 {.unnumbered}
 
+| 目的         | 函数                                  |
+|--------------|---------------------------------------|
+| 舍入         | round(x, digits = n)                  |
+| 舍入         | janitor::round_half_up(x, digits = n) |
+| 向上取舍     | ceiling(x)                            |
+| 向下取舍     | floor(x)                              |
+| 绝对值       | abs(x)                                |
+| 开平方       | sqrt(x)                               |
+| 幂           | exponent(x)                           |
+| 自然对数     | log(x)                                |
+| 10基底的对数 | log10(x)                              |
+| 2基底的对数  | log2(x)                               |
 
-#### Mathematical functions {.unnumbered}
+注意：对于 `round()`，`digits =`指定小数位数。 使用 `signif()`舍入到多个有效数字。
 
-Purpose            |Function
--------------------|-------------
-rounding           | round(x, digits = n)  
-rounding           | janitor::round_half_up(x, digits = n)
-ceiling (round up) | ceiling(x)
-floor (round down) | floor(x)
-absolute value     | abs(x)
-square root        | sqrt(x)
-exponent           | exponent(x)
-natural logarithm  | log(x)
-log base 10        | log10(x)
-log base 2         | log2(x)
+#### 科学记数法 {.unnumbered}
 
-Note: for `round()` the `digits = ` specifies the number of decimal placed. Use `signif()` to round to a number of significant figures.  
+使用科学记数法的可能性取决于 `scipen`选项的值。
 
+来自 `?options`: scipen 的文档显示有一个因素"scipen"决定以固定还是以指数表示打印数值。 正值偏向固定数值，负值偏向科学记数法：固定记数法将是首选，除非它比"scipen"数字更宽（位数更大）。
 
-#### Scientific notation {.unnumbered}
-
-The likelihood of scientific notation being used depends on the value of the `scipen` option.  
-
-From the documentation of `?options`: scipen is a penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.  
-
-If it is set to a low number (e.g. 0) it will be "turned on" always. To "turn off" scientific notation in your R session, set it to a very high number, for example:    
+如果它被设置为一个较低的数字（例如 0），它将始终"打开"。 要在 R 会话中"关闭"科学记数法，请将其设置为一个非常高的数字，例如：
 
 ```{r, eval=F}
-# turn off scientific notation
+#关闭科学记数法
 options(scipen=999)
 ```
 
+#### 取舍 {.unnumbered}
 
-
-#### Rounding {.unnumbered}  
-
-<span style="color: red;">**_DANGER:_** `round()` uses "banker's rounding" which rounds up from a .5 only if the upper number is even. Use `round_half_up()` from **janitor** to consistently round halves up to the nearest whole number. See [this explanation](https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html#explore-records-with-duplicated-values-for-specific-combinations-of-variables-with-get_dupes) </span>  
+[**警告*:*** `round()` 使用 "银行家取舍" 即仅当上位数是偶数才从0.5向上取舍。 而来自**janitor** 的函数`round_half_up()` 始终四舍五入。 请参考此[解释](https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html#explore-records-with-duplicated-values-for-specific-combinations-of-variables-with-get_dupes)]{style="color: red;"}
 
 ```{r}
-# use the appropriate rounding function for your work
+# 为您的工作选择合适的舍入函数
 round(c(2.5, 3.5))
 
 janitor::round_half_up(c(2.5, 3.5))
 ```
 
+#### 统计函数 {.unnumbered}
 
-#### Statistical functions {.unnumbered}  
+[**警示:** 默认情况下，以下函数将在计算中包含缺失值。缺失值将会导致输出`NA` 除非指定 `na.rm = TRUE。`可以简写为`na.rm = T`. 。]{style="color: orange;"}
 
-<span style="color: orange;">**_CAUTION:_** The functions below will by default include missing values in calculations. Missing values will result in an output of `NA`, unless the argument `na.rm = TRUE` is specified. This can be written shorthand as `na.rm = T`.</span>
+| 目的     | 函数               |
+|----------|--------------------|
+| 平均值   | mean(x, na.rm=T)   |
+| 中位数   | median(x, na.rm=T) |
+| 标准差   | sd(x, na.rm=T)     |
+| 分位数\* | quantile(x, probs) |
+| 总计     | sum(x, na.rm=T)    |
+| 最小值   | min(x, na.rm=T)    |
+| 最大值   | max(x, na.rm=T)    |
+| 数值范围 | range(x, na.rm=T)  |
+| 总结\*\* | summary(x)         |
 
+注意:
 
-Objective                |Function
--------------------------|----------------------
-mean (average)           | mean(x, na.rm=T)
-median                   | median(x, na.rm=T)
-standard deviation       | sd(x, na.rm=T)
-quantiles*               | quantile(x, probs)
-sum                      | sum(x, na.rm=T)
-minimum value            | min(x, na.rm=T)
-maximum value            | max(x, na.rm=T)
-range of numeric values  | range(x, na.rm=T)
-summary**               | summary(x)
+-   `*quantile()`: `x` 是要检查的数值向量, 而 `probs =` 是概率在 0 和 1.0 之间的数值向量, e.g `c(0.5, 0.8, 0.85)`
+-   `**summary()`: 给出数值向量的摘要，包括均值、中位数和常见百分位数
 
-Notes:  
-
-* `*quantile()`: `x` is the numeric vector to examine, and `probs = ` is a numeric vector with probabilities within 0 and 1.0, e.g `c(0.5, 0.8, 0.85)`
-* `**summary()`: gives a summary on a numeric vector including mean, median, and common percentiles  
-
-<span style="color: red;">**_DANGER:_** If providing a vector of numbers to one of the above functions, be sure to wrap the numbers within `c()` .</span>
+[**警告:** 如果为上述任何函数提供计算值，请确保数值被包在`c()` 中。]{style="color: red;"}
 
 ```{r}
-# If supplying raw numbers to a function, wrap them in c()
-mean(1, 6, 12, 10, 5, 0)    # !!! INCORRECT !!!  
+# 如果向函数提供原始数值，请将它们包在 c() 中
+mean(1, 6, 12, 10, 5, 0)    # !!! 不正确 !!!  
 
-mean(c(1, 6, 12, 10, 5, 0)) # CORRECT
+mean(c(1, 6, 12, 10, 5, 0)) # 正确
 ```
 
+#### 其他有用的函数 {.unnumbered}
 
-
-
-
-#### Other useful functions {.unnumbered}  
-
-
-Objective                   |Function            |Example
-----------------------------|--------------------|-----------------------------------------------
-create a sequence           | seq(from, to, by)  |`seq(1, 10, 2)`
-repeat x, n times           | rep(x, ntimes)     |`rep(1:3, 2)` or `rep(c("a", "b", "c"), 3)` 
-subdivide a numeric vector  | cut(x, n)          |`cut(linelist$age, 5)`
-take a random sample        | sample(x, size)    |`sample(linelist$id, size = 5, replace = TRUE)`
-
-
-
++---------------+-------------------+-------------------------------------------------+
+| 目的          | 函数              | 例子                                            |
++===============+===================+=================================================+
+| 创建一个序列  | seq(from, to, by) | `seq(1, 10, 2)`                                 |
++---------------+-------------------+-------------------------------------------------+
+| 重复 x, n 次  | rep(x, ntimes)    | `rep(1:3, 2)` or `rep(c("a", "b", "c"), 3)`     |
++---------------+-------------------+-------------------------------------------------+
+| 拆分数值向量  | cut(x, n)         | `cut(linelist$age, 5)`                          |
++---------------+-------------------+-------------------------------------------------+
+| 生成随机样本  | sample(x, size)   | `sample(linelist$id, size = 5, replace = TRUE)` |
++---------------+-------------------+-------------------------------------------------+
 
 <!-- ======================================================= -->
-### `%in%` {.unnumbered}  
 
-A very useful operator for matching values, and for quickly assessing if a value is within a vector or dataframe.   
+### `%in%` {.unnumbered}
+
+一个非常有用的运算符，用于匹配值，以及快速评估该值是否在向量或数据框内。
 
 ```{r}
 my_vector <- c("a", "b", "c", "d")
@@ -1594,15 +1562,15 @@ my_vector <- c("a", "b", "c", "d")
 "h" %in% my_vector
 ```
 
-To ask if a value is **not** `%in%` a vector, put an exclamation mark (!) **in front** of the logic statement:  
+要询问一个值是不是**不在**向量，请在逻辑语句**前**放置一个感叹号 (!)：
 
 ```{r}
-# to negate, put an exclamation in front
+# 要表示否定，在前面加上感叹号
 !"a" %in% my_vector
 !"h" %in% my_vector
 ```
 
-`%in%` is very useful when using the **dplyr** function `case_when()`. You can define a vector previously, and then reference it later. For example:  
+`%in%` 在使用 dplyr 函数 `case_when()` 时非常有用。 您可以先定义一个向量，然后再引用它。 例如：
 
 ```{r eval=F}
 affirmative <- c("1", "Yes", "YES", "yes", "y", "Y", "oui", "Oui", "Si")
@@ -1613,82 +1581,68 @@ linelist <- linelist %>%
     TRUE                                      ~ "Not"))
 ```
 
-Note: If you want to detect a partial string, perhaps using `str_detect()` from **stringr**, it will not accept a character vector like `c("1", "Yes", "yes", "y")`. Instead, it must be given a *regular expression* - one condensed string with OR bars, such as "1|Yes|yes|y". For example, `str_detect(hospitalized, "1|Yes|yes|y")`. See the page on [Characters and strings] for more information.  
+注意：如果您想检测部分字符串，可能使用 stringr 中的 `str_detect()`，它不会接受像 `c("1", "Yes", "yes", "y")`这样的字符向量。 相反，它必须被赋予一个正则表达式 - 一个带有 OR 的精简字符串像"1\|Yes\|yes\|y"。 例如，`str_detect(hospitalized, "1|Yes|yes|y")`。 有关更多信息，请参阅 [字符和字符串] 页面。
 
-You can convert a character vector to a named regular expression with this command:  
+您可以使用以下命令将字符向量转换为命名的正则表达式：
 
 ```{r}
 affirmative <- c("1", "Yes", "YES", "yes", "y", "Y", "oui", "Oui", "Si")
 affirmative
 
-# condense to 
-affirmative_str_search <- paste0(affirmative, collapse = "|")  # option with base R
-affirmative_str_search <- str_c(affirmative, collapse = "|")   # option with stringr package
+# 精简
+affirmative_str_search <- paste0(affirmative, collapse = "|")  # 基于 base R 
+affirmative_str_search <- str_c(affirmative, collapse = "|")   # 基于 stringr package
 
 affirmative_str_search
 ```
 
-
-
-
-
-
-
-
+<!-- ======================================================= -->
 
 <!-- ======================================================= -->
-<!-- ======================================================= -->
-<!-- ======================================================= -->
-## Errors & warnings  
-
-This section explains:  
-
-* The difference between errors and warnings  
-* General syntax tips for writing R code  
-* Code assists  
-
-Common errors and warnings and troubleshooting tips can be found in the page on [Errors and help].  
-
-
 
 <!-- ======================================================= -->
-### Error versus Warning {.unnumbered}
 
-When a command is run, the R Console may show you warning or error messages in red text.  
+## 错误（Error )和警告(Warning)
 
-* A **warning** means that R has completed your command, but had to take additional steps or produced unusual output that you should be aware of.  
+本节解释了：
 
-* An **error** means that R was not able to complete your command.  
+-   错误和警告的区别\
+-   编写 R 代码时的一般语法提示\
+-   代码辅助
 
-Look for clues: 
-
-* The error/warning message will often include a line number for the problem.  
-
-* If an object "is unknown" or "not found", perhaps you spelled it incorrectly, forgot to call a package with library(), or forgot to re-run your script after making changes.  
-
-If all else fails, copy the error message into Google along with some key terms - chances are that someone else has worked through this already!
-
+常见错误和警告以及故障排除方法可以在 [错误和帮助] 页面中找到。.
 
 <!-- ======================================================= -->
-### General syntax tips {.unnumbered}
 
-A few things to remember when writing commands in R, to avoid errors and warnings:  
+### 错误（Error ) VS警告 (Warning) {.unnumbered}
 
-* Always close parentheses - tip: count the number of opening "(" and closing parentheses ")" for each code chunk
-* Avoid spaces in column and object names. Use underscore ( _ ) or periods ( . ) instead
-* Keep track of and remember to separate a function's arguments with commas
-* R is case-sensitive, meaning `Variable_A` is *different* from `variable_A`
+运行命令时，R 控制台可能会以红色文本显示警告或错误消息。
 
+-   警告意味着 R 已完成您的命令，但必须采取额外的步骤或产生了您应该注意的异常输出。
+
+-   错误意味着 R 无法完成您的命令。
+
+寻找错误和警告的线索:
+
+-   错误/警告消息通常会包含出现问题的行号。
+
+-   如果某个对象"未知 unknown"或"未找到 not found"，则可能是您拼写错误，忘记使用 library() 调用package ，或者在进行更改后忘记重新运行脚本。
+
+如果所有方法都不管用，请将错误消息以及一些关键术语复制到 Google 或百度中 - 很可能其他人已经解决了这个问题！
 
 <!-- ======================================================= -->
-### Code assists {.unnumbered}  
 
-Any script (RMarkdown or otherwise) will give clues when you have made a mistake. For example, if you forgot to write a comma where it is needed, or to close a parentheses, RStudio will raise a flag on that line, on the right side of the script, to warn you.  
+### 一般语法技巧 {.unnumbered}
 
+在 R 中编写命令时要记住的一些技巧，以避免错误和警告：
 
+-   始终闭合括号 - 提示：计算每个代码块的左括号"("和右括号")"的数量
+-   避免在列名和对象名中使用空格。 改用下划线 ( \_ ) 或句点 ( . )
+-   跟踪并记住用逗号分隔函数的参数
+-   R 区分大小写，这意味着 `Variable_A` 与 `variable_A` 不同
 
+<!-- ======================================================= -->
 
+### 代码辅助 {.unnumbered}
 
-
-
-
+任何脚本（RMarkdown 或其他脚本）都会在您犯错时提供线索。 例如，如果您忘记在需要的地方写逗号，或者忘记关闭括号，RStudio 将在脚本右侧的该行上引发一个标志，以警告您。
