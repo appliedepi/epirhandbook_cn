@@ -1,97 +1,89 @@
-# Writing functions  
-
+# 创建函数
 
 <!-- ======================================================= -->
-## Preparation {  }
 
+## 准备
 
-### Load packages {-}
+### 载入 packages {.unnumbered}
 
-This code chunk shows the loading of packages required for the analyses. In this handbook we emphasize `p_load()` from **pacman**, which installs the package if necessary *and* loads it for use. You can also load installed packages with  `library()` from **base** R. See the page on [R basics] for more information on R packages.  
+下述代码块显示了如何加载创建函数所需的packages。 在本指南中，我们主要使用 **pacman** 中的 `p_load()`，它会在必要时安装 package 并加载它以供用户使用。 您还可以使用来自 **base** R 的 `library()` 加载已安装的packages。有关 R packages 的更多信息，请参阅 [R 基础] 页面。
 
 ```{r, echo=F, warning=F, message=F}
 pacman::p_load(
-  rio,          # File import
-  here,         # File locator
-  skimr,        # get overview of data
-  tidyverse,    # data management + ggplot2 graphics, 
-  gtsummary,    # summary statistics and tests
-  janitor,      # adding totals and percents to tables
-  scales,       # easily convert proportions to percents  
-  flextable,     # converting tables to HTML
-  purrr,          #makes functional programming easier
-  readr,          #to read csv files
-  highcharter     #to create highchart object and draw particular plot
+  rio,          # 文件导入
+  here,         # 文件定位
+  skimr,        # 数据总览
+  tidyverse,    # 数据管理 + ggplot2 图形, 
+  gtsummary,    # 汇总统计和测试
+  janitor,      # 将总数和百分比添加到表格中
+  scales,       # 更轻松地将比例转换为百分比
+  flextable,     # 将表格转换为HTML
+  purrr,          # 使函数的编程更容易
+  readr,          # 读取 csv 文件
+  highcharter     # 创建 highchart 并绘制特定的图表
 
   )
 ```
 
-### Import data {-}
+### 导入数据 {.unnumbered}
 
-We import the dataset of cases from a simulated Ebola epidemic. If you want to download the data to follow step-by-step, see instructions in the [Download book and data] page. The dataset is imported using the `import()` function from the **rio** package. See the page on [Import and export] for various ways to import data.
+我们从模拟的埃博拉疫情中导入病例数据集。 如果您要逐步的下载数据，请参考 [下载书籍和数据] 页面中的说明。 数据集是使用 **rio** package中的 `import()` 函数导入的。 各种数据导入方式见 [导入和导出] 页面。
 
-We will also use in the last part of this page some data on H7N9 flu from 2013.
+在本页的最后一部分，我们还将使用 2013 年 H7N9 流感的一些数据。
 
 ```{r, echo=F}
-# import the linelists into R
+# 导入 linelists 到 R
 linelist <- rio::import(here::here("data", "case_linelists", "linelist_cleaned.rds"))
 
 flu_china <- rio::import(here::here("data", "case_linelists", "fluH7N9_China_2013.csv"))
 
 ```
 
+## 函数
 
-## Functions  
+函数在编程中很有帮助，因为它们可以让代码更容易被理解、更短、更不容易出错（如果函数本身没有错误的话）。
 
-Functions are helpful in programming since they allow to make codes easier to understand, somehow shorter and less prone to errors (given there were no errors in the function itself).
+如果你已经阅读本指南到此章节，意味着你已经见到了无穷无尽的函数。因为在 R 中，每个操作都是一个函数调用 `+, for, if, [, $, { …`。 例如`x + y` 等同于 `'+'(x, y)` 。
 
-If you have come so far to this handbook, it means you have came across endless functions since in R, every operation is a function call
-`+, for, if, [, $, { …`. For example `x + y` is the same as`'+'(x, y)`
+R 是可以轻松使用函数并为用户提供足够工具来编写函数的语言之一。 我们不应该刻板地认为函数必须应用在编程代码的头部或末端，R 提供了将它们当作向量使用的可能性，甚至可以在其他函数、列表......中使用函数。
 
-R is one the languages that offers the most possibility to work with functions and give enough tools to the user to easily write them. We should not think about functions as fixed at the top or at the end of the programming chain, R offers the possibility to use them as if they were vectors and even to use them inside other functions, lists...
+网上有很多关于函数编程的高级进阶资源。我们只会本页里提供一些启示，以帮助您通过简短的示例并能开始进行函数编程。之后，我们鼓励您访问参考文献以阅读更多相关信息。
 
-Lot of very advanced resources on functional programming exist and we will only give here an insight to help you start with functional programming with short practical examples. You are then encouraged to visit the links on references to read more about it.
+## 为什么要使用函数？
 
+在回答这个问题之前，更重要的是您已经在本手册的 [迭代、循环和列表] 页面中获得了编写第一个 R 函数的技巧。 事实上，"if/else"和循环的使用通常是我们许多函数的核心部分，因为它们很容易帮助我们将代码应用于多个情况之下或迭代代码以重复完成任务。
 
+-   我需要多次重复相同的代码块以将其应用于不同的变量或数据？
 
+-   整合部分代码会大大缩短我的整体代码并使其运行得更快吗？
 
+-   我编写的代码是否有可能在改变了内部许多数值后再次使用？
 
-## Why would you use a function? 
+如果您关于上述问题的答案中存在 "**是**" ，那么您可能需要编写一个函数。
 
-Before answering this question, it is important to note that you have already had tips to get to write your very first R functions in the page on [Iteration, loops, and lists] of this handbook. In fact, use of "if/else" and loops is often a core part of many of our functions since they easily help to either broaden the application of our code allowing multiple conditions or to iterate codes for repeating tasks.
+## 如何在 R 中创建函数？
 
-- I am repeating multiple times the same block of code to apply it to a different variable or data?
+R 中的函数具有三个主要组成部分：
 
-- Getting rid of it will it substantially shorten my overall code and make it run quicker?
+-   `formals()` - 控制我们如何调用函数的参数列表
 
-- Is it possible that the code I have written is used again but with a different value at many places of the code?
+-   `body()` - 函数内部的代码。在括号内或括号后，取决于我们如何编写它
 
-If the answer to one of the previous questions is "YES", then you probably need to write a function
+和,
 
-## How does R  build functions?
+-   `environment()` - 用于定位函数的变量并规定函数如何找到值
 
-Functions in R have three main components:
+创建函数后，您可以通过调用关联的函数来验证这些组件。
 
-- the `formals()` which is the list of arguments which controls how we can call the function
+## 基本语法和结构
 
-- the `body()` that is the code inside the function i.e. within the brackets or following the parenthesis depending on how we write it
+-   函数需要正确命名，这样我们一读到它的名字就很容易理解它的工作。 实际上，大多数 base R 函数就是正确命名的典型例子。 `mean()`, `print()`, `summary()` 等函数的名称非常简单。
 
-and,
+-   函数需要参数，例如要处理的数据以及可以是静态值的其他对象。
 
-- the `environment()` which will help locate the function's variables and determines how the function finds value.
- 
-Once you have created your function, you can verify each of these components by calling the function associated.
- 
+-   最后，函数将根据其核心任务和给定的参数来产生输出。 通常我们会使用内置函数 `print()`, `return()`...来产生输出。 输出可以是一个逻辑值、一个数字、一个字符、一个数据框......简而言之，R 中任何类型的对象。
 
-## Basic syntax and structure
-
-- A function will need to be named properly so that its job is easily understandable as soon as we read its name. Actually this is already the case with majority of the base R architecture. Functions like  `mean()`, `print()`, `summary()` have names that are very straightforward 
-
-- A function will need arguments, such as the data to work on and other objects that can be static values among other options  
-
-- And finally a function will give an output based on its core task and the arguments it has been given. Usually we will use the built-in functions as `print()`, `return()`... to produce the output. The output can be a logical value, a number, a character, a data frame...in short any kind of R object.
-
-Basically this is the composition of a function:
+基本上，这是一个函数的组成：
 
 ```{r, eval=FALSE}
 
@@ -105,7 +97,7 @@ function_name <- function(argument_1, argument_2, argument_3){
 
 ```
 
-We can create our first function that will be called `contain_covid19()`. 
+我们可以创建第一个名为 `contain_covid19()` 的函数。
 
 ```{r}
 
@@ -121,7 +113,7 @@ contain_covid19 <- function(barrier_gest, wear_mask, get_vaccine){
 
 ```
 
-We can then verify the components of our newly created function.
+然后我们可以验证新创建的函数的组件。
 
 ```{r}
 
@@ -131,8 +123,7 @@ environment(contain_covid19)
 
 ```
 
-
-Now we will test our function. To call our written function, you use it as you use all R functions i.e by writing the function name and adding the required arguments.
+现在我们将测试我们的函数。 要调用我们编写的函数，您可以像使用所有 R 函数一样使用它，即通过编写函数名称并添加所需的参数。
 
 ```{r}
 
@@ -140,7 +131,7 @@ contain_covid19(barrier_gest = "yes", wear_mask = "yes", get_vaccine = "yes")
 
 ```
 
-We can write again the name of each argument for precautionary reasons. But without specifying them, the code should work since R has in memory the positioning of each argument. So as long as you put the values of the arguments in the correct order, you can skip writing the arguments names when calling the functions.
+为了减少犯错，我们可以再次写下每个参数的名称。 但是即使没有重新写下名称，代码也可以工作。因为 R 存储了每个参数的位置。 所以只要你把参数的值按正确的顺序排列，你就可以在调用函数时不重复写参数名称。
 
 ```{r}
 
@@ -148,63 +139,57 @@ contain_covid19("yes", "yes", "yes")
 
 ```
 
-Then let's look what happens if one of the values is `"no"` or **not** `"yes"`.
+接下来让我们看看如果其中一个值是`"no"`或不是`"yes"`会发生什么。
 
 ```{r}
 
 contain_covid19(barrier_gest = "yes", wear_mask = "yes", get_vaccine = "no")
 ```
 
-If we provide an argument that is not recognized, we get an error: 
+如果我们提供了一个无法识别的参数，我们会得到一个错误提醒：
 
 ```{r, eval=F}
 contain_covid19(barrier_gest = "sometimes", wear_mask = "yes", get_vaccine = "no")
 ```
 
-`Error in contain_covid19(barrier_gest = "sometimes", wear_mask = "yes",  : 
-  could not find function "contain_covid19"`
+`Error in contain_covid19(barrier_gest = "sometimes", wear_mask = "yes",  :    could not find function "contain_covid19"`
 
+[**注释:** 一些函数（非常短和简单）可能不需要一个名称，能够直接在一行代码或者或另一个函数中使用并用来快速完成任务。它们被称为**匿名函数**。]{style="color: black;"}
 
-<span style="color: black;">**_NOTE:_** Some functions  (most of time very short and straightforward) may not need a name and can be used directly on a line of code or inside another function to do quick task. They are called **anonymous functions** .</span>
-
-For instance below is a first anonymous function that   keeps only character variables the dataset.
+例如下面是一个匿名函数，它只用于保留数据集的字符变量。
 
 ```{r, eval=F}
 linelist %>% 
-  dplyr::slice_head(n=10) %>%  #equivalent to R base "head" function and that return first n observation of the  dataset
+  dplyr::slice_head(n=10) %>%  #等效于 base R 的“head”函数：返回数据集的前 n 个观察结果
   select(function(x) is.character(x)) 
 ```
-  
+
 ```{r, echo=F}
 linelist %>% 
-  dplyr::slice_head(n=10) %>%  #equivalent to R base "head" function and that return first n observation of the  dataset
+  dplyr::slice_head(n=10) %>%  #等效于 base R 的“head”函数：返回数据集的前 n 个观察结果
   select(function(x) is.character(x)) %>%  
 DT::datatable(rownames = FALSE, filter="top", options = list(pageLength = 10, scrollX=T), class = 'white-space: nowrap' )
 ```
 
-
-Then another function that selects every second observation of our dataset (may be relevant when we have longitudinal data with many records per patient for instance after having ordered by date or visit).
-In this case, the proper function writing outside dplyr would be `function (x) (x%%2 == 0)` to apply to the vector containing all row numbers.
-
+然后是另一个函数，用于选择我们数据集的每一个观察值（当我们有每个患者有许多纵向数据记录时，例如按日期或访问顺序排序后，这种做法可能是有意义的）。 在这种情况下，在 dplyr 外部写入的函数应该是 `function (x) (x%%2 == 0)` 以用于包含所有行号的向量。
 
 ```{r, eval=F}
 linelist %>%   
    slice_head(n=20) %>% 
-   tibble::rownames_to_column() %>% # add indices of each obs as rownames to clearly see the final selection
+   tibble::rownames_to_column() %>% # 添加每个obs的索引作为行名以清楚地看到最终选择
    filter(row_number() %%2 == 0)
 ```
 
 ```{r, echo=F}
 linelist %>%   
    slice_head(n=20) %>% 
-   tibble::rownames_to_column() %>%    # add indices of each obs as rownames to clearly see the final selection
+   tibble::rownames_to_column() %>%    #添加每个obs的索引作为行名以清楚地看到最终选择
    filter(row_number() %%2 == 0) %>% 
 DT::datatable(rownames = FALSE, filter="top", options = list(pageLength = 10, scrollX=T), class = 'white-space: nowrap' )
 
 ```
 
-
-A possible base R code for the same task would be:
+基于 base R 用于相同任务的代码是：
 
 ```{r, eval = F}
 
@@ -222,29 +207,28 @@ DT::datatable(rownames = FALSE, filter="top", options = list(pageLength = 10, sc
 
 ```
 
+[**警示:** 尽管创建函数确实可以帮助我们精简或者优化代码。但是如果没有经过深思熟虑，没有恰当的编写函数导致返回错误，这种情况下编写函数或者修复函数是非常耗时的。基于这个原因，我们通常建议首先编写普通的R 代码并确保它能完成我们的意图。然后再将其转换为具有以上三个组件的函数。]{style="color: orange;"}
 
-<span style="color: orange;">**_CAUTION:_** Though it is true that using functions can help us with our code, it can nevertheless be  time consuming to write some functions or to fix one if it has not been thought thoroughly, written adequately and is returning errors as a result. For this reason it is often recommended to first write the R code, make sure it does what we intend it to do, and then transform it into a function with its three main components as listed above. </span>
+## 案例
 
-## Examples  
+### 返回几列数据的比例表 {.unnumbered}
 
-### Return proportion tables for several columns {.unnumbered}  
+尽管我们已经拥有来自不同 packages 的很多很好的函数，它们允许用户以非常简单和漂亮的方式总结信息。 但是我们仍然会尝试自己的方式，这是我们习惯编写函数的第一步。
 
-Yes, we already have nice functions in many packages allowing to summarize information in a very easy and nice way. But we will still try to make our own, in our first steps to getting used to writing functions.
-
-In this example we want to show how writing a simple function would avoid you copy-pasting the same code multiple times.
+在这个例子中，我们想展示如何编写一个简单的函数来避免多次复制粘贴相同的代码。
 
 ```{r}
 
 proptab_multiple <- function(my_data, var_to_tab){
   
-  #print the name of each variable of interest before doing the tabulation
+  #在制表之前打印每个感兴趣的变量的名称
   print(var_to_tab)
 
   with(my_data,
-       rbind( #bind the results of the two following function by row
-        #tabulate the variable of interest: gives only numbers
+       rbind( # 按行绑定下面两个函数的结果
+        #列出感兴趣的变量：只给出数字
           table(my_data[[var_to_tab]], useNA = "no"),
-          #calculate the proportions for each variable of interest and round the value to 2 decimals
+          #计算每个感兴趣变量的比例并将值四舍五入到小数点后两位
          round(prop.table(table(my_data[[var_to_tab]]))*100,2)
          )
        )
@@ -260,10 +244,9 @@ proptab_multiple(linelist, "outcome")
 
 ```
 
-<span style="color: darkgreen;">**_TIP:_** As shown above, it is very important to comment your functions as you would do for the general programming. Bear in mind that a function's aim is to make a code ready to read, shorter and more efficient. Then one should be able to understand what the function does just by reading its name and should have more details reading the comments.</span>
+[**提示:** 如上所示，在您的函数中添加注释是非常重要的。请记住，函数的目的是使带飞更易于阅读，更短且更高效。所以人们应该能够通过它的名称来理解函数的作用，并且能够通过阅读注释来了解更多的计算细节。]{style="color: darkgreen;"}
 
-
-A second option is to use this function in another one via a loop to make the process at once:
+第二种选择是在通过循环中使用此函数以重复执行该过程：
 
 ```{r}
 
@@ -276,7 +259,7 @@ for(var_to_tab in c("gender","age_cat",  "outcome")){
 
 ```
 
-A simpler way could be using the base R "apply" instead of a "for loop" as expressed below:
+一种更简单的方法是使用base R "apply"而不是"for loop"，如下所示：
 
 ```{r, include= FALSE, eval=FALSE}
 
@@ -284,18 +267,15 @@ base::lapply(linelist[,c("gender","age_cat", "outcome")], table)
 
 ```
 
+[**提示:** R 通常被定义为一种函数编程语言。几乎在您运行任何一行代码的时候，您都在使用一些内置函数。如果您经常查看您日常使用的基本函数是如何构建的，对于编写自己的函数，这是非常好的一个习惯。查看基本函数的快捷方式是选择函数名称，然后单击 Ctrl + F2 或者 fn + F2 或 Cmd + F2 （取决于您的计算机）。]{style="color: darkgreen;"}
 
-<span style="color: darkgreen;">**_TIP:_** R is often defined as a functional programming language and almost anytime you run a line of code you are using some built-in functions. A good habit to be more comfortable with writing functions is to often have an internal look at how the basic functions you are using daily are built. The shortcut to do so is selecting the function name and then clicking on`Ctrl+F2` or `fn+F2` or `Cmd+F2` (depending on your computer) .</span>
+## 使用 purrr：编写可以迭代应用的函数
 
-## Using **purrr**: writing functions that can be iteratively applied
+### 修改数据集中多个列的类 {.unnumbered}
 
-### Modify class of multiple columns in a dataset {.unnumbered}  
+假设原始`linelist` 数据中的许多字符变量需要更改为"因素"以进行分析和绘图。 我们可以使用 `lapply()` 在一行代码中完成所有相关变量的转换，而不是多次重复该步骤。
 
-Let's say many character variables in the original `linelist` data need to be changes to "factor" for analysis and plotting purposes. Instead of repeating the step several times, we can just use `lapply()` to do the transformation of all variables concerned on a single line of code.
-
-
-<span style="color: orange;">**_CAUTION:_** `lapply()` returns a list, thus its use may require an additional modification as a last step.</span>
-
+[**警示:**`lapply()` 会返回一个列表，因此使用它作为最后一步时可能需要一些格外的修改。]{style="color: orange;"}
 
 ```{r, include=FALSE}
 
@@ -307,8 +287,7 @@ linelist_factor1 <- linelist %>%
 
 ```
 
-
-The same step can be done using `map_if()` function from the **purrr** package
+或者可以使用 **purrr** package 中的 `map_if()` 函数完成相同的步骤。
 
 ```{r}
 
@@ -321,18 +300,17 @@ linelist_factor2 %>%
 
 ```
 
+### 基于不同的变量迭代生成图形 {.unnumbered}
 
-### Iteratively produce graphs for different levels of a variable {.unnumbered}
-
-We will produce here pie chart to look at the distribution of patient's outcome in China during the H7N9 outbreak for each province. Instead of repeating the code for each of them, we will just apply a function that we will create.
+我们将在此处制作饼图，以查看 H7N9 爆发期间中国各省患者的分布情况。 我们将只用我们创建的函数，而不是为每个省重复一遍代码。
 
 ```{r}
 
-#precising options for the use of highchart
+# 使用 highchart
 options(highcharter.theme =   highcharter::hc_theme_smpl(tooltip = list(valueDecimals = 2)))
 
 
-#create a function called "chart_outcome_province" that takes as argument the dataset and the name of the province for which to plot the distribution of the outcome.
+#创建一个名为“chart_outcome_province”的函数，它将数据集和要绘制的省份名称作为参数。 
 
 chart_outcome_province <- function(data_used, prov){
   
@@ -363,11 +341,11 @@ chart_outcome_province(flu_china,"Jiangsu")
 
 ```
 
+因素
 
+### 基于不同的变量迭代生成表格 {.unnumbered}
 
-### Iteratively produce tables for different levels of a variable {.unnumbered}
-
-Here we will create three indicators to summarize in a table and we would like to produce this table for each of the provinces. Our indicators are the delay between onset and hospitalization, the percentage of recovery and the median age of cases.
+在这里，我们将创建一个表格包括三个参数。我们希望为每个省份制作这张表格。 我们的参数是发病和住院之间的延迟、康复百分比和病例的中位年龄。
 
 ```{r}
 
@@ -403,19 +381,19 @@ indic_3 <-  flu_china %>%
   select(province, median_age_cases)  %>% 
   distinct()
 
-#join the three indicator datasets
+#加入三个参数的数据集
 
 table_indic_all <- indic_1 %>% 
   dplyr::left_join(indic_2, by = "province") %>% 
         left_join(indic_3, by = "province")
 
 
-#print the indicators in a flextable
+#在 flextable 中打印参数
 
 
 print_indic_prov <-  function(table_used, prov){
   
-  #first transform a bit the dataframe for printing ease
+  #首先转换一点数据框以方便打印
   indic_prov <- table_used %>%
     filter(province==prov) %>%
     pivot_longer(names_to = "Indicateurs", cols = 2:4) %>% 
@@ -459,26 +437,23 @@ print_indic_prov(table_indic_all, "Jiangsu")
 
 ```
 
+## 运行良好的函数的提示和练习
 
-## Tips and best Practices for well functioning functions
+函数式编程旨在简化代码并增加其可读性。 它不应该产生相反的结果。 下面的提示将帮助您拥有干净的代码和易于阅读的代码。
 
-Functional programming is meant to ease code and facilitates its reading. It should produce the contrary. The tips below will help you having a clean code and easy to read code. 
+### 命名和语法 {.unnumbered}
 
+-   避免使用环境中已经存在的其他函数可能已经使用的字符。
 
-### Naming and syntax {.unnumbered}
+-   建议函数名简短易懂，方便其他读者理解
 
-- Avoid using character that could have been easily already taken by other functions already existing in your environment
+-   最好使用动词作为函数名称，使用名词作为参数名称。
 
-- It is recommended for the function name to be short and straightforward to understand for another reader
+### 列名和 *tidy* 的评估 {.unnumbered}
 
-- It is preferred to use verbs as the function name and nouns for the argument names.
+如果您想知道如何引用作为参数的列的名称，请阅读此 [tidyverse](https://dplyr.tidyverse.org/articles/programming.html) 编程指南。 其涵盖的主题包括 *tidy* 评估和使用双括号`{{ }}` 。
 
-
-### Column names and tidy evaluation {.unnumbered}  
-
-If you want to know how to reference *column names* that are provided to your code as arguments, read this [tidyverse programming guidance](https://dplyr.tidyverse.org/articles/programming.html). Among the topics covered are *tidy evaluation* and use of the *embrace* `{{ }}` "double braces"
-
-For example, here is a quick skeleton template code from page tutorial mentioned just above:  
+例如，这是上面提到的页面教程中的模板代码：
 
 ```{r, eval=F}
 
@@ -492,12 +467,11 @@ mtcars %>%
 
 ```
 
+### 测试和错误处理 {.unnumbered}
 
-### Testing and Error handling {.unnumbered}
+函数的任务越复杂，出错的可能性就越大。 因此，有时需要在函数中添加一些验证方式，以帮助快速了解错误的来源并找到修复它的方法。
 
-The more complicated a function's task the higher the possibility of errors. Thus it is sometimes necessary to add some verification within the funtion to help quickly understand where the error is from and find a way t fix it.
-
-- It can be more than recommended to introduce a check on the missingness of one argument using `missing(argument)`. This simple check can return "TRUE" or "FALSE" value.
+-   使用 `missing(argument)` 来检查一个参数的缺失性是被强烈推荐的。 这个检查可以简单的返回"TRUE"或"FALSE"值。
 
 ```{r , error=TRUE}
 
@@ -520,8 +494,7 @@ contain_covid19_missing(get_vaccine = "yes")
 
 ```
 
-
-- Use `stop()` for more detectable errors.
+-   使用 `stop()` 检测更多错误。
 
 ```{r, error=TRUE}
 
@@ -541,18 +514,16 @@ contain_covid19_stop(barrier_gest=1, wear_mask="yes", get_vaccine = "no")
 
 ```
 
-- As we see when we run most of the built-in functions, there are messages and warnings that can pop-up in certain conditions. We can integrate those in our written functions by using the functions `message()` and `warning()`.
+-   正如我们在运行大多数内置函数时看到的那样，在某些情况下会弹出消息和警告。 我们可以通过使用函数 `message()` 和 `warning()`将这些集成到我们编写的函数中。
 
-- We can handle errors also by using `safely()` which takes one function as an argument and executes it in a safe way. In fact the function will execute without stopping if it encounters an error. `safely()` returns as output a **list** with two objects which are the results and the error it "skipped".
+-   我们也可以使用 `safely()`来处理错误，它以一个函数作为参数并以安全的方式执行它。 事实上，如果遇到错误，该函数将不停止地执行。`safely()`返回一个包含两个对象的列表作为输出，它们是结果和它"跳过"的错误
 
-We can verify by first running the `mean()` as  function, then run it with `safely()`.
-
+我们可以通过首先将 `mean()` 作为函数运行，然后用 `safely()` 运行它来验证此函数。
 
 ```{r, warning=FALSE}
 
 map(linelist, mean)
 ```
-
 
 ```{r, warning=FALSE}
 safe_mean <- safely(mean)
@@ -561,15 +532,13 @@ linelist %>%
 
 ```
 
-
-As said previously, well commenting our codes is already a good way for having documentation in our work.  
-
+如前所述，对我们的代码进行良好的注释是极好的方法。
 
 <!-- ======================================================= -->
-## Resources
 
+## 资源
 
-[R for Data Science link](https://r4ds.had.co.nz/functions.html)   
+[R for Data Science link](https://r4ds.had.co.nz/functions.html)
 
 [Cheatsheet advance R programming](https://www.rstudio.com/wp-content/uploads/2016/02/advancedR.pdf)
 
