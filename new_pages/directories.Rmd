@@ -1,70 +1,65 @@
+# 目录交互
 
-# Directory interactions { }  
+在本页面中，我们将介绍创建、交互、保存和导入目录(文件夹)的常见场景。
 
-In this page we cover common scenarios where you create, interact with, save, and import with directories (folders).  
+## 准备工作
 
+### **fs** package {.unnumbered}
 
-## Preparation  
-
-### **fs** package {.unnumbered}  
-
-The **fs** package is a **tidyverse** package that facilitate directory interactions, improving on some of the **base** R functions. In the sections below we will often use functions from **fs**.  
+**fs** package 是一个方便目录交互的 **tidyverse** package，其改进了一些 **base** R 的函数。在下面的小节中，我们将经常使用 **fs** 中的函数。
 
 ```{r}
 pacman::p_load(
-  fs,             # file/directory interactions
-  rio,            # import/export
-  here,           # relative file pathways
-  tidyverse)      # data management and visualization
+  fs,             # 文件/目录交互
+  rio,            # 导入/导出
+  here,           # 相对文件路径
+  tidyverse)      # 数据管理和可视化
 ```
 
+### 将目录打印为树状图 {.unnumbered}
 
-### Print directory as a dendrogram tree {.unnumbered}  
+使用 **fs** 中的函数 `dir_tree()`。
 
-Use the function `dir_tree()` from **fs**.  
-
-Provide the folder filepath to `path = ` and decide whether you want to show only one level (`recurse = FALSE`) or all files in all sub-levels (`recurse = TRUE`). Below we use `here()` as shorthand for the R project and specify its sub-folder "data", which contains all the data used for this R handbook. We set it to display all files within "data" and its sub-folders (e.g. "cache", "epidemic models", "population", "shp", and "weather").  
-
+将文件夹路径提供给 `path =`，并决定是否只显示一层 (`recurse = FALSE`) 或所有子层 (`recurse = TRUE`) 中的所有文件。下面我们使用 `here()` 作为 R 项目的简写，并指定其子文件夹 "data"，其中包含本 R 指南中使用的所有数据。我们将其设置为显示 "data" 及其子文件夹中的所有文件（例如"cache"、"epidemic models"、"population"、"shp"和 "weather"）。
 
 ```{r}
 fs::dir_tree(path = here("data"), recurse = TRUE)
 ```
 
+## 列出目录中的文件
 
-## List files in a directory  
-
-To list just the file names in a directory you can use `dir()` from **base** R. For example, this command lists the file names of the files in the "population" subfolder of the "data" folder in an R project. The relative filepath is provided using `here()` (which you can read about more in the [Import and export] page).  
+要仅列出目录中的文件名，您可以使用 **base** R 中的 `dir()`。例如，此命令列出 R 项目中 "data" 的子文件夹 "population" 中所有文件的文件名。使用 `here()` 提供相对文件路径 （您可以在 [导入和导出] 页面中了解更多信息）。
 
 ```{r}
-# file names
+# 文件名
 dir(here("data", "gis", "population"))
 ```
 
-To list the full file paths of the directory's files, you can use you can use `dir_ls()` from **fs**. A **base** R alternative is `list.files()`.  
+要列出目录文件的完整文件路径，您可以使用 **fs** 中的 `dir_ls()`。 一个替代 **base** R 的方法是使用 `list.files()`。
 
 ```{r}
-# file paths
+# 文件路径
 dir_ls(here("data", "gis", "population"))
 ```
 
-To get all the metadata information about each file in a directory, (e.g. path, modification date, etc.) you can use `dir_info()` from **fs**.  
+要获取目录中每个文件的所有元数据信息（例如路径、修改日期等），您可以使用 **fs** 中的 `dir_info()`。
 
-This can be particularly useful if you want to extract the last modification time of the file, for example if you want to import the most recent version of a file. For an example of this, see the [Import and export] page.     
+如果您想提取文件的最后修改时间为导入文件的最新版本时，此方程特别有用。有关此方程的示例，请参阅 [导入和导出] 页面。
 
 ```{r, eval=F}
-# file info
+# 文件信息
 dir_info(here("data", "gis", "population"))
 ```
 
-Here is the data frame returned. Scroll to the right to see all the columns.  
+这是返回的数据帧。 向右滚动以查看所有列。
 
 ```{r, echo=F}
 DT::datatable(dir_info(here("data", "gis", "population")), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
 
-## File information  
+## 文件信息
 
-To extract metadata information about a specific file, you can use `file_info()` from **fs** (or `file.info()` from **base** R).  
+要提取有关特定文件的元数据信息，您可以使用 **fs** 中的 `file_info()`（或 **base** R 中的 `file.info()`）。
 
 ```{r, eval=F}
 file_info(here("data", "case_linelists", "linelist_cleaned.rds"))
@@ -74,140 +69,126 @@ file_info(here("data", "case_linelists", "linelist_cleaned.rds"))
 DT::datatable(file_info(here("data", "case_linelists", "linelist_cleaned.rds")), rownames = FALSE, options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
 
-Here we use the `$` to index the result and return only the `modification_time` value.  
+这里我们使用 `$` 来索引结果并只返回 `modification_time` 值。
 
 ```{r}
 file_info(here("data", "case_linelists", "linelist_cleaned.rds"))$modification_time
 ```
 
+## 检查存在性
 
+### R 对象 {.unnumbered}
 
-
-## Check if exists  
-
-### R objects {.unnumbered}  
-
-You can use `exists()` from **base** R to check whether an R object exists *within* R (supply the object name in quotes).  
+您可以使用 **base** R 中的 `exists()` 来检查 R 中是否存在 R 对象（用引号提供对象名称）。
 
 ```{r}
 exists("linelist")
 ```
 
-Note that some **base** R packages use generic object names like "data" behind the scenes, that will appear as TRUE unless `inherit = FALSE` is specified. This is one reason to not name your dataset "data".  
+请注意，某些 **base** R packages 会在幕后使用通用的对象名称，如 "data"。除非指定了 `inherit = FALSE`，否则这些名称将显示为 TRUE。 这是不将数据集命名为"data"的原因之一。
 
 ```{r}
 exists("data")
 exists("data", inherit = FALSE)
 ```
 
-If you are writing a function, you should use `missing()` from **base** R to check if an argument is present or not, instead of `exists()`.  
+如果你正在编写一个函数，你应该使用来自 **base** R 的 `missing()` 来检查参数是否存在，而不是使用 `exists()`。
 
+### 目录 {.unnumbered}
 
-
-### Directories {.unnumbered}  
-
-To check whether a directory exists, provide the file path (and file name) to `is_dir()` from **fs**. Scroll to the right to see that `TRUE` is printed.    
+要检查目录是否存在，请先向 fs 中的 `is_dir()` 提供文件路径（和文件名）。 向右滚动以查看是否打印出 `TRUE`。
 
 ```{r}
 is_dir(here("data"))
 ```
 
-An alternative is `file.exists()` from **base** R.  
+另一种可用的函数是来自 **base** R 的 `file.exists()`。
 
+### 文件 {.unnumbered}
 
-### Files {.unnumbered}  
-
-To check if a specific file exists, use `is_file()` from **fs**. Scroll to the right to see that `TRUE` is printed.  
+要检查特定文件是否存在，请使用 **fs** 中的 `is_file()`。 向右滚动以查看是否打印出 `TRUE`。
 
 ```{r}
 is_file(here("data", "case_linelists", "linelist_cleaned.rds"))
 ```
 
-A **base** R alternative is `file.exists()`.  
+**base** R 的 `file.exists()`也可以用在这种情况下。
 
+## 创建
 
+### 目录 {.unnumbered}
 
-## Create  
-
-### Directories {.unnumbered}  
-
-To create a new directory (folder) you can use `dir_create()` from **fs**. If the directory already exists, it will not be overwritten and no error will be returned. 
+要创建新目录（文件夹），您可以使用 **fs** 中的 `dir_create()`。 如果目录已经存在，则原来的目录不会被覆盖，编译器也不会返回错误。
 
 ```{r, eval=F}
 dir_create(here("data", "test"))
 ```
 
-An alternative is `dir.create()` from **base** R, which will show an error if the directory already exists. In contrast, `dir_create()` in this scenario will be silent.  
+另一种方法是来自 **base** R 的 `dir.create()`，如果目录已经存在，它将显示错误。 相比之下，**fs** 中的 `dir_create()` 是比较静默的。
 
-### Files {.unnumbered}  
+### 文件 {.unnumbered}
 
-You can create an (empty) file with `file_create()` from **fs**. If the file already exists, it will not be over-written or changed.  
+您可以使用 **fs** 中的 `file_create()` 创建一个（空）文件。 如果文件已经存在，则不会被覆盖或更改。
 
 ```{r, eval=F}
 file_create(here("data", "test.rds"))
 ```
 
-A **base** R alternative is `file.create()`. But if the file already exists, this option will truncate it. If you use `file_create()` the file will be left unchanged.  
+**base** R 的替代方程是 `file.create()`。 但是如果文件已经存在，这个选项会删除原文件。 如果您使用 `file_create()` ，原文件将保持不变。
 
+### 如果不存在原文件则创建 {.unnumbered}
 
-### Create if does not exists {.unnumbered}  
+正在编写
 
-UNDER CONSTRUCTION  
+## 删除
 
+### R 对象 {.unnumbered}
 
-## Delete
+使用 **base** R 中的 `rm()` 删除 R 对象。
 
-### R objects {.unnumbered}  
+### 目录 {.unnumbered}
 
-Use `rm()` from **base** R to remove an R object.  
+用来自 **fs** 的 `dir_delete()` 。
 
-### Directories {.unnumbered}  
+### 文件 {.unnumbered}
 
-Use `dir_delete()` from **fs**. 
+您可以通过**fs** 的 `file_delete()` 来删除文件。
 
+## 运行其他脚本文件
 
-### Files {.unnumbered}  
+### `source()` {.unnumbered}
 
-You can delete files with `file_delete()` from **fs**.  
-
-
-
-## Running other files  
-
-### `source()` {.unnumbered}  
-
-To run one R script from another R script, you can use the `source()` command (from **base** R).
+要从另一个 R 脚本运行一个 R 脚本，您可以使用 `source()` 命令（来自 **base** R）。
 
 ```{r, eval=F}
 source(here("scripts", "cleaning_scripts", "clean_testing_data.R"))
 ```
 
-This is equivalent to viewing the above R script and clicking the "Source" button in the upper-right of the script. This will execute the script but will do it silently (no output to the R console) unless specifically intended. See the page on [Interactive console] for examples of using `source()` to interact with a user via the R console in question-and-answer mode.  
+这相当于查看上面的 R 脚本并单击脚本右上角的"Source"按钮。这将执行脚本，但会以静默方式执行（没有输出到 R 控制台）。有关使用 `source()` 在问答模式下通过 R 控制台与用户交互的示例，请参阅页面 [交互式控制台] 。
 
 ```{r, fig.align = "center", out.height = '300%', echo=F}
 knitr::include_graphics(here::here("images", "source_button.png"))
 ```
 
+### `render()` {.unnumbered}
 
-### `render()` {.unnumbered}  
+`render()` 是 `source()` 的变体，最常用于 R markdown 脚本。 您需要给 `input =` 提供特定的 R markdown 文件，以及给 `output_format =` 提供信息 （通常是 "html_document", "pdf_document", "word_document" 等）。
 
-`render()` is a variation on `source()` most often used for R markdown scripts. You provide the `input = ` which is the R markdown file, and also the `output_format = ` (typically either "html_document", "pdf_document", "word_document", "") 
+有关更多详细信息，请参阅 [在 R Markdown 中的汇报] 页面。 另请参阅[此处](https://rmarkdown.rstudio.com/docs/reference/render.html)的 `render()` 文档或输入 `?render`。
 
-See the page on [Reports with R Markdown] for more details. Also see the documentation for `render()` [here](https://rmarkdown.rstudio.com/docs/reference/render.html) or by entering `?render`.  
+### 运行目录下的文件 {.unnumbered}
 
+您可以创建一个 for 循环并将其用于 `source()` 目录中的每个文件，如 `dir()`所示的。
 
-
-### Run files in a directory {.unnumbered}
-
-You can create a *for loop* and use it to `source()` every file in a directory, as identified with `dir()`. 
+You can create a *for loop* and use it to `source()` every file in a directory, as identified with `dir()`.
 
 ```{r, eval=F}
-for(script in dir(here("scripts"), pattern = ".R$")) {   # for each script name in the R Project's "scripts" folder (with .R extension)
-  source(here("scripts", script))                        # source the file with the matching name that exists in the scripts folder
+for(script in dir(here("scripts"), pattern = ".R$")) {   #对于 R 项目的“scripts”文件夹中的每个脚本名称（带有 .R 扩展名）
+  source(here("scripts", script))                        #溯源“scripts”文件夹中存在的且匹配名字的文件
 }
 ```
 
-If you only want to run certain scripts, you can identify them by name like this:  
+如果您只想运行某些特定脚本，您可以通过名称来识别它们，如下所示：:
 
 ```{r, eval=F}
 
@@ -223,29 +204,24 @@ for(script in scripts_to_run) {
 
 ```
 
+这是 **fs** 和 **base** R 中函数的[对比](https://cran.r-project.org/web/packages/fs/vignettes/function-comparisons.html)。
 
+### 导入目录中的文件 {.unnumbered}
 
-Here is a [comparison](https://cran.r-project.org/web/packages/fs/vignettes/function-comparisons.html) of the **fs** and **base** R functions.  
+有关导入和导出单个文件的信息，请参阅 [导入和导出] 页面。
 
-### Import files in a directory  {.unnumbered}
+另请参阅 [导入和导出] 页面，了解根据文件名中的日期或通过查看文件元数据自动导入最新文件的方法。
 
-See the page on [Import and export] for importing and exporting individual files.  
+参见[迭代，循环，和列表]的页面中用 **purrr** 展示的示例：
 
-Also see the [Import and export] page for methods to automatically import the most recent file, based on a date in the file name *or* by looking at the file meta-data.  
+-   拆分数据框并将其保存为多个 CSV 文件\
+-   拆分数据框并将每个部分保存为一个 Excel 工作簿中的单独工作表\
+-   导入多个 CSV 文件并将它们组合成一个数据框\
+-   导入包含多张工作表的 Excel 工作簿并将它们组合成一个数据框
 
-See the page on [Iteration, loops, and lists] for an example with the package **purrr** demonstrating:  
+## **base** R
 
-* Splitting a data frame and saving it out as multiple CSV files  
-* Splitting a data frame and saving each part as a separate sheet within one Excel workbook  
-* Importing multiple CSV files and combining them into one dataframe  
-* Importing an Excel workbook with multiple sheets and combining them into one dataframe  
-
-
-
-
-## **base** R  
-
-See below the functions `list.files()` and `dir()`, which perform the same operation of listing files within a specified directory. You can specify `ignore.case =` or a specific pattern to look for. 
+请观察下面的函数 `list.files()` 和 `dir()`，它们执行咸通的操作，即列出指定目录中的文件。 您可以指定 `ignore.case =` 或其他查找的特定模式。
 
 ```{r, eval=F}
 list.files(path = here("data"))
@@ -257,13 +233,10 @@ list.files(path = here("data"), pattern = "evd", ignore.case = TRUE)
 
 ```
 
-If a file is currently "open", it will display in your folder with a tilde in front, like "~$hospital_linelists.xlsx".  
-
+如果文件是"打开"的状态，它会将您的文件夹中显示与前一个波浪，例如"〜\$ hospital_linelists.xlsx"。
 
 <!-- ======================================================= -->
-## Resources {  }
 
-https://cran.r-project.org/web/packages/fs/vignettes/function-comparisons.html
+## 资料来源
 
-
-
+<https://cran.r-project.org/web/packages/fs/vignettes/function-comparisons.html>
