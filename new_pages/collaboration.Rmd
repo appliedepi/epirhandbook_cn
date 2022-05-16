@@ -1,605 +1,485 @@
-# Version control and collaboration with Git and Github
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
 
-This chapter presents an overview of using Git to collaborate with others.
-More extensive tutorials can be
-found at the bottom in the Resources section.
+# 版本控制与协同合作 (Git 和 Github)
 
-## What is Git?
+本章主要讲述如何使用 Git 与他人协作。
+更多的教程可以参考在本章末尾的其他资源部分。
 
-Git is a **version control** software that allows tracking changes in a
-folder. It can be used like the "track change" option in Word, LibreOffice or
-Google docs, but for all types of files. It is one of the most powerful
-and most used options for version control.
+## Git 是什么?
 
-**Why have I never heard of it? -** While people with a developer
-background routinely learn to use version control software (Git,
-Mercurial, Subversion or others), few of us from
-quantitative disciplines are taught these skills. Consequently, most epidemiologists never
-hear of it during their studies, and have to learn it on the fly.
+Git 是一个**版本控制**软件，它可以被用来记录文件夹中的更改。
+它的功能类似于 Word、LibreOffice 或 Google
+文档中的"追踪修订"功能，且适用于所有类型的文件。
+它是诸多版本控制软件中最强大和最常用的选择之一。
 
-**Wait, I heard of Github, is it the same?** - Not exactly, but you
-often use them together, and we will show you how to. In short:
+**为什么我从来没有听说过？** -
+一些从事软件开发的人员通常会学习过版本控制软件（Git、Mercurial、Subversion
+或其他），但像我们这种从事定量学科的研究人员很少接触这些软件。
+因此，大多数流行病学家在研究期间从未听说过它，而不得不在需要使用时临时抱佛脚。
 
--   **Git** is the version control system, a piece of software. You can use it
-    locally on your computer or to synchronize a folder with a
-    host **website**. By default, one uses a terminal to give Git
-    instructions in command-line.
+**等等，我听说过Github，它是一样的吗？**-
+不完全准确，但它们经常被一起使用，我们将告诉你如何共同使用它们。简而言之：
 
--   You can use a **Git client/interface** to avoid the command-line and
-    perform the same actions (at least for the simple, super common
-    ones).
+-   **Git**是版本控制系统，本质是一个软件。你可以在你的电脑上使用它，也可以将文件夹与**主机网站**同步。默认情况下，人们使用终端在命令行中对Git进行指示。
 
--   If you want to store your folder in a **host website** to
-    collaborate with others, you may create an account at Github,
-    Gitlab, Bitbucket or others.
+-   你可以使用 **Git
+    客户端/交互界面**来避免使用命令行，并执行同样的操作（至少对于简单的、超级常见的操作可以这样完成）。
 
-So you could use the client/interface **Github Desktop**, which uses
-**Git** in the background to manage your files, both locally on your
-computer, and remotely on a **Github** server.
+-   如果你想把你的文件夹存储在一个**主机网站**上与他人合作，你可以在Github、Gitlab、Bitbucket或其他网站创建一个账户。
 
-## Why use the combo Git and Github?
+所以你可以使用 **Github Desktop** 的客户端/交互界面，在后台使用**Git**
+来管理你的文件。它既可以在你的电脑上本地管理文件，也可以在**Github**
+服务器上远程管理文件。
 
-Using **Git** facilitates:
+## 为什么要使用Git和Github的组合呢？
 
-1)  Archiving documented versions with incremental changes so that you
-    can easily revert backwards to any previous state
-2)  Having parallel *branches*, i.e. developing/"working" versions with
-    structured ways to integrate the changes after review
+使用 **Git** 可以促进：
 
-This can be done locally on your computer, even if you don't collaborate
-with other people. Have you ever:
+1)  归档被改变的文件版本，这样你就可以很容易地恢复文件到以前的状态。
+2)  拥有平行分支版本，例如 开发中/"工作
+    "版本，用结构化的方法来将审查后的修改整合进文件。
 
--   regretted having deleted a section of code, only to realize two
-    months later that you actually needed it?
+无论你是否与他人合作，这些功能可以在你的电脑本地完成。你有没有：
 
+-   当你意识到你需要一些过去的代码的时候发现你两个月前已经删除了这些代码？
 
--   come back on a project that had been on pause and attempted to
-    remember whether you had made that tricky modification in one of the
-    models?
+-   继续一个已经暂停很久的项目，并且试图想起你是否修改了其中一个复杂的模型？
 
--   had a *file model_1.R* and another file *model_1\_test.R* and a file
-    *model_1\_not_working.R* to try things out?
+-   需要尝试一下三个文件（ *model_1.R* 、 *model_1\_test.R* 和
+    *model_1\_not_working.R* ）分别代表什么?
 
--   had a file *report.Rmd*, a file *report_full.Rmd*, a file
-    *report_true_final.Rmd*, a file *report_final_20210304.Rmd*, a file
-    *report_final_20210402.Rmd* and cursed your archiving skills?
+-   有文件：*report.Rmd*、 *report_full.Rmd*、 *report_true_final.Rmd*、
+    *report_final_20210304.Rmd*和
+    *report_final_20210402.Rmd*，于是只能责怪你自己的归档能力太差？
 
-Git will help with all that, and is worth to learn for that alone.
+Git 将帮助解决所有这些问题。仅此一点， Git 就值得被学习。
 
+但是，当 Git 与 Github
+等在线存储库一起使用以支持**多人协作项目**时，它会变得更加强大。
+这有利于：
 
-However, it becomes even more powerful when used with a online repository
-such as Github to support **collaborative projects**. This facilitates:
+-   多人协作：其他人可以查看、评论和接受/拒绝更改
 
--   Collaboration: others can review, comment on, and
-    accept/decline changes
+-   共享您的代码、数据和输出，并邀请公众（或私下邀请您的团队成员）提供反馈
 
--   Sharing your code, data, and outputs, and invite feedback
-    from the public (or privately, with your team)
+从而避免：
 
-and avoids:
+-   "糟糕，我忘记发送最新的版本了，你需要在这个文件上重做两天的工作"
 
--   "Oops, I forgot to send the last version and now you need to
-    redo two days worth of work on this new file"
+-   Mina、Henry 和 Oumar 都同时在一个脚本上工作，需要手动合并他们的更改
 
--   Mina, Henry and Oumar all worked at the same time on one script and
-    need to manually merge their changes
+-   两个人尝试在 Dropbox 和 Sharepoint
+    上修改同一个文件，并且导致同步错误。
 
--   Two people try to modify the same file on Dropbox and Sharepoint 
-    and this creates a synchronization error.
+### 这听起来有点复杂，我可不是程序员 {.unnumbered}
 
-### This sounds complicated, I am not a programmer {-}
+对于从未接触版本控制软件的人，有可能稍微有点复杂。
+尤其是Git高级用途的例子是非常难以理解的。 但是，与 R 和 Excel
+非常相似，您无需成为专家即可受益于该工具。
+您只需要学习少量函数和概念就可以让您在很短的时间内跟踪您的文件更改、同步在线存储库中的文件并与您的同事协作。
 
-It can be. Examples of advanced uses can be quite scary. However, much
-like R, or even Excel, you don't need to become an expert to reap the
-benefits of the tool. Learning a *small number of functions and notions*
-lets you track your changes, synchronize your files on a online
-repository and collaborate with your colleagues in a very short amount
-of time.
+由于学习曲线的客观原因，学习这些工具的最佳时机可能不是在非常紧急的情况下。研究人员最好一步一步地慢慢学习这些工具。一旦您掌握了几个概念，您的工作流程就会变得相当高效和快速。如果您不是在一个必须通过
+Git
+与人协作的项目中工作，那么在协作之前，您可以单独练习它来建立您的信心。
 
-Due to the learning curve, emergency context may not be the best of time
-to learn these tools. But learning can be achieved by steps. Once you acquire 
-a couple of notions, your workflow can be quite efficient and fast.
-If you are not working on a project where collaborating with people
-through Git is a necessity, **it is actually a good time to get
-confident using it** in solo before diving in collaboration.
+## 设置
 
-## Setup
+### 安装 Git {.unnumbered}
 
-### Install Git {.unnumbered}
+*Git*
+是在你电脑幕后的引擎，它追踪变化、分支（版本）、合并和恢复.**你必须从
+<https://git-scm.com/downloads> 安装Git.**
 
-*Git* is the engine behind the scenes on your computer, which tracks
-changes, branches (versions), merges, and reverting. **You must first
-install *Git* from <https://git-scm.com/downloads>.**
+### 安装一个交互界面（可选但强烈建议） {.unnumbered}
 
-### Install an interface (optional but recommended) {.unnumbered}
+Git 有自己的命令语言，研究人员可以在命令行终端上输入命令语言来控制
+Git。然而，作为非开发背景的研究人员，在日常使用中，您很少需要与 Git
+直接互动。网上有很多不同的客户端/交互界面都能提供漂亮的可视化工具来显示文件的修改或分支。
 
-Git has its own language of commands, which can be typed into a command
-line terminal. However, there are many clients/interfaces and as non-developpers, in your
-day-to-day use, you will rarely _need_ to interact with Git directly and 
-interface usually provide nice visualisation tools for file modifications or branches. 
+所有操作系统上都有许多客户端可以选择，有些对初学者友好，有些则更复杂。适合初学者的选项包括
+RStudio 的 Git 面板和 Github
+Desktop（我们将在本文中展示的）。适合高级开发人员的（更强大，但更复杂）客户端包括
+Source Tree、Gitkracken、Smart Git 和其他。
 
-Many options exist, on all OS, from beginner friendly to more complex ones. 
-Good options for beginners include the RStudio Git pane and 
-[Github Desktop](https://desktop.github.com/), which we will showcase in 
-this chapter.
-Intermediate (more powerfull, but more complex) options include Source Tree, 
-Gitkracken, Smart Git and others.
+关于 [Git
+客户端](-%09https:/happygitwithr.com/git-client.html#git-client)的简单说明。
 
-Quick explanation on [Git clients](-%09https:/happygitwithr.com/git-client.html#git-client).
+注意：由于不同客户端实际上都在内部使用
+Git，你可以尝试几个客户端，在某个项目上从一个客户端切换到另一个客户端，或使用控制台进行客户端不支持的操作，甚至可以在Github上在线执行多次操作。
 
-*Note: since interfaces actually all use Git internally, you can try several of
-them, switch from one to another on a given project, use the console punctually 
-for an action your interface does not support, or even perform any number of 
-actions online on Github.*
+如下所述，你可能偶尔需要将 Git 命令写入终端，如 RStudio 终端窗格（R
+控制台旁边的一个标签）或 Git Bash 终端。
 
-As noted below, you may occasionally have to write Git commands into a
-terminal such as the RStudio terminal pane (a tab adjacent to the R
-Console) or the Git Bash terminal.
+### Github 账户 {.unnumbered}
 
+在 [github.com](github.com) 注册一个免费的账户.
 
-### Github account {.unnumbered}
+你可能会被要求用手机上的一个应用程序设置双因素认证。在Github
+[帮助文档](https://docs.github.com/en/github/authenticating-to-github/securing-your-account-with-two-factor-authentication-2fa)中阅读更多内容。
 
-Sign-up for a free account at [github.com](github.com).
+如果你使用 Github Desktop，你可以在安装 Github Desktop
+后按照[步骤](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/authenticating-to-github)输入你的Gitub
+凭证。如果你不这样做，当你试图从 Github
+克隆一个项目时，证书会被要求提供。
 
-You may be offered to set-up two-factor authentication with an app on
-your phone. Read more in the Github [help
-documents](https://docs.github.com/en/github/authenticating-to-github/securing-your-account-with-two-factor-authentication-2fa).
+## 词汇、概念和基本功能
 
-If you use Github Desktop, you can enter your Gitub credentials after
-installation following these
-[steps](https://docs.github.com/en/desktop/installing-and-configuring-github-desktop/authenticating-to-github).
-If you don't do it know, credentials will be asked later when you try to
-clone a project from Github.
+和学习R时一样，要理解 Git
+也需要记住一些词汇。这里有一些[基础知识关于入门/互动教程](https://www.freecodecamp.org/news/an-introduction-to-git-for-absolute-beginners-86fa1d32ff71/)。在接下来的章节中，我们将展示如何使用交互界面，但您最好能记住这些词汇和概念，因为无论如何您在使用交互界面时都会用到它们。
 
-## Vocabulary, concepts and basic functions
+### Repository 资源库 {.unnumbered}
 
-As when learning R, there is a bit of vocabulary to remember to
-understand Git. Here are the [basics to get you
-going](https://www.freecodecamp.org/news/an-introduction-to-git-for-absolute-beginners-86fa1d32ff71/)
-/ [interactive tutorial](learngitbranching.js.org). In the next
-sections, we will show how to use interfaces, but it is good
-to have the vocabulary and concepts in mind, to build your mental model,
-and as you'll need them when using interfaces anyway.
+Git Repository
+资源库（"repo"）是一个文件夹，包含了你项目的所有子文件夹和文件（数据、代码、图像等）及其修订历史。当你开始用它追踪仓库的变化时，Git
+会创建一个包含所有追踪信息的隐藏文件夹。一个典型的 Git Repository
+资源库是你的 R 项目文件夹（见手册中的 [R 项目] 页面）
 
-### Repository {.unnumbered}
+我们将在接下来的章节中展示如何从Github、Github Desktop或Rstudio
+创建（初始化）一个Git Repository 资源库。
 
-A Git *repository* ("*repo*") is a folder that contains all the
-sub-folders and files for your project (data, code, images, etc.) and
-their revision histories. When you begin tracking changes in the
-repository with it, Git will create a hidden folder that contains
-all tracking information. A typical Git repository is
-your *R Project* folder (see handbook page on [R projects]).
+### Commits 历史版本 {.unnumbered}
 
-We will show how to create (_initialize_) a Git repository 
-from Github, Github Desktop or Rstudio in the next
-sections.
+Commits
+历史版本是项目在某一特定时间内的一个**快照**。当你对项目进行修改时，你会做一个新的提交来跟踪你的文件的修改（delta）。例如，也许你编辑了一些代码行，并更新了一个相关的数据集。一旦你的改动被保存下来，你可以将这些改动捆绑在一起，形成一个
+"Commits 历史版本"。
 
-### Commits {.unnumbered}
+每个提交都有一个唯一的ID（哈希值）。出于版本控制的目的，您可以根据commits
+历史版本来回溯你的项目，所以最好让它们相对多而且连贯。你还会附上对修改的简要描述，称为
+"历史版本信息"。
 
-A *commit* is a **snapshot** of the project at a given time. 
-When you make a change to the project, you will make a new commit
-to track the changes (the delta) made to your
-files. For example, perhaps you edited some lines of code and updated a
-related dataset. Once your changes are saved, you can bundle these
-changes together into one "commit".
+阶段性修改？阶段性修改是指将它们添加到暂存区，为下一次提交做准备。这样做的目的是，你可以精细地决定在某个特定的提交中包含哪些修改。例如，如果你在一个脚本中做了模型规范，后来又在另一个脚本中做了图，那么有两个不同的提交是有意义的（如果你想恢复图上的修改而不是模型上的修改，这样会更容易）。
 
-Each commit has a unique ID (a *hash*). For version control purposes,
-you can revert your project back in time based on commits, so it is best
-to keep them relatively small and coherent. You will also attach a brief
-description of the changes called the "commit message".
+### 版本分支 {.unnumbered}
 
-*Staged changes*? To stage changes is to add them to the *staging area*
-in preparation for the next commit. The idea is that you can finely
-decide which changes to include in a given commit. For example, if you
-worked on model specification in one script, and later on a figure in
-another script, it would make sense to have two different commits (it would be easier
-in case you wanted to revert the changes on the figure but not the model).
+一个分支代表你的资源库中一个独立支线，它是一个与主支平行的、可替代主支项目的版本。
 
+主支通常是项目的"主要/最终/实时"版本，在把分支合并到主支之前，分支主要被用于测试代码的修改是否有用。
+当您在一个分支上完成测试后，您可以通过合并分支与主支将修改带入您的支。如果修改不是很成功，您可以直接删除此分支。
 
-### Branches {.unnumbered}
+**注意：无需与其他人协作，也无需拥有远程在线存储库，您可以直接使用分支**。
 
-A branch represents an *independent line* of changes in your repo, a
-parallel, alternate version of your project files. 
+### 本地和远程资源库 {.unnumbered}
 
+克隆就是在另一个地方创建一个 Git 资源库的副本。
 
-Branches are useful to test changes before they are incorporated into
-the *main* branch, which is usually the primary/final/"live" version of
-your project. When you are done experimenting on a branch, you can bring
-the changes into your *main* branch, by *merging* it, or delete it, if
-the changes were not so successful.
+例如，您可以从 Github
+克隆一个在线资源库到本地计算机，或者把本地资源库克隆到 Github线上。
 
-*Note: you do not have to collaborate with other people to use branches,
-nor need to have a remote online repository.*
+资源库被克隆后，其项目文件存在于两个位置：
 
+-   计算机上的本地资源库。 这是您对文件/代码进行实际更改的地方。
 
+-   远程在线资源库。您的项目文件在 Github 资源库（或任何其他 Web
+    主机上）中的版本。
 
-### Local and remote repositories {.unnumbered}
+为了同步这些资源库，我们将使用很多函数。 与 Sharepoint、Dropbox
+或其他同步软件不同，Git 不会自动更新本地资源库或在线资源库。
+您可以选择同步的时间和方式。
 
-To *clone* is to create a copy of a Git repository in another place.
+-   `git fetch` 从远程资源库下载新更改，但不更改本地资源库。
+    你可以将此函数功能视为检查远程资源库的状态。
 
-For example, you can *clone* a online repository _from_ Github locally on
-your computer, or begin with a local repository and clone
-it online _to_ Github.
+-   `git pull` 从远程资源库下载新更改并更新您的本地资源库。
 
-When you have cloned a repository, the project files exist in
-two places:
+-   当您在本地创建了一次或多次历史版本时，您可以用
+    `git push`提交到远程资源库。 这会将您的更改发送到 Github
+    上，以便其他人可以根据需要查看和提取它们。
 
--   the *LOCAL* repository on your physical computer. This
-    is where you make the actual changes to the files/code.
+## 开始: 创建一个新的资源库
 
--   the *REMOTE*, online repository: the versions of your project files
-    in the Github repository (or on any other web
-    host).
+您可以用很多方法创建新的存储库。例如，您可以从控制台、Github
+和交互界面执行此操作。
 
-To synchronize these repositories, we will use more functions. Indeed,
-unlike Sharepoint, Dropbox or other synchronizing software, Git does
-not automatically update your local repository based or what's online,
-or vice-versa. You get to choose when and how to synchronize.
+两种主要的设置方法是：
 
--   `git fetch` downloads the new changes from the remote repository but does not 
-change your local repository. Think of it as checking the state of the remote repository.
+-   从现有或新的 Github 资源库（推荐初学者使用）创建新的 R 项目
+-   为现有 R 项目创建 Github 资源库
 
--   `git pull` downloads the new changes from the remote repositories
-    and update your local repository.
+### 启动文件 {.unnumbered}
 
--   When you have made one or several commits locally, you can
-    `git push` the commits to the remote repository. This sends your
-    changes on Github so that other people can see and pull them if
-    they want to.
+创建新资源库时，您可以选择创建以下所有文件，也可以稍后将它们添加到资源库中。
+它们通常位于资源库的"root"文件夹中。
 
+-   *README* 自述文件是包括项目简介和使用方式的文件。
+    刚创建时它是空的，您应该稍后在完成项目时完善它。
 
-## Get started: create a new repository
+-   gitignore 文件是一个文本文件，其中每一行都包含 Git
+    应该忽略的文件夹或文件（不跟踪更改）。
+    有关它的更多信息请在[此处](https://www.freecodecamp.org/news/gitignore-what-is-it-and-how-to-add-to-repo/)查看示例。
 
-There are many ways to create new repositories. You can do it from the
-console, from Github, from an interface.
+-   您可以为您的作品选择 *license*
+    许可证，以便其他人知道他们可以在哪些条件下使用或复制您的作品。
+    有关详细信息，请参阅[知识共享许可](https://creativecommons.org/licenses/)。
 
-Two general approaches to set-up are:
+### 在 Github 中创建一个新的资源库 {.unnumbered}
 
-
--   Create a new R Project from an existing or new Github repository
-    (*preferred for beginners*), or
--   Create a Github repository for an existing R project
-
-
-### Start-up files {.unnumbered}
-
-When you create a new repository, you can optionally create 
-all of the below files, or you can add them to your repository at a later stage.
-They would typically live in the "root" folder of the repository.
-
--   A *README* file is a file that someone can read to understand why
-    your project exists and what else they should know to use it. It
-    will be empty at first, but you should complete it later.
-
--   A *.gitignore* file is a text file where each line would contain
-    folders or files that Git should ignore (not track changes). Read
-    more about it and see examples
-    [here](https://www.freecodecamp.org/news/gitignore-what-is-it-and-how-to-add-to-repo/).
-
--   You can choose a *license* for your work, so that other people
-    know under which conditions they can use or reproduce your work. For more
-    information, see the [Creative Commons
-    licenses](https://creativecommons.org/licenses/).
-
-### Create a new repository in Github {.unnumbered}
-
-To create a new repository, log into Github and look for the green
-button to create a new repository. This now empty repository can be
-cloned locally to your computer (see next section).
+登录 Github 并按下绿色按钮可以创建一个新的资源库。
+这个空的新资源库可以被克隆到您的本地计算机（请参阅下一节）。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_new.png"))
 ```
 
-You must choose if you want your repository to be **public** (visible to
-everyone on the internet) or **private** (only visible to those with
-permission). This has important implications if your data are sensitive.
-If your repository is private you will encounter some quotas in advanced
-special circumstances, such as if you are using Github *actions* to
-automatically run your code in the cloud.
- 
-### Clone from a Github repository {.unnumbered}
+您必须选择您的存储库是**公开的**（互联网上的每个人都可以看到）还是**私有的**（只有有权限的人才能看到）。
+如果您的数据是敏感的，最好将您的资源库配置成私有的。
+如果您的资源库是私有的，您将在特殊情况下遇到一些限制，例如当您使用
+Github 在线远程自动运行您的代码时。
 
-You can *clone* an existing Github repository to create
-a new local R project on your computer.
+### 从现有的 Github 资源库克隆 {.unnumbered}
 
-The Github repository could be one that already exists and contains
-content, or could be an empty repository that you just created. In this
-latter case you are essentially creating the Github repo and local R
-project at the same time (see instructions above).
+您可以**克隆**现有的 Github 资源库，从而在您的计算机上创建一个新的 R
+项目。
 
-_Note_: if you do not have contributing rights on a Github repository, 
-it is possible to first _fork_ the repository to your profile, and then
-proceed with the other actions. Forking is explained at the end of this 
-chapter, but we recommend that you read the other sections first.
+Github
+资源库可以是已经存在并包含一些内容的资源库，也可以是您刚刚创建的空资源库。
+在后一种情况下，您实际上是在同时创建 Github 资源库和本地 R
+项目（请参阅上面的说明）。
 
-Step 1: Navigate in Github to the repository, click on the green "**Code**"
-button and copy the **HTTPS clone URL** (see image below)
+**注意：**如果您对 Github 资源库没有权限，可以先将资源库 fork
+到您的个人名下，然后继续执行其他操作。 在本章末尾解释了什么是
+fork，但我们建议您先阅读其他部分。
+
+第 1 步：在 Github 中进入到目标资源库库，单击绿色的"**Code**"按钮并复制
+**HTTPS URL**（见下图）
 
 ```{r echo=F, out.width = '100%', out.height='100%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_clone.png"))
 ```
 
-The next step can be performed in any interface. We will illustrate with
-Rstudio and Github desktop.
+下一步可以在任何交互界面中执行。 我们将使用 Rstudio 和 Github desktop 。
 
-#### In Rstudio {.unnumbered}
+#### 使用 Rstudio {.unnumbered}
 
-In RStudio, start a new R project by clicking *File \> New Project \>
-Version Control \> Git*
+在 RStudio 中，通过 *File \> New Project \> Version Control \> Git*
+来创建一个新的 R 项目。
 
--   When prompted for the "Repository URL", paste the HTTPS URL from
-    Github\
--   Assign the R project a short, informative name\
--   Choose where the new R Project will be saved locally\
--   Check "Open in new session" and click "Create project"
+-   当软件提示输入"Repository URL"时，粘贴从 Github 复制的 HTTPS URL
 
+-   为R项目指定一个简短的、容易识别的名称\
 
-You are now in a new, local, RStudio project that is a clone of the
-Github repository. This local project and the Github repository are now
-linked.
+-   选择把新的 R 项目保存在本地的位置\
 
-#### In Github Desktop {.unnumbered}
+-   选中"Open in new session" 并单击 "Create project"
 
--   Click on *File \> Clone a repository*
+您现在拥有一个新的本地 RStudio 项目，该项目是某个 Github 资源库的克隆。
+此本地项目和 Github 资源库现在已被关联。
 
--   Select the URL tab
+#### 使用 Github Desktop {.unnumbered}
 
--   Paste the HTTPS URL from Github in the first box
+-   单击 *File \> Clone a repository*
 
--   Select the folder in which you want to have your local repository
+-   选择 URL
 
--   Click "CLONE"
+-   在第一个框内粘贴来自 Github 的 HTTPS URL
+
+-   选择本地资源库储存的文件夹
+
+-   单击"CLONE"
 
 ```{r echo=F, out.width = '100%', out.height='100%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_clone_desktop.png"))
 ```
 
-### New Github repo from existing R project {.unnumbered}
+### 基于现有的 R 项目创建新的 Github 资源库 {.unnumbered}
 
-An alternative setup scenario is that you have an existing R project
-with content, and you want to create a Github repository for it.
+还有一种情况是，你有一个包含内容的R项目，并且想为它创建一个Github资源库。
 
-1)  Create a new, empty Github repository for the project (see
-    instructions above)\
-2)  Clone this repository locally (see HTTPS instructions above)\
-3)  Copy all the content from your pre-existing R
-    project (codes, data, etc.) into this new empty, local, repository (e.g. use copy and paste).\
-4)  Open your new project in RStudio, and go to the Git pane. The new files should
-    register as file changes, now tracked by Git. Therefore, you can
-    bundle these changes as a *commit* and *push* them up to Github.
-    Once *pushed*, the repository on Github will reflect all the files.
-    
-See the Github workflow section below for details on this process.
+1)  为项目创建一个新的、空的Github资源库（请参阅上面使用说明）\
+2)  克隆此资源库到本地计算机（请参阅上面使用说明）\
+3)  将现有 R
+    项目中的所有内容（代码、数据等）复制到这个新的空本地资源库中（例如，使用复制和粘贴）。\
+4)  在 RStudio 中打开您的新项目，然后转到 Git 窗格。
+    新文件应显示了文件变更。 因此，您可以将这些变更捆绑，并将它们推送到
+    Github。 推送后，Github 上的资源库将显示所有文件。
 
-### What does it look like now? {.unnumbered}
+有关此过程的详细信息，请参阅下面的 Github 工作流程部分。
 
-#### In RStudio {-}
+### 创建完成后的交互界面 {.unnumbered}
 
-Once you have cloned a Github repository to a new R project, 
-you now see in RStudio a "Git" tab. This tab appears in the same RStudio pane
-as your R Environment:
+#### 在 RStudio 中 {.unnumbered}
+
+将 Github 资源库克隆到新的 R 项目后，您现在可以在 RStudio
+中看到"Git"选项。 此选项显示在 RStudio 窗格中：
 
 ```{r echo=F, out.width = "75%", out.height="75%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "Git_console.png"))
 ```
 
-Please note the buttons circled in the image above, as they will be
-referenced later (from left to right):
+请注意上图中圈出的按钮，因为稍后会解释它们（从左到右）：
 
--   Button to *commit* the saved file changes to the local
-    branch (this will open a new window)
--   Blue arrow to *pull* (update your local version of the branch with
-    any changes made on the remote/Github version of that branch)
--   Green arrow to *push* (send any commits/changes for your local
-    version of the branch to the remote/Github version of that branch)
--   The Git tab in RStudio
--   Button to create a NEW branch using whichever local branch is shown
-    to the right as the base. *You almost always want to branch off from
-    the main branch (after you first pull to update the main branch)*
--   The branch you are currently working in
--   Changes you made to code or other files will appear below
+-   *commit* 按钮用来保存文件的更改到本地分支（这将打开一个新窗口）
+-   蓝色箭头是 *pull* （基于该分支的远程/Github
+    版本上的任何更改来更新您的本地版本）
+-   绿色箭头是 *push*
+    （将本地分支版本的任何提交/更改发送到该分支的远程/Github 版本）
+-   RStudio 中的 Git 选项
+-   用来使用右侧显示的本地分支作为基础创建新分支的按钮。您最好主要基于主分支创建出来（在您第一次更新主分支之后）
+-   您目前工作的分支
+-   您对代码或其他文件所做的更改将显示在下方
 
-#### In Github Desktop {-}
+#### 在 Github Desktop 中 {.unnumbered}
 
-Github Desktop is an independent application that allows you to manage
-all your repositories. When you open it, the interface allows you to
-choose the repository you want to work on, and then to perform basic Git
-actions from there.
+Github Desktop
+是一个独立的应用程序，可让您管理所有资源库。当您打开它时，该软件允许您选择要处理的资源库，然后执行基本的
+Git 操作。
 
 ```{r echo=F, out.width = "75%", out.height="75%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_interface.png"))
 ```
 
+## Git + Github 工作流程
 
-## Git + Github workflow
+### 流程概述 {.unnumbered}
 
-### Process overview {.unnumbered}
+完成设置（如上所述）后，您将拥有一个关联（克隆）到本地 R 项目的 Github
+资源库。主分支（默认创建）是所有文件的"实时"版本。当您想要进行修改时，最好从主分支创建一个新分支（如"制作副本"）。这是
+Git 中的典型工作流程，因为创建分支既简单又快速。
 
-Once you have completed the setup (described above), you will have a
-Github repo that is connected (*cloned*) to a local R project. The
-*main* branch (created by default) is the so-called "live" version of
-*all* the files. When you want to make modifications, it is a good
-practice to create a *new branch* from the *main* branch (like "Make a
-Copy"). This is a typical workflow in Git because creating a branch is
-easy and fast.
+典型的工作流程如下：
 
+1.  确保您的本地资源库是最新的，如果不是，请更新它
 
-A typical workflow is as follow:
+2.  转到您之前工作的分支，或创建一个新分支来尝试更改一些事情
 
-1.  Make sure that your local repository is up-to-date, update it if
-    not
+3.  在您的计算机上处理文件，对该分支进行一次或多次提交
 
-2.  Go to the branch you were working on previously, or create a new
-    branch to try out some things
+4.  基于您的更改更新分支的远程版本（推送）
 
+5.  当您对您的分支感到满意时，您可以将工作分支的在线版本合并到在线"主"分支中以合并更改
 
-3.  Work on the files locally on your computer, make one or several
-    commits to this branch
+其他团队成员可能在他们自己的分支中做同样的事情，或者也可以在您的工作分支中提交一些更改。
 
-4.  Update the remote version of the branch with your changes (push)
-
-5.  When you are satisfied with your branch, you can merge the online
-    version of the working branch into the online "main" branch to
-    transfer the changes
-
-Other team members may be doing the same thing with their own branches,
-or perhaps contributing commits into your working branch as well. 
-
-We go through the above process step-by-step in more detail below.
-Here is a schematic we've developed - it's in the format of a two-way
-table so it should help epidemiologists understand.
+我们将在下面详细地逐步完成上述过程。 这是我们开发的示意图 -
+它采用双向表的格式，因此应该有助于流行病学家理解。
 
 ```{r echo=F, out.height='150%', out.width='100%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_table.png"))
 ```
 
-Here's [another diagram](https://build5nines.com/introduction-to-git-version-control-workflow/).
+这是[另外的表格](https://build5nines.com/introduction-to-git-version-control-workflow/)。
 
-*Note: until recently, the term "master" branch was used, but it is now
-referred to as "main" branch.*
+**注意**: 之前使用了名词 "master"分支代表主分支，但是现在主要使用 "main"
+分支代表主分支 。
 
 ```{r echo=F, out.width = '100%', out.height='100%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "GitHub-Flow.png"))
 ```
 
-Image
-[source](https://build5nines.com/introduction-to-git-version-control-workflow/)
+[图片来源](https://build5nines.com/introduction-to-git-version-control-workflow/)
 
-## Create a new branch
+## 创建新的分支
 
-When you select a branch to work on, **Git resets your working directory
-the way it was the last time you were on this branch**.
+当您选择要工作的分支时，**Git将重置您的工作目录，使其与上次您在这个分支上时相同。**
 
-### In Rstudio Git pane {.unnumbered}
+### 在 Rstudio Git 窗格中 {.unnumbered}
 
-Ensure you are in the "main" branch, and then click on the purple icon to
-create a new branch (see image above).
+确保您在"main" 主分支中，然后单击紫色图标创建一个新分支（见上图）。
 
--   You will be prompted to name your branch with a one-word descriptive
-    name (can use underscores if needed).
--   You will see that locally, you are still in the same R project, but
-    you are no longer working on the "main" branch.
--   Once created, the new branch will also appear in the Github website
-    as a branch.
-    
-You can visualize branches in the Git Pane in Rstudio after clicking on "History"
+-   系统将提示您使用一个描述性名称单词来命名您的分支（如果需要，可以使用下划线）。
+-   您会在本地看到，您仍在同一个 R 项目中，但您不再在主分支上工作。
+-   创建完成后，新分支也将作为分支出现在 Github 网站上。
+
+单击"历史记录"后，您可以在 Rstudio 的 Git 窗格中可视化分支
 
 ```{r echo=F, out.width = '100%', out.height='100%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_rstudio_branchs.png"))
 ```
 
+### 在 Github Desktop 中 {.unnumbered}
 
-### In Github Desktop {.unnumbered}
-
-The process is very much similar, you are prompted to give your branch
-a name. After, you will be prompted to "Publish you branch to Github" to
-make the new branch appear in the remote repo as well.
-
+创建过程非常相似。系统会提示您为分支命名。之后，系统会提示您"将分支发布到
+Github"以使新分支也出现在远程资源库中。
 
 ```{r echo=F, out.width = '100%', out.height='100%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_new_branch.png"))
 ```
 
-### In console {.unnumbered}
+### 在控制台模式中 {.unnumbered}
 
-What is actually happening behind the scenes is that you create a new
-branch with `git branch`, then go to the branch with
-`git checkout` (_i.e._ tell Git that your next commits will occur there). 
-From your git repository:
+您可以使用 `git branch`创建一个新分支，然后使用 `git checkout`
+转到该分支（即告诉 Git 您的下一次提交将发生在那里）。
+从您的 git 资源库中：
 
 ```{bash, eval = FALSE}
-git branch my-new-branch  # Create the new branch branch
-git checkout my-new-branch # Go to the branch
-git checkout -b my-new-branch # Both at once (shortcut)
+git branch my-new-branch  # 创建新的分支
+git checkout my-new-branch # 转到此分支
+git checkout -b my-new-branch # 两者同时进行（快捷方式）
 ```
 
+有关使用控制台的更多信息，请参阅末尾的 Git 命令部分。
 
-For more information about using the console, see the section on
-Git commands at the end.
+## 提交变更
 
-## Commit changes
+现在您可以编辑代码、添加新文件、更新数据集等等。
 
-Now you can edit code, add new files, update datasets, etc.
+您的每一个更改和保存都会被跟踪记录。更改后的文件将出现在RStudio
+Git视窗中，在Github Desktop中，或者在控制台中使用`git status`
+命令显示(见下文)。
 
+每当您进行重大更改（例如添加或更新一段代码）时，暂停并提交这些更改。您可以将提交视为对文件的一"批次"更改。
+在提交更改后，您始终可以继续修改文件。
 
-Every one of your changes is tracked, *once the respective file is
-saved*. Changed files will appear in the RStudio Git tab, in Github
-Desktop, or using the command `git status` in the terminal (see below).
+**关于提交的建议**：通常来说，您最好有一些目的相同的修改就做一次提交，这样的话，如果更改出现问题可以很容易地恢复。
+为了实现这一点，您会发现您应该经常提交。
+最初，您可能会忘记经常提交，但随后就会习惯的。
 
-Whenever you make substantial changes (e.g. adding or updating a section of
-code), pause and *commit* those changes. Think of a commit as a "batch"
-of changes related to a common purpose. You can always continue to
-revise a file after having committed changes on it.
+### 在 Rstudio 中 {.unnumbered}
 
-*Advice on commits*: generally, it is better to make small commits, that
-can be easily reverted if a problem arises, to commit together
-modifications related to a common purpose. To achieve this, you will
-find that *you should commit often*. At the beginning, you'll probably
-forget to commit often, but then the habit kicks in.
-
-### In Rstudio {.unnumbered}
-
-The example below shows that, since the last commit, the R Markdown script "collaboration.Rmd" has changed, 
-and several PNG images were added.
+下面的示例显示，自上次提交以来，R Markdown
+脚本"collaboration.Rmd"被更改，并被添加了几个 PNG 图像。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_tracking2.png"))
 ```
 
-You might be wondering what the yellow, blue, green, and red squares next to
-the file names represent. Here is a snapshot from the [RStudio
-cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
-that explains their meaning. Note that changes with yellow "?" can still
-be staged, committed, and pushed.
+您可能想知道文件名旁边的黄色、蓝色、绿色和红色方块代表什么。下面是
+[RStudio
+备忘录](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)，解释了它们的含义。注意，带有黄色"?"的更改仍然可以被搁置、提交和推送。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_tracking.png"))
 ```
 
--   Press the "Commit" button in the Git tab, which will open a new
-    window (shown below)
+-   按 Git 选项中的"提交"按钮，这将打开一个新窗口（如下所示）
 
--   Click on a file name in the upper-left box
+-   单击左上角框中的文件名
 
--   Review the changes you made to that file (highlighted below in green
-    or red)
+-   查看您对该文件所做的更改（在下方以绿色或红色突出显示）
 
--   "Stage" the file, which will include those changes in the commit. Do
-    this by checking the box next to the file name. Alternatively, you
-    can highlight multiple file names and then click "Stage"
+-   "暂存"文件，此操作将在提交中包含这些更改。
+    通过选中文件名旁边的框来执行此操作。
+    或者，您可以手动选择多个文件名，然后单击"暂存"
 
--   Write a commit message that is short but descriptive (required)
+-   编写一个简短但具有描述性(必需的)的提交消息
 
--   Press the "Commit" button. A pop-up box will appear showing success
-    or an error message.
+-   按"提交"按钮。 将出现一个弹出框，显示成功或失败消息。
 
-
-Now you can make more changes and more commits, as many times as you would like
+现在您可以进行更多更改和提交。
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_commit.png"))
 ```
 
-### In Github Desktop {.unnumbered}
+### 在 Github Desktop 中 {.unnumbered}
 
-You can see the list of the files that were changed on the left. If
-you select a text file, you will see a summary of the modifications that were made
-in the right pane (the view will not work on more complex files like .docs or .xlsx).
+您可以在左侧看到更改的文件列表。
+如果选择文本文件，您将在右侧窗格中看到所做修改的摘要（该视图不适用于
+.docs 或 .xlsx 等更复杂的文件）。
 
-To stage the changes, just tick the little box near file names. When you
-have selected the files you want to add to this commit, give the commit
-a name, optionally a description and then click on the **commit**
-button.
+要暂存这些更改，只需勾选文件名附近的小框。
+您可以选择要添加到此提交的文件后，添加名称和描述（可选），然后单击**提交**按钮。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_commit.png"))
 ```
 
-### In console {.unnumbered}
+### 在控制台中 {.unnumbered}
 
-The two functions used behind the scenes are `git add` to select/stage
-files and `git commit` to actually do the commit.
+`git add` 被用作选择/暂存文件。`git commit` 用来实际提交文件。
 
 ```{bash, eval = FALSE}
 git status # see the changes 
@@ -611,387 +491,303 @@ git commit -m "Describe commit from Github Desktop" # commit the changes with a 
 git log  # view information on past commits
 ```
 
+### 修改之前的提交 {.unnumbered}
 
-### Amend a previous commit {.unnumbered}
+如果您提交了一些更改，然后继续工作，忽然意识到您现在所做的更改应该属于过去的提交（在您看来）。
+请不要害怕！ 您可以将这些更改附加到您之前的提交中。
 
-What happens if you commit some changes, carry on working, and realize
-that you made changes that should "belong" to the past commit (in your opinion). 
-Fear not! You can append these changes to your previous commit.
+在 Rstudio 中，在 COMMIT 按钮所在的行上有一个"修改上一个提交"选项框。
 
-In Rstudio, it should be pretty obvious as there is a "Amend previous commit" 
-box on the same line as the COMMIT button. 
+由于一些尚不明确的原因，该功能尚未在 Github Desktop
+中实现。但有一种（概念上很笨拙但很简单的）方法。
+如果您已提交但尚未推送您的更改，则在 COMMIT
+按钮下方会出现一个"UNDO"按钮。
+单击它，它将恢复您的提交（但保留您的暂存文件和您的提交消息）。
+保存您的更改，将新文件添加到提交中，然后再次提交。
 
-For some unclear reason, the functionality has not been implemented 
-as such in Github Desktop, but there is a (conceptually awkward but easy)
-way around. If you have committed **but not pushed** your changes yet, 
-an "UNDO" button appears just under the COMMIT button. Click on it and 
-it will revert your commit (but keep your staged files and your commit message). 
-Save your changes, add new files to the commit if necessary and commit again.
-
-In the console:  
+在控制台中:
 
 ```{bash, eval = FALSE}
-git add [YOUR FILES] # Stage your new changes
+git add [YOUR FILES] # 暂存新的修改
 
-git commit --amend  # Amend the previous commit
+git commit --amend  # 修改之前的提交
 
-git commit --amend -m "An updated commit message"  # Amend the previous commit AND update the commit message
+git commit --amend -m "An updated commit message"  # 修改之前的提交并更新提交信息
 ```
 
+**注意：**在修改已经公开并与协作者共享的提交之前，请三思。
 
-_Note: think before modifying commits that are already public and shared with your collaborators_.
+## 将更改拉取并推送到 Github
 
+"先拉，再推"
 
-## Pull and push changes up to Github
+在开始处理项目之前拉取远程版本是一种很好的做法，这样可以基于远程/Github
+版本中来更新本地计算机上的分支版本。
 
-"First PULL, then PUSH"
+请不要犹豫，经常拉取。并且要时刻提醒自己先拉再推。.
 
-It is good practice to *fetch* and *pull* before you begin working on
-your project, to update the branch version on your local computer with
-any changes that have been made to it in the remote/Github version.
+当您做出更改并提交，且您对项目的阶段完成满意时，您可以将提交推送到分支的远程/Github
+版本。
 
-PULL often. Don't hesitate. *Always pull before pushing*.
+当你在资源库工作时请不停重复此操作。
 
-When your changes are made and committed and you are happy with the 
-state of your project, you can *push* your commits up
-to the remote/Github version of your branch.
+**注意**：还原已提交但未推送的更改（即仍然是本地的）比还原已推送到远程存储库（可能已经被其他人拉取）的更改要容易得多。因此最好在您完成任务的更改后再推送。
 
+#### 在 Rstudio 中 {.unnumbered}
 
-Rince and repeat while you are working on the repository.
+*PULL* - 首先，单击"拉取"图标（向下箭头）。
 
-**Note:** it is much easier to revert changes that were committed but not 
-pushed (i.e. are still local) than to revert changes that were pushed to the
-remote repository (and perhaps already pulled by someone else), so it is better 
-to push when you are done with introducing changes on the task that 
-you were working on.
-
-
-#### In Rstudio {.unnumbered}
-
-*PULL* - First, click the "Pull" icon (downward arrow) which fetches and
-pulls at the same time.
-
-*PUSH* - Clicking the green "Pull" icon (upward arrow). You may be asked
-to enter your Github username and password. The first time you are
-asked, you may need to enter two Git command lines into the *Terminal*:
+*PUSH* - 单击绿色的"推送"图标（向上箭头）。 您可能会被要求输入您的
+Github 用户名和密码。 第一次询问您时，您可能需要在终端中输入两条 Git
+命令行：
 
 -   **git config --global user.email
-    "[you\@example.com](mailto:you@example.com){.email}"** (your Github
-    email address), and\
--   **git config --global user.name "Your Github username"**
+    "[you\@example.com](mailto:you@example.com){.email}"**
+    (您的电子邮箱地址), 和\
+-   **git config --global user.name "您的 Github 用户名"**
 
-To learn more about how to enter these commands, see the section below
-on Git commands.
+要了解有关输入这些命令的更多信息，请参阅下面有关 Git 命令的部分。
 
-***TIP:*** Asked to provide your password too often? See these chapters
-10 & 11 of this
-[tutorial](https://happygitwithr.com/credential-caching.html#credential-caching)
-to connect to a repository using a SSH key (more
-complicated)  
+**提示**：被要求提供密码的频率太高？ 请参阅
+[本教程](https://happygitwithr.com/credential-caching.html#credential-caching)的第
+10 章和第 11 章以使用 SSH 密钥连接到存储库（更复杂）
 
+#### 在 Github Desktop 中 {.unnumbered}
 
-#### In Github Desktop {.unnumbered}
-
-Click on the "Fetch origin" button to check if there are new commits on
-the remote repository.
+单击"Fetch origin"按钮以检查远程资源库上是否有新的提交。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_fetch_button.png"))
 ```
 
-If Git finds new commits on the remote repository, the button will
-change into a "Pull" button. Because the same button is used to push and
-pull, you cannot push your changes if you don't pull before.
+如果 Git 在远程资源库中发现新的提交，该按钮将变为"Pull"按钮。
+因为相同的按钮用于拉取和推动，所以如果您之前不拉取，您将无法推动您的更改。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_pull_button.png"))
 ```
 
-You can go to the "History" tab (near the "Changes" tab) to see all
-commits (yours and others). This is a nice way of acquainting yourself
-with what your collaborators did. You can read the commit message, the
-description if there is one, and compare the code of the two files using
-the *diff* pane.
+您可以转到"History"选项（靠近"Changes"选项卡）查看所有的提交（您的和其他人的）。
+这是了解合作者工作的好方法。 您可以阅读提交消息、描述（如果有），并使用
+*diff* 窗格比较两个文件的代码。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_history.png"))
 ```
 
-Once all remote changes have been pulled, and at least one local change
-has been committed, you can push by clicking on the same button.
+拉取所有远程更改并提交至少一项本地更改后，您可以通过单击同一按钮进行推送。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_push_button.png"))
 ```
 
-#### Console {.unnumbered}
+#### 在控制台中 {.unnumbered}
 
-Without surprise, the commands are *fetch*, *pull* and *push*.
+命令是 fetch、pull 和 push。
 
 ```{bash, eval = FALSE}
-git fetch  # are there new commits in the remote directory?
-git pull   # Bring remote commits into your local branch
-git push   # Puch local commits of this branch to the remote branch
+git fetch  # 远程目录中有新的提交吗？
+git pull   # 将远程提交拉取本地分支
+git push   # 将此分支的本地提交推送到远程分支
 ```
 
+### 我希望拉取但是本地有一些不希望被覆盖的工作 {.unnumbered}
 
-### I want to pull but I have local work {.unnumbered}
+有时会发生这种情况：您对本地资源库进行了一些更改，但远程资源库有您没有拉取的提交。
 
-This can happen sometimes: 
-you made some changes on your local repository, but the remote
-repository has commits that you didn't pull. 
+Git 将拒绝拉取，因为它可能会覆盖您的更改。
+有几种策略可以保留您的更改，在 [Happy Git with
+R](https://happygitwithr.com/pull-tricky.html)
+中有很好的描述，其中两个主要是： 1.
+提交更改，获取远程更改，拉取，如果需要解决冲突（参见下面的部分），然后把所有更改都推送到在线；2.存储您的更改，将它们存储在一边，拉取，取消存储（恢复），然后提交，解决任何有可能的冲突，然后推送。
 
+如果远程更改所涉及的文件和本地更改所涉及的文件不重叠，Git
+可能会自动解决冲突。
 
-Git will refuse to pull because it might overwrite your changes. 
-There are several strategies to keep your changes, 
-well described in [Happy Git with R](https://happygitwithr.com/pull-tricky.html), 
-among which the two main ones are:
-- commit your changes, fetch remote changes, pull them in, resolve conflicts 
-if needed (see section below), and push everything online
-- `stash` your changes, which sort of stores them aside, pull, unstash 
-(restore), and then commit, solve any conflicts, and push. 
-
-If the files concerned by the remote changes and the files concerned 
-by your local changes do not overlap, Git may solve conflicts automatically.
-
-In Github Desktop, this can be done with buttons. To stash, go to _Branch > Stash all changes_.
+在 Github Desktop 中，此项操作可以通过按钮来完成。
+要存储更改，请转到*Branch \> Stash all changes*。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_stash.png"))
 ```
 
+## 将分支合并到主支
 
+如果您已完成更改，则可以开始将这些分支合并到主支中。
+根据您的情况，这可能很快，或者会被一个队友主导的审查和批准步骤。
 
-## Merge branch into Main 
+### 在 Github Desktop 本地中 {.unnumbered}
 
-If you have finished making changes, you can begin the process of
-merging those changes into the main branch. Depending on your situation,
-this may be fast, or you may have deliberate review and approval
-steps involving teammates.
-
-### Locally in Github Desktop {.unnumbered}
-
-One can merge branches locally using Github Desktop. First, go to
-(checkout) the branch that will be the recipient of the commits, in other words, the
-branch you want to update. Then go to the menu *Branch \> Merge into
-current branch* and click. A box will allow you to select the branch you
-want to import from.
+您可以使用 Github Desktop
+本地合并分支。首先，转到一个您想要更新的分支。然后单击菜单"*Branch \>
+Merge into current branch*"。一个方框将允许您选择要导入的分支。
 
 ```{r echo=F, fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_desktop_merge.png"))
 ```
 
-### In console {.unnumbered}
+### 在控制台中 {.unnumbered}
 
-First move back to the branch that will be the recipient of the changes.
-This is usually *master*, but it could be another branch. Then merge your
-working branch into master.
+首先回到将成为更改接收者的分支。 这通常是主支，但它可以是另一个分支。
+然后将您的工作分支合并到主分支。
 
 ```{bash, eval = FALSE}
-git checkout master  # Go back to master (or to the branch you want to move your )
+git checkout master  # 回到主支 (或者另一个希望作为更改接收者的分支 )
 git merge this_fancy_new_branch
 ```
 
-[This
-page](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
-shows a more advanced example of branching and explains a bit what is
-happening behind the scenes.
+[此页面](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)显示了更高级的分支示例，并解释了幕后发生的事情。
 
-### In Github: submitting pull requests {.unnumbered}
+### 在 Github 中：提交拉取请求 {.unnumbered}
 
+虽然完全可以在本地或者在不通知任何人的情况下合并两个分支，合并到主分支之前最好还是由几个人讨论或检查一下更改。
+为了帮助完成这个过程，Github 提供了一些关于合并的讨论功能：拉取请求
+**pull request**。
 
-While it is totally possible to merge two branches locally, or without
-informing anybody, a merge may be discussed or investigated by several
-people before being integrated to the master branch. To help with the
-process, Github offers some discussion features around the merge: the
-**pull request**.
+拉取请求（"PR"）是将一个分支合并到另一个分支的请求（换句话说，请求将您的工作分支拉入"主"分支）。
+一个拉取请求通常涉及多个提交。
+拉取请求实际上是在合并分支之前的对话和审查过程。 例如，您可以阅读
+[dplyr's github](https://github.com/tidyverse/dplyr/pulls) 上的 pull
+request 拉取请求讨论。
 
-A pull request (a "PR") is a request to merge one branch into another 
-(in other words, a request that _your working branch be pulled into the "main" branch_). 
-A pull request typically involves multiple commits. A pull request usually begins a conversation and review 
-process before it is accepted and the branch is merged. For example, 
-you can read pull request discussions on [dplyr's
-github](https://github.com/tidyverse/dplyr/pulls).
+您可以直接从网站（如下图所示）或从 Github Desktop 提交拉取请求 (PR)。
 
+-   转到 Github 资源库（在线）
+-   查看"拉取请求"选项并单击"新拉取请求"按钮
+-   从下拉菜单中选择以将您的分支合并到主支
+-   写一个详细的拉取请求注释，然后单击"创建拉取请求"。
 
-You can submit a pull request (PR) directly form the website (as
-illustrated bellow) or from Github Desktop.
-
--   Go to Github repository (online)
--   View the tab "Pull Requests" and click the "New pull request" button
--   Select from the drop-down menu to merge your branch into main
--   Write a detailed Pull Request comment and click "Create Pull
-    Request".
-
-In the image below, the branch "forests" has been selected to be merged
-into "main":
+在下图中，分支"forests"已被选择合并到"main"中：
 
 ```{r echo=F, out.width = '100%', out.height='150%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_pull_request2.png"))
 ```
 
-Now you should be able to see the pull request (example image below):
+现在您应该能够看到拉取请求（下图示例）：
 
--   Review the tab "Files changed" to see how the "main" branch would
-    change if the branch were merged.\
--   On the right, you can request a review from members of your team by
-    tagging their Github ID. If you like, you can set the repository
-    settings to require one approving review in order to merge into
-    main.\
--   Once the pull request is approved, a button to
-    "Merge pull request" will become active. Click this.\
--   Once completed, delete your branch as explained below.
+-   查看"已更改的文件"选项以查看如果合并分支后"主"分支将如何更改。\
+-   在右侧，您可以通过标记团队成员的 Github ID 来请求他们进行审核。
+    如果您愿意，您可以将资源库设置为需要批准审核才能合并到 main.js 中。\
+-   一旦拉取请求被批准，"合并拉取请求"的按钮将变为活动状态。
+    点击此按钮。\
+-   完成后，删除您的分支，如下所述。
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_pull_request.png"))
 ```
 
-### Resolving conflicts {.unnumbered}
+### 解决冲突 {.unnumbered}
 
-When two people modified the same line(s) at the same time, a
-merge conflict arises. Indeed, Git refuses to make a decision about
-which version to keep, but it helps you find where the
-conflict is. **DO NOT PANIC**. Most of the time, it is pretty straightforward
-to resolve.
+当两个人同时修改同一行代码时，就会出现合并冲突。 事实上，Git
+会拒绝决定要保留哪个版本，但它可以帮助您找到冲突所在的位置。
+**不要恐慌**。 大多数时候，冲突解决起来非常简单。
 
-For example, on Github:
+例如，在 Github 上：
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_conflict2.png"))
 ```
 
-
-After the merge raised a conflict, open the file in your favorite editor.
-The conflict will be indicated by series of characters:
+合并引发冲突后，在您喜欢的编辑器中打开文件。 冲突将由一系列字符指出：
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_conflict3.png"))
 ```
 
-The text between *\<\<\<\<\<\<\< HEAD* and *=======* comes from your
-local repository, and the one between *=======* and *\>\>\>\>\>\>\>* from the
-the other branch (which may be origin, master or any branch of
-your choice).
+*\<\<\<\<\<\<\<* 和 *=======* 之间的文档来自于您的本地资源库。 *=======*
+和*\>\>\>\>\>\>\>* 之间的文档来自于别的分支 (w可以是
+origin、主支或您选择的任何分支).
 
-You need to decide which version of the code you prefer (or even write a
-third, including changes from both sides if pertinent), delete the rest
-and remove all the marks that Git added *(\<\<\<\<\<\<\< HEAD, =======,
-\>\>\>\>\>\>\> origin/master/your_branch_name*). 
+你需要决定你喜欢哪个版本的代码（或者甚至写第三个包括双方的更改的版本），删除其余的并删除
+Git 添加的所有标记（\<\<\<\<\<\<\< , == =====，\>\>\>\>\>\>\>
+主支/​​您的分支名称）。
 
-Then, save the file, stage it and commit it : this is the commit 
-that makes the merged version "official". Do not forget to push afterwards.
+然后，保存文件，暂存并提交它：这是合并版本"正式"的提交。
+之后不要忘记推送。
 
-The more often you and your collaborators pull and push, the smaller the
-conflicts will be.
+您和您的合作者拉取和推送的次数越多，冲突就越小。
 
+注意：如果您对使用控制台感到更安心，您还可以使用[更高级的合并选项](https://git-scm.com/book/en/v2/Git-Tools-Advanced-Merging)（例如，忽略空格、给予协作者优先级等）
 
-*Note: If you feel at ease with the console, there are more [advanced
-merging
-options](https://git-scm.com/book/en/v2/Git-Tools-Advanced-Merging)
-(e.g. ignoring whitespace, giving a collaborator priority etc.).*
+### 删除您的分支 {.unnumbered}
 
-### Delete your branch {.unnumbered}
-
-Once a branch was merged into master and is no longer needed, you can
-delete it.
+一旦分支被合并到主支中并且不再被需要，您可以将其删除。
 
 #### Github + Rstudio
 
-Go to the repository on Github and click the button to view all the
-branches (next to the drop-down to select branches). Now find your
-branch and click the trash icon next to it. Read more detail on deleting
-a branch
-[here](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-and-deleting-branches-within-your-repository#deleting-a-branch).
+进入 Github 上的资源库，点击按钮查看所有分支（下拉框旁边选择分支）。
+现在找到您的分支并单击它旁边的垃圾桶图标。
+在[此处](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-and-deleting-branches-within-your-repository#deleting-a-branch)阅读有关删除分支的更多详细信息。
 
-Be sure to also delete the branch locally on your computer. This will
-not happen automatically.
+请务必在您的本地计算机上删除分支。 您的本地计算机不会自动删除分支。
 
--   From RStudio, make sure you are in the Main branch
--   Switch to typing Git commands in the RStudio "Terminal" (the tab
-    adjacent to the R console), and type: **git branch -d
-    branch_name**, where "branch_name" is the name of your branch to be
-    deleted
--   Refresh your Git tab and the branch should be gone
+-   在 RStudio 中，确保您在主支中
+-   切换到在 RStudio"Terminal"（与 R 控制台相邻的选项）中键入 Git
+    命令，然后键入：**git branch -d
+    branch_name**，其中"branch_name"是要删除的分支的名称
+-   刷新你的 Git 选项，分支应该消失了
 
+#### 在 Github Desktop 中
 
-#### In Github Desktop
+只需找出您要删除的分支，然后转到菜单 *Branch \> Delete*.
 
-Just checkout the branch you want to delete, and go to the menu
-*Branch \> Delete*.
+### Forking 分叉 {.unnumbered}
 
+如果您想为项目做出贡献但无权这样做，或者您只是想修改它以供个人使用，您可以分叉一个项目。
+可以在[此处](https://guides.github.com/activities/forking/)找到有关分叉的简短描述。
 
-### Forking {.unnumbered}
-
-You can fork a project if you would like to contribute to it but 
-do not have the rights to do so, or if you just 
-want to modify it for your personal use. A 
-short description of forking can be found [here](https://guides.github.com/activities/forking/).
-
-On Github, click on the "Fork" button:  
+在 Github 上，点击"Fork"按钮：
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_fork_1.png"))
 ```
 
-This will clone the original repository, but in your own profile. So now, 
-there are two versions of the repository **on Github**: the original one,
-that you cannot modify, and the cloned version in your profile.
+这将克隆原始资源库到您自己的空间中。 所以现在，Github
+上有两个版本的存储库：原始版本（您无法修改），以及您个人空间中的克隆版本。
 
-Then, you can proceed to clone your version of the online repository locally 
-on your computer, using any of the methods described in previous sections. 
-Then, you can create a new branch, make changes, commit and push them 
-_to your remote repository_.
+然后，您可以继续使用前几节中描述的任何方法在您的本地计算机上克隆您的在线远程资源库。
+然后，您可以创建一个新分支、进行更改、提交并将它们推送到您的远程资源库。
 
-Once you are happy with the result you can create a Pull Request 
-from Github or Github Desktop to begin the conversation with the 
-owners/maintainers of the original repository.
+一旦您对结果感到满意，您可以从 Github 或 Github Desktop
+创建一个拉取请求，并与原始存储库的所有者/维护者进行对话。
 
+**如果您需要一些来自官方资源库的更新怎么办？**
 
-**What if you need some newer commits from the official repository?**
+想象一下，有人对官方资源库进行了修改，您希望将其包含到您的克隆版本中。
+您可以将您的 fork 与官方资源库同步。 它涉及使用终端，但它并不太复杂。
+您最需要记住的是： - *upstream* = 官方资源库，您无法修改 *origin* = 您在
+Github 个人空间上的资源库版本
 
-Imagine that someone makes a critical modification to the official repository,
-which you want to include to your cloned version.
-It is possible to synchronize your fork with the official repository. 
-It involves using the terminal, but it is not too complicated. 
-You mostly need to remember that:
-- _upstream_ = the official repository, the one that you could not modify
-- _origin_ = your version of the repository on your Github profile
+您可以阅读[本教程](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)或按照以下说明进行操作：
 
-
-You can read [this tutorial](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork) or follow along below: 
-
-
-First, type in your Git terminal (inside your repo):  
+首先，在你的 Git 终端输入（在你的资源库中）：
 
 ```{bash, eval = FALSE}
 git remote -v
 ```
- 
-If you have not yet configured the upstream repository you should 
-see two lines, beginning by _origin_. They show the remote repo 
-that `fetch` and `push` point to. Remember, _origin_ is the conventional
-nickname for your own version of the repository on Github. For example:  
+
+如果您尚未配置上游资源库，您应该会看到两行，*origin* 作为开始符。
+它们显示了`fetch`和`push`指向的远程资源库。 请记住，*origin* 是您自己在
+Github 上的资源库版本的默认昵称。 例如：
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_fork_2.png"))
 ```
 
-Now, add a new remote repository:  
+现在，添加一个新的远程资源库：
 
 ```{bash, eval = FALSE}
 git remote add upstream https://github.com/appliedepi/epirhandbook_eng.git
 ```
- 
-Here the address is the address that Github generates when you clone
-a repository (see section on cloning). Now you will have four remote pointers:
+
+这里的地址是 Github 在克隆资源库时生成的地址（参见克隆部分）。
+现在您将有四个远程指针：
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_fork_3.png"))
 ```
 
-Now that the setup is done, whenever you want to get the changes from 
-the original (_upstream_) repository, you just have to go (_checkout_) to 
-the branch you want to update and type:
+现在设置已经完成，无论何时你想从原始（*upstream*）资源库中获取更改，你只需要去（*checkout*）到你想要更新的分支并输入：
 
 ```{bash, eval = FALSE}
 git fetch upstream # Get the new commits from the remote repository
@@ -1000,152 +796,150 @@ git merge upstream/the_branch_you_want_to_update  # Merge the upstream branch in
 git push # Update your own version of the remote repo
 ```
 
-If there are conflicts, you will have to solve them, as explained 
-in the Resolving conflicts section. 
+如果存在冲突，您必须解决它们。解决冲突方式已在上面某部分阐述。
 
+**总结**：fork 是克隆，但是在 Github 服务器端。
+其余操作是典型的协作工作流操作（克隆、推送、拉取、提交、合并、提交拉取请求......）
 
-**Summary**: forking is cloning, but on the Github server side. 
-The rest of the actions are typical collaboration workflow actions 
-(clone, push, pull, commit, merge, submit pull requests...).
-
-_Note: while forking is a concept, not a Git command, it also exist on other Web hosts, like [Bitbucket](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow)._
-
+**注意**：虽然 fork 分叉是一个概念，而不是 Git 命令行，但它也存在于其他
+Web 主机上，例如
+[*Bitbucket*](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow)。
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_fork_4.png"))
 ```
 
+## 我们学到了什么
 
-## What we learned
+您已经学会了如何：
 
-You have learned how to:  
+-   设置 Git 以跟踪文件夹中的修改；\
+-   将您的本地资源库关联到远程在线资源库；\
+-   提交更改；\
+-   同步本地和远程资源库。
 
-- setup Git to track modifications in your folders,  
-- connect your local repository to a remote online repository,  
-- commit changes,  
-- synchronize your local and remote repositories.  
+所有这一切关于版本控制的信息都可以帮助您的研究，并且足以满足您（一个流行病学家）的大部分需求。
+我们通常不太需要像开发人员那样更高级的应用。
 
-All this should get you going and be enough for most of your needs as 
-epidemiologists. We usually do not have as advanced usage as developers. 
+但是，如果您想要（或需要）更进一步，Git
+提供了更多功能来简化提交历史、还原一个或多个提交、挑选提交等。其中一些听起来很难，但现在您有了基础，就更容易理解和使用这些高级功能。
 
-However, know that should you want (or need) to go further, Git offers more power to simplify 
-commit histories, revert one or several commits, cherry-pick commits, etc. 
-Some of it may sound like pure wizardry, but now that you have the basics, 
-it is easier to build on it.
+请注意，虽然 Rstudio 和 Github Desktop 中的 Git
+窗格非常适合我们作为初学者和日常使用，但它们不提供一些中级/高级 Git
+功能。
+一些功能更完整软件允许您通过点击完成更多操作（通常以更复杂的布局为代价）.
 
+请记住，由于您可以在任何时候使用任何工具来跟踪您的资源库，您可以很容易地安装一个软件来尝试它，或者偶尔执行一些不太常见的复杂任务，而在其余时间更喜欢简化的软件（
+例如，大部分时间使用 Github Desktop，并为某些特定任务切换到 SourceTree
+或 Gitbash）
 
-Note that while the Git pane in Rstudio and Github Desktop are good for 
-beginners / day-to-day usage in our line of work, they do not offer an 
-interface to some of the intermediate / advanced Git functions. 
-Some more complete interfaces allows you to do more with point-and-click 
-(usually at the cost of a more complex layout). 
+## Git 命令 {#git}
 
-Remember that since you can use any tool at any point to track your repository, 
-you can very easily install an interface to try it out sometimes, 
-or to perform some less common complex task occasionally, 
-while preferring a simplified interface for the rest of time (e.g. using 
-Github Desktop most of the time, and switching to SourceTree or Gitbash for some specific tasks).
+### 推荐资料 {.unnumbered}
 
+要在交互式教程中学习 Git
+命令，请参阅[此网站](https://learngitbranching.js.org/).
 
-## Git commands {#git}
+### Git 命令输入位置 {.unnumbered}
 
+您可以在 Git shell 中输入命令。
 
-### Recommended learning {.unnumbered}
-
-To learn Git commands in an interactive tutorial, see [this
-website](https://learngitbranching.js.org/).
-
-### Where to enter commands {.unnumbered}
-
-You enter commands in a Git shell.
-
-*Option 1* You can open a new Terminal in RStudio. This tab is next to
-the R Console. If you cannot type any text in it, click on the
-drop-down menu below "Terminal" and select "New terminal". Type the
-commands at the blinking space in front of the dollar sign "\$".
+**选项 1** 您可以在 RStudio 中打开一个新 Terminal 。 此选项位于 R
+控制台旁边。 如果您无法在其中输入任何文本，请单击"Terminal
+"下方的下拉菜单并选择"New terminal"。
+在美元符号"\$"前面的闪烁空格处键入命令。
 
 ```{r echo=F, out.width = '100%', out.height='200%', fig.align = "center"}
 knitr::include_graphics(here::here("images", "github_terminal.png"))
 ```
 
-*Option 2* You can also open a *shell* (a terminal to enter commands) by
-clicking the blue "gears" icon in the Git tab (near the RStudio
-Environment). Select "Shell" from the drop-down menu. A new window will
-open where you can type the commands after the dollar sign "\$".
+**选项 2** 您还可以通过单击 Git 选项（靠近 RStudio
+环境）中的蓝色"齿轮"图标来打开 shell（输入命令的终端）。
+从下拉菜单中选择"Shell"
+将打开一个新窗口。您可以在其中美元符号"\$"后输入命令。
 
-*Option 3* Right click to open "Git Bash here" which will open the same
-sort of terminal, or open *Git Bash* form your application list.
-[More beginner-friendly informations on Git Bash](https://happygitwithr.com/shell.html), 
-how to find it and some bash commands you will need.
+**选项 3** 右键单击​​以打开"Git Bash
+here"，这将打开相同类型的终端，或者从您的应用程序列表中打开 Git Bash。
+有关 Git Bash、如何找到它以及您将需要的一些 bash 命令在[此处
+](https://happygitwithr.com/shell.html)。
 
-### Sample commands {.unnumbered}
+### 命令示例 {.unnumbered}
 
-Below we present a few common git commands. When you use them, keep in mind
-which branch is active (checked-out), as that will change the action!
+下面我们介绍一些常见的 git 命令。
+使用它们时，请记住哪个分支处于活动状态，因为这会改变操作！
 
-In the commands below, <name> represents a branch name. 
-<commit_hash> represents the hash ID of a specific
-commit. <num> represents a number. Do not type the
-\< or \> symbols.
+在下面的命令中，<name> 代表一个分支名称。 <commit_hash>
+表示特定提交的哈希 ID。<num> 代表一个数字。 不要键入 \< 或 \> 符号。
 
-| Git command              | Action                                                                   |
-|--------------------------|--------------------------------------------------------------------------|
-| `git branch <name>`      | Create a new branch with the name <name>                                 |
-| `git checkout <name>`    | Switch current branch to <name>                                          |
-| `git checkout -b <name>` | Shortcut to create new branch *and* switch to it                         |
-| `git status`             | See untracked changes                                                    |
-| `git add <file>`         | Stage a file                                                             |
-| `git commit -m <message>`| Commit currently staged changes to current branch with message |
-| `git fetch`              | Fetch commits from remote repository                                     |
-| `git pull`               | Pull commits from remote repository in current branch                    |
-| `git push`               | Push local commits to remote directory                          |
-| `git switch`             | An alternative to `git checkout` that is being phased in to Git |
-| `git merge <name>`       | Merge <name> branch into current branch                         |
-| `git rebase <name>`      | Append commits from current branch on to <name> branch          |
-
-
++-----------------+----------------------------------------------------+
+| Git 命令        | 操作                                               |
++=================+====================================================+
+| `git            | 使用<name>创建一个新分支                           |
+|  branch <name>` |                                                    |
++-----------------+----------------------------------------------------+
+| `git c          | 将当前分支切换到 <name> 分支                       |
+| heckout <name>` |                                                    |
++-----------------+----------------------------------------------------+
+| `git chec       | 创建新分支并切换到它                               |
+| kout -b <name>` |                                                    |
++-----------------+----------------------------------------------------+
+| `git status`    | 查看未跟踪的更改                                   |
++-----------------+----------------------------------------------------+
+| `               | 暂存文件                                           |
+| git add <file>` |                                                    |
++-----------------+----------------------------------------------------+
+| `git commi      | 使用 message 提交当前暂存的更改到当前分支          |
+| t -m <message>` |                                                    |
++-----------------+----------------------------------------------------+
+| `git fetch`     | 从远程资源库获取提交                               |
++-----------------+----------------------------------------------------+
+| `git pull`      | 从当前分支的远程资源库中拉取提交                   |
++-----------------+----------------------------------------------------+
+| `git push`      | 将本地提交推送到远程资源库                         |
++-----------------+----------------------------------------------------+
+| `git switch`    | `git checkout` 的替代方案，正在逐步引入 Git        |
++-----------------+----------------------------------------------------+
+| `gi             | 将 <name> 分支合并到当前分支                       |
+| t merge <name>` |                                                    |
++-----------------+----------------------------------------------------+
+| `git            | 将当前分支的提交追加到 <name> 分支                 |
+|  rebase <name>` |                                                    |
++-----------------+----------------------------------------------------+
 
 <!-- ======================================================= -->
 
-## Resources
+## 其他资源
 
-Much of this page was informed by [this "Happy Git with R"
-website](https://happygitwithr.com/) by Jenny Bryan. There is a very helpful
-section of this website that helps you troubleshoot common Git and
-R-related errors.
+此页面的大部分内容来自 Jenny Bryan 的"[Happy Git with
+R](https://happygitwithr.com/)"网站。
+该网站非常有用，并且可帮助您解决常见的 Git 和 R 错误。
 
-The [Github.com documentation and start
-guide](https://docs.github.com/en/github).
+[Github.com 文档和入门指南](https://docs.github.com/en/github)。
 
-The RStudio ["IDE"
-cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)
-which includes tips on Git with RStudio.
+RStudio ["IDE"
+备忘录](https://www.rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf)，其中包括使用
+RStudio 的 Git 技巧。
 
 <https://ohi-science.org/news/github-going-back-in-time>
 
-**Git commands for beginners**
+**适合初学者的 Git 命令**
 
-An [interactive
-tutorial](learngitbranching.js.org) to learn
-Git commands.
+学习 Git 命令的[交互式教程](learngitbranching.js.org)。
 
 <https://www.freecodecamp.org/news/an-introduction-to-git-for-absolute-beginners-86fa1d32ff71/>:
-good for learning the absolute basics to track changes in one folder on
-you own computer.
+非常适合学习的基础知识，用以跟踪您自己计算机上一个文件夹中的更改。
 
-Nice schematics to understand branches:
+很好的示意图来理解分支：
 <https://speakerdeck.com/alicebartlett/git-for-humans>
 
-
-**Tutorials covering both basic and more advanced subjects**
+**涵盖基础和更高级知识的教程**
 
 <https://tutorialzine.com/2016/06/learn-git-in-30-minutes>
 
 <https://dzone.com/articles/git-tutorial-commands-and-operations-in-git>
-<https://swcarpentry.github.io/git-novice/> (short course)
+<https://swcarpentry.github.io/git-novice/> (短期课程)
 <https://rsjakob.gitbooks.io/git/content/chapter1.html>
 
-The [Pro Git book](https://git-scm.com/book/en/v2) is considered an official reference. 
-While some chapters are ok, it is usually a bit _technical_. It is probably a good resource 
-once you have used Git a bit and want to learn a bit more precisely 
-what happens and how to go further.
+[Pro
+Git](https://git-scm.com/book/en/v2)的书被认为是官方参考资料。虽然它有些章节是可以的，但总体而言它太技术性了。如果您已经使用过
+Git，并且希望更精确地了解发生了什么以及如何进一步学习，那么它可能是一个很好的资源。
