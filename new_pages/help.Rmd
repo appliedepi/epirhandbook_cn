@@ -1,78 +1,68 @@
+# 寻求帮助
 
-# Getting help  
+本页介绍了如何通过发布 Github 问题或在在线论坛发布可重现的示例（\"reprex\"）来获得帮助。
 
-This page covers how to get help by posting a Github issue or by posting a reproducible example ("reprex") to an online forum.  
+## Github 问题
 
+许多 R packages 和项目的代码托管在 Github.com 网站上。 您可以通过发布\"问题\"在 Github 网站直接与作者交流。
 
+您可以通过阅读[协作和 Github] 页面来了解有关如何在 Github 上存储您的工作。
 
+在 Github 上，每个项目都被包含在一个资源库中。 每个资源库都包含代码、数据、输出、帮助文档等。最重要的是还有一个与作者交流的工具，称为\"问题 Issue\"。
 
-## Github issues  
-
-Many R packages and projects have their code hosted on the website Github.com. You can communicate directly with authors via this website by posting an "Issue".  
-
-Read more about how to store your work on Github in the page [Collaboration and Github]. 
-
-On Github, each project is contained within a *repository*. Each repository contains code, data, outputs, help documentation, etc. There is also a vehicle to communicate with the authors called "Issues".  
-
-See below the Github page for the **incidence2** package (used to make epidemic curves). You can see the "Issues" tab highlighted in yellow. You can see that there are 5 open issues.  
+请参阅下面的 Github 页面以获取 **incidence2** package（用于制作流行曲线）。 您可以看到以黄色突出显示的\"问题\"选项卡里有 5 个未解决的问题。
 
 ```{r, warning=F, message=F, echo=F}
 knitr::include_graphics(here::here("images", "errors_Github_issues.png"))
 ```
 
-Once in the Issues tab, you can see the open issues. Review them to ensure your problem is not already being addressed. You can open a new issue by clicking the green button on the right. You will need a Github account to do this. 
+进入\"问题\"选项卡后，您可以看到已提出来的问题。 您可以查看它们以确保您的问题还没有被提出或者被解决。 您可以通过单击右侧的绿色按钮打开一个新问题。 您将需要一个 Github 帐户来执行此操作。
 
 ```{r, warning=F, message=F, echo=F}
 knitr::include_graphics(here::here("images", "errors_Github_issues2.png"))
 ```
 
+对于您的问题，请按照以下说明提供一个最小的、可重现的示例。 请保持礼貌！ 大多数开发 R packages 和项目的人员都不把开发作为本职工作（比如这本手册！）。
 
-  
-In your issue, follow the instructions below to provide a minimal, reproducible example. And please be courteous! Most people developing R packages and projects are doing so in their spare time (like this handbook!).  
+如果您需要阅读更多有关Github 问题的高级资料，请查看[Github 的 Issues 文档](https://guides.github.com/features/issues/)。
 
-To read more advanced materials about handling issues in your own Github repository, check out the Github [documentation on Issues](https://guides.github.com/features/issues/).  
+## 可重现的例子
 
+在论坛或 Github 问题中发帖时，提供可重现的示例（\"reprex\"）是获得帮助的关键。 大部分人们都想帮助您，但是您必须给他们一个可以在他们自己的计算机上使用的例子。 该示例应：
 
+-   能够清楚展示您遇到的问题\
+-   代码尽量少，因为它只应包含重现问题所需的数据和代码\
+-   可重现，包括所有对象（例如数据）、package 调用（例如 library() 或 p_load()）
 
-## Reproducible example  
+另外，请确保您不要使用 reprex 发布任何敏感数据！ 您可以创建示例数据集，或使用 R 中内置的数据集之一（输入 `data()` 打开这些数据集的列表）。
 
-Providing a reproducible example ("reprex") is key to getting help when posting in a forum or in a Github issue. People want to help you, but you have to give them an example that they can work with on their own computer. The example should:  
+### R**eprex** package {.unnumbered}
 
-* Demonstrate the problem you encountered  
-* Be *minimal*, in that it includes only the data and code required to reproduce your problem  
-* Be *reproducible*, such that all objects (e.g. data), package calls (e.g. `library()` or `p_load()`) are included
+**Reprex** package 可以帮助您制作可重现的示例：
 
-*Also, be sure you do not post any sensitive data with the reprex!* You can create example data frames, or use one of the data frames built into R (enter `data()` to open a list of these datasets).  
-
-
-
-### The **reprex** package {.unnumbered}  
-
-The **reprex** package can assist you with making a reproducible example:  
-
-1) **reprex** is installed with **tidyverse**, so load either package  
+1)  **reprex** 会与 **tidyverse** 一起安装，因此请加载任一包。
 
 ```{r, eval=F}
-# install/load tidyverse (which includes reprex)
+# 安装/加载 tidyverse (包括 reprex)
 pacman::p_load(tidyverse)
 ```
 
-2) Begin an R script that creates your problem, step-by-step, starting from loading packages and data.  
+2)  新建一个 R 脚本，从加载 packages 和数据开始，逐步创建您的问题。
 
 ```{r, eval=F}
-# load packages
+# 加载 packages
 pacman::p_load(
-     tidyverse,  # data mgmt and vizualization
-     outbreaks)  # example outbreak datasets
+     tidyverse,  # 数据管理和可视化
+     outbreaks)  # 爆发数据集示例
 
-# flu epidemic case linelist
-outbreak_raw <- outbreaks::fluH7N9_china_2013  # retrieve dataset from outbreaks package
+# 流感流行病例列表
+outbreak_raw <- outbreaks::fluH7N9_china_2013  # 暴发 package中检索数据集
 
-# Clean dataset
+# 清理数据集
 outbreak <- outbreak_raw %>% 
      mutate(across(contains("date"), as.Date))
 
-# Plot epidemic
+# 流行病绘图
 
 ggplot(data = outbreak)+
      geom_histogram(
@@ -84,67 +74,61 @@ ggplot(data = outbreak)+
   )
 
 ```
-*Copy* all the code to your clipboard, and run the following command:  
+
+将所有代码复制到剪贴板，然后运行以下命令：
 
 ```{r, eval=F}
 reprex::reprex()
 ```
 
-You will see an HTML output appear in the RStudio Viewer pane. It will contain all your code and any warnings, errors, or plot outputs. This output is also copied to your clipboard, so you can post it directly into a Github issue or a forum post.  
+您将看到 HTML 输出出现在 RStudio 查看器窗格中。 它将包含您的所有代码以及任何警告、错误或绘图输出。此输出也会被复制到您的剪贴板，因此您可以将其直接发布到 Github 问题或论坛帖子中。
 
 ```{r, out.width=c('100%', '100%'), warning=F, message=F, echo=F}
 knitr::include_graphics(here::here("images", "errors_reprex_RStudio1.png"))
 ```
 
+-   如果您设置 `session_info = TRUE`，则`sessioninfo::session_info()` 的输出将包含您的R 和 R package 的版本信息\
+-   您可以通过`wd =`来提供一个工作目录\
+-   您可以在[文档]()中或者通过输入`?reprex` 来阅读更多关于参数的信息
 
-* If you set `session_info = TRUE` the output of `sessioninfo::session_info()` with your R and R package versions will be included  
-* You can provide a working directory to `wd = `  
-* You can read more about the arguments and possible variations at the [documentation]() or by entering `?reprex`
+在上面的示例中，`ggplot()` 命令没有运行，因为 `date_format =` 不正确， 它应该是 `date_labels =`。
 
-In the example above, the `ggplot()` command did not run because the arguemnt `date_format =` is not correct - it should be `date_labels = `.  
+### 最少的数据 {.unnumbered}
 
+帮助者往往需要能够使用您的数据 - 理想情况下，他们能够使用代码创建它。
 
-### Minimal data {.unnumbered}  
+要创建最小数据集，请考虑匿名化并仅使用观察集的子集。
 
-The helpers need to be able to use your data - ideally they need to be able to create it *with code*.  
+您还可以使用函数 `dput()` 创建最小数据集。
 
-To create a minumal dataset, consider anonymising and using only a subset of the observations. 
+## 发布到论坛
 
-UNDER CONSTRUCTION - you can also use the function `dput()` to create minimal dataset.  
+您可以阅读大量论坛帖子，从而了解哪些帖子写得好，哪些帖子写得不好。
 
+1)  首先，你要决定是否要问这个问题。 您是否彻底查看了论坛网站，尝试了各种搜索词，检查您的问题是否已经被提出？
 
+2)  给你的问题一个信息量较大的标题（而不是\"帮助！这不起作用\"）。
 
+3)  描述您的问题:
 
-## Posting to a forum  
+-   介绍你的情况和问题\
+-   链接到类似问题的帖子，并解释为什么他们的答案不能回答您的问题\
+-   总结任何相关信息以帮助不了解您工作背景的人\
+-   用你的 R 会话信息给出一个最小的可重复的例子\
+-   使用正确的拼写、语法、标点符号，并将你的问题分成几段，以便于阅读
 
-Read lots of forum posts. Get an understanding for which posts are well-written, and which ones are not.  
+4)  发布后及时查看您的问题，以回应任何请求。 要有礼貌和亲切------回答的人通常是自愿抽出时间来帮助你。 如果您有后续问题，请考虑是否应该单独发布问题。
 
-1) First, decide whether to ask the question at all. Have you *thoroughly* reviewed the forum website, trying various search terms, to see if your question has already been asked?  
+5)  如果已经得到答案，则将问题标记为已回答。这可以帮助其他人很快地了解到解决方案。
 
-2) Give your question an informative title (not "Help! this isn't working").  
-
-3) Write your question:  
-
-* Introduce your situation and problem  
-* Link to posts of similar issues and explain how they do not answer your question  
-* Include any relevant information to help someone who does not know the context of your work  
-* Give a minimal reproducible example with your R session information  
-* Use proper spelling, grammar, punctuation, and break your question into paragraphs so that it is easier to read  
-
-4) Monitor your question once posted to respond to any requests for clarification. Be courteous and gracious - often the people answering are volunteering their time to help you. If you have a follow-up question consider whether it should be a separate posted question.  
-
-5) Mark the question as answered, *if* you get an answer that meets the *original* request. This helps others later quickly recognize the solution.  
-
-
-Read these posts about [how to ask a good question](https://stackoverflow.com/help/how-to-ask) the [Stack overflow code of conduct](https://stackoverflow.com/conduct).  
-
+阅读这些帖子，了解[如何提出一个好问题](https://stackoverflow.com/help/how-to-ask)和[Stack overflow 代码准则](https://stackoverflow.com/conduct)。
 
 <!-- ======================================================= -->
-## Resources { }
 
+## 资料来源
 
-Tidyverse page on how to [get help!](https://www.tidyverse.org/help/#:~:text=When%20you%20want%20to%20make,to%20load%20the%20reprex%20package.&text=Enter%20reprex()%20in%20the,preview%20of%20your%20rendered%20reprex.)
+关于如何[获得帮助](https://www.tidyverse.org/help/#:~:text=When%20you%20want%20to%20make,to%20load%20the%20reprex%20package.&text=Enter%20reprex()%20in%20the,preview%20of%20your%20rendered%20reprex.)的Tidyverse页面
 
-Tips on [producing a minimal dataset](https://xiangxing98.github.io/R_Learning/R_Reproducible.nb.html#producing-a-minimal-dataset)
+[生成最小数据集](https://xiangxing98.github.io/R_Learning/R_Reproducible.nb.html#producing-a-minimal-dataset)的技巧
 
-Documentation for the [dput function](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/dput)
+[dput 函数](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/dput)的文档
