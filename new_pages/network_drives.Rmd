@@ -1,177 +1,155 @@
-
-# R on network drives { }  
-
- 
-
+# 网络驱动器上的 R
 
 <!-- ======================================================= -->
-## Overview {  }
 
-Using R on network or "company" shared drives can present additional challenges. This page contains approaches, common errors, and suggestions on troubleshooting gained from our experience working through these issues. These include tips for the particularly delicate situations involving R Markdown.  
+## 概览
 
+在网络或"公司"共享驱动器上使用 R 可能会带来一些额外的问题。本页面包含了解决这些问题的方法、常见错误以及故障排除的建议。其中包括针对涉及 R Markdown 的一些特别情况的提示。
 
-**Using R on Network Drives: Overarching principles**  
+**在网络驱动器上使用 R：总体原则**
 
-1) You must get administrator access for your computer. Setup RStudio specifically to run as administrator.  
-2) Save packages to a library on a lettered drive (e.g. "C:") when possible. Use a package library whose path begins with "\\\" as little as possible.  
-3) the **rmarkdown** package must **not** be in a "\\\" package library, as then it can't connect to TinyTex or Pandoc.  
+1)  您必须获得计算机的管理员访问权限。 并且以管理员身份运行RStudio。\
+2)  尽可能将 packages 保存到字母驱动器（例如"C:"​​）中。 尽量少使用路径以"\\"开头的 package 库。\
+3)  **rmarkdown** package **不能**在"\\" package 库中，因为它不能连接到 TinyTex 或 Pandoc。
 
+## 管理员身份运行 RStudio
 
+当您企图打开打开 RStudio 时，请右键单击RStudio 图标。 根据您的机器设置，您可能会看到"以管理员身份运行"选项。您也可能会看到一个选择属性的选项（然后应该会出现一个带有"兼容性"选项的窗口，您可以勾选复选框"以管理员身份运行"）。
 
+## 常用的代码
 
-## RStudio as administrator  
+以下是在网络驱动器上使用 R时的一些用于解决问题的常用代码。
 
-When you click the RStudio icon to open RStudio, do so with a right-click. Depending on your machine, you may see an option to "Run as Administrator". Otherwise, you may see an option to select Properties (then there should appear a window with the option "Compatibility", and you can select a checkbox "Run as Administrator").  
-
-
-
-
-## Useful commands 
-
-Below are some useful commands when trying to troubleshoot issues using R on network drives.  
-
-You can return the path(s) to package libraries that R is using. They will be listed in the order that R is using to install/load/search for packages. Thus, if you want R to use a different default library, you can switch the order of these paths (see below).  
+您可以得到 R 正在使用的 package 库的路径。 它们将按照安装/加载/搜索 package 的顺序列出。 因此，如果您希望 R 使用不同的默认库，您可以切换这些路径的顺序（见下文）。
 
 ```{r, eval=F}
-# Find libraries
-.libPaths()                   # Your library paths, listed in order that R installs/searches. 
-                              # Note: all libraries will be listed, but to install to some (e.g. C:) you 
-                              # may need to be running RStudio as an administrator (it won't appear in the 
-                              # install packages library drop-down menu) 
+# 查找库
+.libPaths()                   # 您的库路径，按 R 安装/搜索的顺序列出。
+                              # 注意：将列出所有库，但要安装到某些（例如 C :) 您
+                              # 您可能需要以管理员身份运行 RStudio (它不会出现在 packages库的下拉菜单中) 
 ```
 
-You may want to switch the order of the package libraries used by R. For example if R is picking up a library location that begins with "\\\" and one that begins with a letter e.g. "D:". You can adjust the order of `.libPaths()` with the following code.  
-
-````{r, eval=F}
-# Switch order of libraries
-# this can effect the priority of R finding a package. E.g. you may want your C: library to be listed first
-myPaths <- .libPaths() # get the paths
-myPaths <- c(myPaths[2], myPaths[1]) # switch them
-.libPaths(myPaths) # reassign them
-```
-
-If you are having difficulties with R Markdown connecting to Pandoc, begin with this code to find out where RStudio thinks your Pandoc installation is.  
+您可能想要切换 R 使用的 package 库的顺序。例如，R可以 选择以"\\"开头的库位置或者以字母开头的库位置，例如"D:"。 您可以使用以下代码调整 `.libPaths()` 的顺序。
 
 ```{r, eval=F}
-# Find Pandoc
-Sys.getenv("RSTUDIO_PANDOC")  # Find where RStudio thinks your Pandoc installation is
+# 切换库的顺序
+# 这会影响 R 查找package.的优先级。 例如。 您可能希望首先列出您的 C: 库 
+myPaths <- .libPaths() # 得到路径 
+myPaths <- c(myPaths[2], myPaths[1]) # 切换路径
+libPaths(myPaths) #重新分配库
 ```
 
-If you want to see which library a package is loading from, try the below code:  
+如果您在使用 R Markdown 连接到 Pandoc 时遇到困难，请使用这段代码来找出 RStudio 认为的 Pandoc 安装路径。
 
 ```{r, eval=F}
-# Find a package
-# gives first location of package (note order of your libraries)
+# 查找 Pandoc
+Sys.getenv("RSTUDIO_PANDOC")  # 查找 RStudio 认为的 Pandoc 安装路径
+```
+
+如果你想查看一个package 是从哪个库加载的，试试下面的代码：
+
+```{r, eval=F}
+# 查找 package
+# 给出包的第一个位置（注意库的顺序）
 find.package("rmarkdown", lib.loc = NULL, quiet = FALSE, verbose = getOption("verbose")) 
 ```
 
-
-
 <!-- ======================================================= -->
-## Troubleshooting common errors {  }
 
+## 排查常见错误
 
-**"Failed to compile...tex in rmarkdown"**  
+**"Failed to compile...tex in rmarkdown"**
 
-* Check the installation of TinyTex, or install TinyTex to C: location. See the [R basics] page on how to install TinyTex.  
+-   检查 TinyTex 的安装，或者将 TinyTex 安装到 C: 。 请参阅 [R 基础] 页面了解如何安装 TinyTex。0
 
 ```{r, eval=F}
-# check/install tinytex, to C: location
+# 检查/安装tinytex，到C： location
 tinytex::install_tinytex()
-tinytex:::is_tinytex() # should return TRUE (note three colons)
+tinytex:::is_tinytex() # 应该返回 TRUE（注意三个冒号）
 ```
 
+**Internet routines cannot be loaded**
 
-**Internet routines cannot be loaded**  
+例如 `Error in tools::startDynamicHelp() : internet routines cannot be loaded`
 
-For example, `Error in tools::startDynamicHelp() : internet routines cannot be loaded`  
-
-* Try selecting 32-bit version from RStudio via Tools/Global Options.  
-  * note: if 32-bit version does not appear in menu, make sure you are not using RStudio v1.2.  
-* Alternatively, try uninstalling R and re-installing with different bit version (32 instead of 64)
-
+-   尝试通过工具/全局选项中选择 32 位版本 RStudio 。
+    -   注意：如果菜单中没有出现 32 位版本，请确保您使用的不是 RStudio v1y.2。\
+-   或者，尝试卸载 R 并使用32 而不是 64位版本重新安装。
 
 **C: library does not appear as an option when I try to install packages manually**
 
-* Run RStudio as an administrator, then this option will appear.  
-* To set-up RStudio to always run as administrator (advantageous when using an Rproject where you don't click RStudio icon to open)... right-click the Rstudio icon 
+-   以管理员身份运行 RStudio时，这个选项就会出现。
+-   要将 RStudio 设置为始终以管理员身份运行（在使用不单击 RStudio 图标打开的 R project 时非常有用）\... 右键单击​​ Rstudio 图标
 
-The image below shows how you can manually select the library to install a package to. This window appears when you open the Packages RStudio pane and click "Install".  
+下图显示了如何手动选择要安装 package 的库。 当您打开 Packages RStudio 窗格并单击\"安装\"时，会出现此窗口。
 
 ```{r, warning=F, message=F, echo=F}
 knitr::include_graphics(here::here("images", "network_install.png"))
 ```
 
-**Pandoc 1 error**  
+**Pandoc 1 error**
 
-If you are getting "pandoc error 1" when knitting R Markdowns scripts on network drives:  
+如果您在网络驱动器上编写 R Markdowns 脚本时遇到\"pandoc error 1\"：
 
-* Of multiple library locations, have the one with a lettered drive listed first (see codes above)  
-* The above solution worked when knitting on local drive but while on a networked internet connection  
-* See more tips here: https://ciser.cornell.edu/rmarkdown-knit-to-html-word-pdf/  
+-   在多个库位置中，首先使用带有字母驱动器的位置（参见上面的代码）\
+-   上述解决方案在本地驱动器上编有效但在联网的互联网上使用时无效\
+-   在此处查看更多提示：: <https://ciser.cornell.edu/rmarkdown-knit-to-html-word-pdf/>
 
-**Pandoc Error 83**  
+**Pandoc Error 83**
 
-The error will look something like this: `can't find file...rmarkdown...lua...`. This means that it was unable to find this file.  
+错误将如下所示： `can't find file...rmarkdown...lua...`. 这意味着它无法找到该文件。
 
-See https://stackoverflow.com/questions/58830927/rmarkdown-unable-to-locate-lua-filter-when-knitting-to-word  
+查阅： <https://stackoverflow.com/questions/58830927/rmarkdown-unable-to-locate-lua-filter-when-knitting-to-word>
 
-Possibilities:  
+可能是由于：
 
-1) Rmarkdown package is not installed  
-2) Rmarkdown package is not findable  
-3) An admin rights issue.  
+1)  Rmarkdown package 未安装\
+2)  Rmarkdown package 未被找到\
+3)  管理员权限问题。
 
-It is possible that R is not able to find the **rmarkdown** package file, so check which library the **rmarkdown** package lives (see code above). If the package is installed to a library that in inaccessible (e.g. starts with "\\\") consider manually moving it to C: or other named drive library. Be aware that the **rmarkdown** package has to be able to connect to TinyTex installation, so can not live in a library on a network drive.
+R 可能无法找到 **rmarkdown** package文件，因此请检查 **rmarkdown** package 所在的库（参见上面的代码）。 如果软件包安装到无法访问的库（例如以\"\\\"开头），请考虑手动将其移动到 C: 或其他命名的驱动器中。 请注意，**rmarkdown** package 必须能够连接到 TinyTex 安装，因此不能存在于网络驱动器上的库中。
 
+**Pandoc Error 61**
 
-**Pandoc Error 61**  
+例如： `Error: pandoc document conversion failed with error 61` 或者 `Could not fetch...`
 
-For example: `Error: pandoc document conversion failed with error 61`  or `Could not fetch...`  
+-   尝试以管理员身份运行 RStudio（右键单击图标，选择以管理员身份运行，参见上述说明）\
+-   还要查看是否可以将无法访问的特定 package 移动到 C: 中。
 
-* Try running RStudio as administrator (right click icon, select run as admin, see above instructions)  
-* Also see if the specific package that was unable to be reached can be moved to C: library.
+**LaTex error (见下文)**
 
-**LaTex error (see below)**
+像这样的错误： `! Package pdftex.def Error: File 'cict_qm2_2020-06-29_files/figure-latex/unnamed-chunk-5-1.png' not found: using draft setting.` or `Error: LaTeX failed to compile file_name.tex.`
 
-An error like: `! Package pdftex.def Error: File 'cict_qm2_2020-06-29_files/figure-latex/unnamed-chunk-5-1.png' not found: using draft setting.` or `Error: LaTeX failed to compile file_name.tex.`  
+-   排查技巧请参阅 <https://yihui.org/tinytex/r/#debugging>。\
+-   查看 file_name.log 以获得更多信息。
 
-* See https://yihui.org/tinytex/r/#debugging for debugging tips.  
-* See file_name.log for more info.
+**Pandoc Error 127**
 
-
-**Pandoc Error 127**  
-
-This could be a RAM (space) issue. Re-start your R session and try again. 
-
+这可能是 RAM（空间）问题。 重新启动您的 R 会话并重试。
 
 **Mapping network drives**
 
-Mapping a network drive can be risky. Consult with your IT department before attempting this.  
+映射网络驱动器可能会有风险。 在尝试此操作之前，请咨询您的 IT 部门。
 
-A tip borrowed from this [forum discussion](https://stackoverflow.com/questions/48161177/r-markdown-openbinaryfile-does-not-exist-no-such-file-or-directory/55616529?noredirect=1#comment97966859_55616529): 
+这是[论坛上](https://stackoverflow.com/questions/48161177/r-markdown-openbinaryfile-does-not-exist-no-such-file-or-directory/55616529?noredirect=1#comment97966859_55616529)讨论出的一个建议。
 
-How does one open a file "through a mapped network drive"?  
+如何\"通过映射的网络驱动器\"打开文件？
 
-* First, you'll need to know the network location you're trying to access.  
-* Next, in the Windows file manager, you will need to right click on "This PC" on the right hand pane, and select "Map a network drive".  
-* Go through the dialogue to define the network location from earlier as a lettered drive.  
-* Now you have two ways to get to the file you're opening. Using the drive-letter path should work.  
+-   首先，您需要知道您尝试访问的网络位置。\
+-   接下来，在 Windows 文件管理器中，您需要右键单击右侧窗格中的\"此 PC\"，然后选择\"映射网络驱动器\"。\
+-   通过对话框将之前的网络位置定义为带字母的驱动器。\
+-   现在您有两种方法可以访问您正在打开的文件。 使用驱动器号路径应该可以工作。
 
+**Error in install.packages()**
 
-**Error in install.packages()**  
+如果您得到一个包含提到\"lock\"目录的错误，例如： `Error in install.packages : ERROR: failed to lock directory...`
 
-If you get an error that includes mention of a "lock" directory, for example: `Error in install.packages : ERROR: failed to lock directory...`
+查看您的 package 库，您将看到一个名称以\"00LOCK\"开头的文件夹。 尝试以下选择：
 
-Look in your package library and you will see a folder whose name begins with "00LOCK". Try the following tips:  
+-   从 package 库中手动删除\"00LOCK\"文件夹目录。 尝试再次安装该软件 package。\
 
-* Manually delete the "00LOCK" folder directory from your package library. Try installing the package again.  
-* You can also try the command `pacman::p_unlock()` (you can also put this command in the Rprofile so it runs every time project opens.). Then try installing the package again. It may take several tries.  
-* Try running RStudio in Administrator mode, and try installing the packages one-by-one.  
-* If all else fails, install the package to another library or folder (e.g. Temp) and then manually copy the package's folder over to the desired library.  
+-   您也可以尝试使用 `pacman::p_unlock()` 命令（您也可以将此命令放在 Rprofile 中，以便在每次项目打开时运行）。 然后尝试再次安装该软件 package。 可能需要多次尝试。\
 
+-   尝试在管理员模式下运行 RStudio，并依次安装软件package。
 
-
-
-
-
+-   如果以上努力都失败了，请将package安装到另一个库或文件夹（例如 Temp），然后手动将package的文件夹复制到所需的库。
