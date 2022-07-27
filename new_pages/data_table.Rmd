@@ -1,136 +1,136 @@
+# 数据表
 
-# Data Table { }  
-     
-The handbook focusses on the **dplyr** “verb” functions and the **magrittr** pipe operator `%>%` as a method to clean and group data, but the **data.table** package offers an alternative method that you may encounter in your R career.  
-
-
+本指南侧重于使用 **dplyr** "verb" 函数和 **magrittr** 管道运算符 `%>%` 作为整理和分组数据的方法，但 **data.table** package 可以作为另一种可能被使用的方法。
 
 <!-- ======================================================= -->
-## Intro to data tables {  }
 
-A data table is a 2-dimensional data structure like a data frame that allows complex grouping operations to be performed. The data.table syntax is structured so that operations can be performed on rows, columns and groups. 
+## 数据表简介
 
-The structure is **DT[i, j, by]**, separated by 3 parts; the **i, j** and **by** arguments. The **i** argument allows for subsetting of required rows, the **j** argument allows you to operate on columns and the **by** argument allows you operate on columns by groups.
-  
-This page will address the following topics:  
+数据表是一种二维数据结构，类似于数据框，其允许执行复杂的分组操作。 data.table 语法的结构使得您可以对行、列和组执行操作。
 
-* Importing data and use of `fread()` and `fwrite()`
-* Selecting and filtering rows using the **i** argument
-* Using helper functions `%like%`, `%chin%`, `%between%` 
-* Selecting and computing on columns using the **j** argument
-* Computing by groups using the **by** argument
-* Adding and updating data to data tables using `:=`
+数据表结构表达为 **DT[i, j, by]**,由 i, j 和 by 三个参数组成。 i 参数代表对行的操作， j 参数代表列的操作，而 by 参数允许您按组对列进行操作。
+
+本页将讨论以下主题：
+
+-   导入数据并且使用 `fread()` 和 `fwrite()`
+-   使用 i 参数选择和过滤行
+-   使用辅助函数`%like%`, `%chin%`, `%between%`
+-   使用 j 参数选择和计算列
+-   使用 by 参数按组计算数据
+-   使用`:=` 向数据表添加和更新数据
 
 <!-- ======================================================= -->
-## Load packages and import data { }
 
-### Load packages {.unnumbered}  
+## 加载 packages 和导入数据
 
-Using the `p_load()` function from **pacman**, we load (and install if necessary) packages required for this analysis.
-     
-     
+### 加载 packages {.unnumbered}
+
+使用 **pacman** 中的 `p_load()` 函数，您可以加载（或者安装）此分析所需的 packages。.
+
 ```{r}
 pacman::p_load(
-  rio,        # to import data
-  data.table, # to group and clean data
-  tidyverse,  # allows use of pipe (%>%) function in this chapter
+  rio,        # 载入数据
+  data.table, # 对数据进行分组和整理
+  tidyverse,  # 允许使用管道 (%>%) 函数
   here 
   ) 
 ```
 
+### 导入数据 {.unnumbered}
 
-### Import data {.unnumbered}
+本页将使用整本指南中之前引用的行列表来探索 **data.table** 的一些核心功能。
 
-This page will explore some of the core functions of **data.table** using the case linelist referenced throughout the handbook.
-
-We import the dataset of cases from a simulated Ebola epidemic. If you want to download the data to follow step-by-step, see instructions in the [Download book and data] page. The dataset is imported using the `import()` function from the **rio** package. See the page on [Import and export] for various ways to import data. From here we use `data.table()` to convert the data frame to a data table.
+我们从模拟的埃博拉疫情中导入病例数据集。 如果您想知道如何逐步地下载数据，请参阅 [下载书籍和数据] 页面中的说明。请您使用 **rio** 包中的`import()` 函数导入数据集。有关导入数据的不同方法，请参见 [导入和导出] 页面。 在这里我们使用 `data.table()` 将数据框转换为数据表。
 
 ```{r}
 linelist <- rio::import(here("data", "linelist_cleaned.xlsx")) %>% data.table()
 ```
 
-The `fread()` function is used to directly import regular delimited files, such as .csv files, directly to a data table format. This function, and its counterpart, `fwrite()`, used for writing data.tables as regular delimited files are very fast and computationally efficient options for large databases.
+`fread()` 函数可用于将常规分隔文件（例如 .csv 文件）直接导入数据表格式。 此函数的对应函数 `fwrite()` 用于将 data.tables 写入常规分隔文件。对于大型数据库来说，这两个函数是非常快速且高效的选择。
 
-
-The first 20 rows of `linelist`:  
+`linelist` 的前 20 行：
 
 ```{r message=FALSE, echo=F, eval=FALSE}
 DT::datatable(head(linelist,20), rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
 
-Base R commands such as `dim()` that are used for data frames can also be used for data tables
+用于数据框的基本 R 命令（例如 `dim()`）也可用于数据表。
 
 ```{r}
-dim(linelist) #gives the number of rows and columns in the data table
+dim(linelist) #显示数据表中的行数和列数
 ```
-
 
 <!-- ======================================================= -->
-## The i argument: selecting and filtering rows{ }
-     
-Recalling the **DT[i, j, by]** structure, we can filter rows using either row numbers or logical expressions. The i argument is first; therefore, the syntax **DT[i]** or **DT[i,]** can be used. 
 
-The first example retrieves the first 5 rows of the data table, the second example subsets cases are 18 years or over, and the third example subsets cases 18 years old or over but not diagnosed at the Central Hospital:
+## i 参数：选择和过滤行
 
+回顾 **DT[i, j, by]** 结构，我们可以使用行号或逻辑表达式筛选行。 由于i 参数是第一个参数， 因此我们在表达时可以使用语法 **DT[i]** 或 **DT[i,]**。
+
+第一个示例用于检索数据表的前 5 行，第二个示例选择了为 18 岁或以上的病例作为子集，第三个示例选择了 18 岁或以上但未在中心医院诊断的病例作为子集：
 
 ```{r, eval=F}
-linelist[1:5] #returns the 1st to 5th row
-linelist[age >= 18] #subsets cases are equal to or over 18 years
-linelist[age >= 18 & hospital != "Central Hospital"] #subsets cases equal to or over 18 years old but not diagnosed at the Central Hospital
+linelist[1:5] #返回第 1 到第 5 行
+linelist[age >= 18] #18 岁或以上的病例作为子集
+linelist[age >= 18 & hospital != "Central Hospital"] #18 岁或以上但未在中心医院诊断的病例作为子集
 
 ```
 
-Using .N in the i argument represents the total number of rows in the data table. This can be used to subset on the row numbers: 
+在 i 参数中使用 .N 表示数据表中的总行数。 这帮助您来选择特定子集：
 
 ```{r, eval=F}
-linelist[.N] #returns the last row
-linelist[15:.N] #returns the 15th to the last row
+linelist[.N] #返回最后一行
+linelist[15:.N] #返回第 15 行到最后一行
 ```
 
+### 使用辅助函数进行过滤 {.unnumbered}
 
-### Using helper functions for filtering {.unnumbered}  
+数据表能够使用辅助函数，使过滤行变得更容易。 `%like%` 函数可用于匹配列中的特定模式，`%chin%` 用于匹配特定字符，`%between%` 辅助函数用于匹配预先指定范围内的数字列。
 
-Data table uses helper functions that make subsetting rows easy. The `%like%` function is used to match a pattern in a column, `%chin%` is used to match a specific character, and the `%between%` helper function is used to match numeric columns within a prespecified range.
+在以下示例中，我们：
 
-In the following examples we:
-*  filter rows where the hospital variable contains “Hospital”
-*  filter rows where the outcome is “Recover” or “Death”
-*  filter rows in the age range 40-60
+\* 过滤医院变量包含"医院"的行
+
+\* 过滤结果为"康复"或"死亡"的行
+
+\* 过滤年龄范围 40-60 的行
 
 ```{r, eval=F}
-linelist[hospital %like% "Hospital"] #filter rows where the hospital variable contains “Hospital”
-linelist[outcome %chin% c("Recover", "Death")] #filter rows where the outcome is “Recover” or “Death”
-linelist[age %between% c(40, 60)] #filter rows in the age range 40-60
+linelist[hospital %like% "Hospital"] #过滤hospital变量包含“Hospital”的行
+linelist[outcome %chin% c("Recover", "Death")] #过滤结果为“康复”或“死亡”的行 
+linelist[age %between% c(40, 60)] #过滤年龄范围 40-60 的行 
 
-#%between% must take a vector of length 2, whereas %chin% can take vectors of length >= 1
+#%between% 必须采用长度为 2 的向量, %chin% 可以采用长度 >= 1 的向量
 
 ```
 
-## The j argument: selecting and computing on columns{ }
+## j 参数：选择和计算列
 
-Using the **DT[i, j, by]** structure, we can select columns using numbers or names. The **j** argument is second; therefore, the syntax **DT[, j]** is used. To facilitate computations on the **j** argument, the column is wrapped using either `list()` or `.()`. 
+由于数据表是 **DT[i, j, by]** 结构，我们可以使用数字或名称来选择列。由于j 参数是第二个参数， 因此我们在表达时可以使用语法 **DT[, j]**。为了便于对 j 参数进行计算，列通常使用 `list()` 或`.()`进行包装。
 
+### 选择列 {.unnumbered}
 
-### Selecting columns {.unnumbered} 
+第一个示例用于检索数据表的第一列、第三列和第五列；第二个示例选择除身高、体重和性别列之外的所有列。 第三个示例使用 `.()`来选择 **case_id** 和 **outcome** 列。
 
 The first example retrieves the first, third and fifth columns of the data table, the second example selects all columns except the height, weight and gender columns. The third example uses the `.()` wrap to select the **case_id** and **outcome** columns.
-
 
 ```{r, eval=F}
 linelist[ , c(1,3,5)]
 linelist[ , -c("gender", "age", "wt_kg", "ht_cm")]
-linelist[ , list(case_id, outcome)] #linelist[ , .(case_id, outcome)] works just as well
+linelist[ , list(case_id, outcome)] #linelist[ , .(case_id, outcome)] 也能正常工作
 
 ```
 
-### Computing on columns {.unnumbered} 
+### 计算列 {.unnumbered}
 
-By combining the **i** and **j** arguments it is possible to filter rows and compute on the columns. Using **.N** in the **j** argument also represents the total number of rows in the data table and can be useful to return the number of rows after row filtering.
+通过组合使用 i 和 j 参数，您可以过滤行并计算列。 在 j 参数中使用**.N** 也表示数据表中的总行数，并且常用于过滤行后返回总行数。
 
-In the following examples we:
-* Count the number of cases that stayed over 7 days in hospital
-* Calculate the mean age of the cases that died at the military hospital
-* Calculate the standard deviation, median, mean age of the cases that recovered at the central hospital
+在以下示例中，我们：
+
+\* 统计住院超过 7 天的病例数
+
+\* 计算在军队医院死亡的病例的平均年龄
+
+\* 计算中心医院康复病例的标准差、中位数、平均年龄
 
 ```{r}
 linelist[days_onset_hosp > 7 , .N]
@@ -138,92 +138,79 @@ linelist[hospital %like% "Military" & outcome %chin% "Death", .(mean(age, na.rm 
 linelist[hospital == "Central Hospital" & outcome == "Recover", 
                  .(mean_age = mean(age, na.rm = T),
                    median_age = median(age, na.rm = T),
-                   sd_age = sd(age, na.rm = T))] #this syntax does not use the helper functions but works just as well
+                   sd_age = sd(age, na.rm = T))] #此语法不使用辅助函数，但同样有效
 
 ```
 
-Remember using the .() wrap in the j argument facilitates computation, returns a data table and allows for column naming.
+请记住，在 j 参数中使用 .() 包裹列有助于计算、返回数据表并允许对列命名。
 
-## The by argument: computing by groups{ }
+## by参数:按组计算
 
-The **by** argument is the third argument in the **DT[i, j, by]** structure. The **by** argument accepts both a character vector and the `list()` or `.()` syntax. Using the `.()` syntax in the **by** argument allows column renaming on the fly.
+by 参数是 **DT[i, j, by]** 结构中的第三个参数。 by 参数中可以使用字符向量和`list()` 或 `.()` 语法。 在 by 参数中使用 `.()` 语法允许在运行中重命名列。
 
-In the following examples we:	
-* group the number of cases by hospital
-* in cases 18 years old or over, calculate the mean height and weight of cases according to gender and whether they recovered or died
-* in admissions that lasted over 7 days, count the number of cases according to the month they were admitted and the hospital they were admitted to
+在下面的例子中，我们：\
+\* 将病例数按医院分组
 
+\*对于 18 岁或以上的病例，根据性别以及是否康复或死亡，计算病例的平均身高和体重
 
-````{r}
-linelist[, .N, .(hospital)] #the number of cases by hospital
-linelist[age > 18, .(mean_wt = mean(wt_kg, na.rm = T),
-                             mean_ht = mean(ht_cm, na.rm = T)), .(gender, outcome)] #NAs represent the categories where the data is missing
-linelist[days_onset_hosp > 7, .N, .(month = month(date_hospitalisation), hospital)]
+\* 在持续超过 入院7 天的病例中，根据入院月份和入院医院统计病例
 
+```{r}
+linelist[, .N, .(hospital)] #按医院分组的病例数
+linelist[age > 18, .(mean_wt = mean(wt_kg, na.rm = T), mean_ht = mean(ht_cm, na.rm = T)), .(gender, outcome)] #NAs 代表数据缺失的类别
+linelist[days_onset_hosp > 7, .N, .(month = month(date_hospitalisation), hospital)]`
 ```
 
-Data.table also allows the chaining expressions as follows:
+    Data.table 还允许链接表达式如下：
 
-````{r}
-
-linelist[, .N, .(hospital)][order(-N)][1:3] #1st selects all cases by hospital, 2nd orders the cases in descending order, 3rd subsets the 3 hospitals with the largest caseload
-
-
+```{r}
+linelist[, .N, .(hospital)][order(-N)][1:3] #第一个子集按医院选择所有病例，第二个子集按降序排列病例，第三个子集是病例量最大的 3 家医院
 ```
 
-In these examples we are following the assumption that a row in the data table is equal to a new case, and so we can use the **.N** to represent the number of rows in the data table. Another useful function to represent the number of unique cases is `uniqueN()`, which returns the number of unique values in a given input. This is illustrated here:
+在这些示例中，我们假设数据表中的一行等于一个新案例，因此我们可以使用 **.N** 来表示数据表中的行数。 表示唯一案例数量的另一个有用函数是 `uniqueN()`，它返回输入中唯一案例的数量。 这在此处进行了说明：
 
-````{r}
-
-linelist[, .(uniqueN(gender))] #remember .() in the j argument returns a data table
-
+```{r}
+linelist[, .(uniqueN(gender))] #记住 j 参数中的 .() 返回一个数据表
 ```
 
-The answer is 3, as the unique values in the gender column are m, f and N/A. Compare with the base R function `unique()`, which returns all the unique values in a given input:
+    答案是 3，因为性别列中的唯一值是 m、f 和 N/A。 与基本 R 函数 `unique()` 进行比较，后者返回给定输入中的所有唯一值：
 
-````{r}
-
+```{r}
 linelist[, .(unique(gender))]
 ```
 
-To find the number of unique cases in a given month we would write the following:
+要查找给定月份中唯一案例的数量，我们将编译以下代码：
 
-````{r}
-
-linelist[, .(uniqueN(case_id)), .(month = month(date_hospitalisation))]
-
+```{r}
+linelist[, .(uniqueN(case_id)), .(month = month(date_hospitalisation))]#添加和更新数据表
 ```
 
-## Adding and updating to data tables { }
+    :=`运算符用于在数据表中添加或更新数据。 您可以通过以下方式向数据表中添加列：
 
-The `:=` operator is used to add or update data in a data table. Adding columns to your data table can be done in the following ways:
-
-````{r}
-
-linelist[, adult := age >= 18] #adds one column
-linelist[, c("child", "wt_lbs") := .(age < 18, wt_kg*2.204)] #to add multiple columns requires c("") and list() or .() syntax
+```{r}
+linelist[, adult := age >= 18] #添加一列
+linelist[, c("child", "wt_lbs") := .(age < 18, wt_kg*2.204)] #添加多个列需要 c("") 和 list() 或 .() 语法 
 linelist[, `:=` (bmi_in_range = (bmi > 16 & bmi < 40),
-                         no_infector_source_data = is.na(infector) | is.na(source))] #this method uses := as a functional operator `:=`
-linelist[, adult := NULL] #deletes the column
-
+          no_infector_source_data = is.na(infector) | is.na(source))] #t此方法使用 := 作为函数运算符 `:=`
+linelist[, adult := NULL] #删除某列
 ```
 
+更复杂的复合计算超出了本介绍性章节的范围，但其基本理念是为 **dplyr** 提供一种流行且可行的替代方案，用于分组和整理数据。 总的来说，**data.table** 是一个很棒的package ，它拥有整洁和可读性强的代码。
 
-Further complex aggregations are beyond the scope of this introductory chapter, but the idea is to provide a popular and viable alternative to **dplyr** for grouping and cleaning data. The **data.table** package is a great package that allows for neat and readable code.
+## 资料来源
 
+以下是一些有助于获取更多信息的资源：
 
-## Resources {  }
+\* <https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html>
 
-Here are some useful resources for more information:
-* https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html
-* https://github.com/Rdatatable/data.table
-* https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf
-* https://www.machinelearningplus.com/data-manipulation/datatable-in-r-complete-guide/
-* https://www.datacamp.com/community/tutorials/data-table-r-tutorial
+\* <https://github.com/Rdatatable/data.table>
 
-You can perform any summary function on grouped data; see the Cheat Sheet here for more info:
-https://s3.amazonaws.com/assets.datacamp.com/blog_assets/datatable_Cheat_Sheet_R.pdf
+\* <https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf>
 
+\* <https://www.machinelearningplus.com/data-manipulation/datatable-in-r-complete-guide/>
 
+\* <https://www.datacamp.com/community/tutorials/data-table-r-tutorial>
 
+您可以在分组数据上使用任何汇总函数，请参阅此处的速查表以获取更多信息：
 
+<https://s3.amazonaws.com/assets.datacamp.com/blog_assets/datatable_Cheat_Sheet_R.pdf>
