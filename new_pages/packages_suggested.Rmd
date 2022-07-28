@@ -1,166 +1,163 @@
-# Suggested packages
+# 推荐的 packages
 
-Below is a long list of suggested packages for common epidemiological work in R. You can copy this code, run it, and all of these packages will install from CRAN and load for use in the current R session. If a package is already installed, it will be loaded for use only.  
+下面是一些流行病学工作者在使用 R 语言时常用的 packages。您可以直接复制代码，并且运行它。所有这些 packages 将从CRAN安装并加载，之后这些 packages 可以在当前 R 会话中使用。如果一个 package 已经被安装了，它将只被用于使用。
 
-You can modify the code with `#` symbols to exclude any packages you do not want.  
+您可以使用 `#` 符号添加到代码前以排除任何您不想要安装的 packages。
 
-Of note:  
+注意：
 
-* Install the **pacman** package first before running the below code. You can do this with `install.packages("pacman")`. In this handbook we emphasize `p_load()` from **pacman**, which installs the package if necessary *and* loads it for use in the current R session. You can also load packages that are already installed with `library()` from **base** R.  
-* In the code below, packages that are included when installing/loading another package are indicated by an indent and hash. For example how **ggplot2** is listed under **tidyverse**.  
-* If multiple packages have functions with the same name, *masking* can occur when the function from the more recently-loaded package takes precedent. Read more in the [R basics] page. Consider using the package **conflicted** to manage such conflicts.  
-* See the [R basics] section on packages for more information on **pacman** and masking.  
+-   在运行下面的代码之前，您需要先安装 **pacman** package。您可以用`install.packages("pacman")` 来安装。在本指南中，我们着重于使用 **pacman** 的`p_load()`函数，它可以在需要时安装package，并在当前的 R 会话中加载 package。您还可以加载已经使用`library()`（**base** R）安装的包。\
+-   在下面的代码中，有些 package 包含的 package由缩进和 `#` 表示。 例如，在 **tidyverse**下列出的 **ggplot2** 。\
+-   如果多个 packages 具有名称相同的函数，则会发生函数屏蔽现象且最新加载的 package 中的函数优先。 您可以在 [R 基础] 页面中阅读更多相关内容。Package **conflicted** 可用来管理此类冲突。\
+-   有关 **pacman** 和掩码的更多信息，请参阅 [R 基础] 页面的 packages 部分。
 
-To see the versions of R, RStudio, and R packages used during the production of this handbook, see the page on [Editorial and technical notes].  
+要查看本指南创作过程中所使用的 R、RStudio 和 R package 的版本，请参阅 [编辑和技术说明] 页面。
 
-## Packages from CRAN  
+## 来自 CRAN 的 Packages
 
 ```{r, eval=F}
 
 ##########################################
-# List of useful epidemiology R packages #
+# 常用的流行病学 R packages 列表 #
 ##########################################
 
-# This script uses the p_load() function from pacman R package, 
-# which installs if package is absent, and loads for use if already installed
+# 该脚本使用 pacman 中的 p_load() 函数，
+# 该函数会检查package状态，如果 package 不存在则安装，如果已经安装则加载使用
 
 
-# Ensures the package "pacman" is installed
+# 确保"pacman"已经被安装
 if (!require("pacman")) install.packages("pacman")
 
 
-# Packages available from CRAN
+# CRAN 提供的Packages
 ##############################
 pacman::p_load(
      
-     # learning R
+     # 学习 R
      ############
-     learnr,   # interactive tutorials in RStudio Tutorial pane
-     swirl,    # interactive tutorials in R console
+     learnr,   # RStudio 教程窗格中的交互式教程
+     swirl,    # R 控制台的交互式教程
         
-     # project and file management
+     # 项目和文件管理
      #############################
-     here,     # file paths relative to R project root folder
-     rio,      # import/export of many types of data
-     openxlsx, # import/export of multi-sheet Excel workbooks 
+     here,     # 相对于 R 项目的根文件夹的文件路径
+     rio,      # 多种类型数据的导入/导出
+     openxlsx, # Excel 工作簿的导入/导出
      
-     # package install and management
+     # package 的安装和管理
      ################################
-     pacman,   # package install/load
-     renv,     # managing versions of packages when working in collaborative groups
-     remotes,  # install from github
+     pacman,   # package 安装/加载
+     renv,     # 在多人协作工作时管理package的版本
+     remotes,  # 从 github 安装
      
-     # General data management
+     # 通用数据管理
      #########################
-     tidyverse,    # includes many packages for tidy data wrangling and presentation
-          #dplyr,      # data management
-          #tidyr,      # data management
-          #ggplot2,    # data visualization
-          #stringr,    # work with strings and characters
-          #forcats,    # work with factors 
-          #lubridate,  # work with dates
-          #purrr       # iteration and working with lists
-     linelist,     # cleaning linelists
-     naniar,       # assessing missing data
+     tidyverse,    # 包括许多用于整理数据和演示的packages
+          #dplyr,      # 数据管理
+          #tidyr,      # 数据管理
+          #ggplot2,    # 数据可视化
+          #stringr,    # 使用字符和字符串
+          #forcats,    # 使用因子
+          #lubridate,  # 使用日期
+          #purrr       # 迭代和使用列表
+     linelist,     # 整理线表
+     naniar,       # 评估缺失的数据
      
-     # statistics  
+     # 统计
      ############
-     janitor,      # tables and data cleaning
-     gtsummary,    # making descriptive and statistical tables
-     rstatix,      # quickly run statistical tests and summaries
-     broom,        # tidy up results from regressions
-     lmtest,       # likelihood-ratio tests
+     janitor,      # 表格和数据整理
+     gtsummary,    # 制作描述性统计表
+     rstatix,      # 快速运行统计性测试和总结结果
+     broom,        # 整理回归的结果
+     lmtest,       # 似然比检验
      easystats,
-          # parameters, # alternative to tidy up results from regressions
-          # see,        # alternative to visualise forest plots 
+          # parameters, # 整理回归结果的替代方法
+          # see,        # 可视化森林图的替代方法
      
-     # epidemic modeling
+     # 流行病学模型
      ###################
-     epicontacts,  # Analysing transmission networks
-     EpiNow2,      # Rt estimation
-     EpiEstim,     # Rt estimation
-     projections,  # Incidence projections
-     incidence2,   # Make epicurves and handle incidence data
-     i2extras,     # Extra functions for the incidence2 package
-     epitrix,      # Useful epi functions
-     distcrete,    # Discrete delay distributions
+     epicontacts,  # 分析传播网络
+     EpiNow2,      # 实时估算
+     EpiEstim,     # 实时估算
+     projections,  # 发病预测
+     incidence2,   # 制作流行曲线并处理发病数据
+     i2extras,     # incidence2 package 的额外函数
+     epitrix,      # 有用的流行病学函数
+     distcrete,    # 离散的延迟分布
      
      
-     # plots - general
+     # 绘图 - 普通
      #################
-     #ggplot2,         # included in tidyverse
-     cowplot,          # combining plots  
-     # patchwork,      # combining plots (alternative)     
-     RColorBrewer,     # color scales
-     ggnewscale,       # to add additional layers of color schemes
+     #ggplot2,         # 包含在 tidyverse 中
+     cowplot,          # 组合绘图 
+     # patchwork,      # 组合绘图 (替代方案)     
+     RColorBrewer,     # 色度标
+     ggnewscale,       # 添加额外的配色层
 
      
-     # plots - specific types
+     # 绘图 - 特定类型
      ########################
-     DiagrammeR,       # diagrams using DOT language
-     incidence2,       # epidemic curves
-     gghighlight,      # highlight a subset
-     ggrepel,          # smart labels
-     plotly,           # interactive graphics
-     gganimate,        # animated graphics 
+     DiagrammeR,       # 使用 DOT 语言的图表
+     incidence2,       # 流行曲线
+     gghighlight,      # 突出一个子集
+     ggrepel,          # 智能标签
+     plotly,           # 交互式图形
+     gganimate,        # 动态图形
 
      
-     # gis
+     # 地理信息系统
      ######
-     sf,               # to manage spatial data using a Simple Feature format
-     tmap,             # to produce simple maps, works for both interactive and static maps
-     OpenStreetMap,    # to add OSM basemap in ggplot map
-     spdep,            # spatial statistics 
+     sf,               # 使用Simple Feature格式来管理空间数据
+     tmap,             # 制作简单的地图，适用于交互式和静态地图
+     OpenStreetMap,    # 在 ggplot 地图中添加 OSM 底图
+     spdep,            # 空间统计
      
-     # routine reports
+     # 例行报告
      #################
-     rmarkdown,        # produce PDFs, Word Documents, Powerpoints, and HTML files
-     reportfactory,    # auto-organization of R Markdown outputs
+     rmarkdown,        # 生成 PDF、Word 文档、PowerPoint 和 HTML 文件
+     reportfactory,    # 自动生成 R Markdown 输出
      officer,          # powerpoints
      
-     # dashboards
+     # 交互面板
      ############
-     flexdashboard,    # convert an R Markdown script into a dashboard
-     shiny,            # interactive web apps
+     flexdashboard,    # 将 R Markdown 脚本转换为交互面板
+     shiny,            # 交互式网络应用程序
      
-     # tables for presentation
+     # 演示用表格
      #########################
-     knitr,            # R Markdown report generation and html tables
-     flextable,        # HTML tables
-     #DT,              # HTML tables (alternative)
-     #gt,              # HTML tables (alternative)
-     #huxtable,        # HTML tables (alternative) 
+     knitr,            # R Markdown 报告生成和 html 表格
+     flextable,        # HTML 表格
+     #DT,              # HTML 表格 (替代方案)
+     #gt,              # HTML 表格 (替代方案)
+     #huxtable,        # HTML 表格 (替代方案) 
      
-     # phylogenetics
+     # phylogenetics 系统发生学
      ###############
-     ggtree,           # visualization and annotation of trees
-     ape,              # analysis of phylogenetics and evolution
-     treeio            # to visualize phylogenetic files
+     ggtree,           # 树的可视化和注释
+     ape,              # 系统发育和进化分析
+     treeio            # 可视化系统发育文件
  
 )
 
 ```
 
-## Packages from Github  
+## 来自 Github 的 Packages
 
+下面是直接从 Github 资源库安装两个 packages 的代码。
 
-Below are commmands to install two packages directly from Github repositories.  
-
-* The development version of **epicontacts** contains the ability to make transmission trees with an temporal x-axis  
-* The **epirhandbook** package contains all the example data for this handbook and can be used to download the offline version of the handbook.  
-
+-   **Epicontacts** 的开发者版本能够制作具有时间 x 轴的传输树\
+-   **Epirhandbook** package 包含本指南的所有示例数据，可用于下载该指南的离线版本。
 
 ```{r, eval=F}
-# Packages to download from Github (not available on CRAN)
+# 从 Github 下载的packages (在CRAN上不可用)
 ##########################################################
 
-# Development version of epicontacts (for transmission chains with a time x-axis)
+# Epicontacts的开发者版本(用于带有时间x轴的传输链)
 pacman::p_install_gh("reconhub/epicontacts@timeline")
 
-# The package for this handbook, which includes all the example data  
+# 本指南的 package，其中包括所有示例数据
 pacman::p_install_gh("appliedepi/epirhandbook")
 
 
 
 ```
-
