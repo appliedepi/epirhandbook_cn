@@ -1,271 +1,236 @@
+<!-- ======================================================= -->
 
 <!-- ======================================================= -->
+
 <!-- ======================================================= -->
-<!-- ======================================================= -->
-# Transition to R { }  
 
-Below, we provide some advice and resources if you are transitioning to R.  
+# 过渡到使用 R
 
-R was introduced in the late 1990s and has since grown dramatically in scope. Its capabilities are so extensive that commercial alternatives have reacted to R developments in order to stay competitive! ([read this article comparing R, SPSS, SAS, STATA, and Python](https://www.inwt-statistics.com/read-blog/comparison-of-r-python-sas-spss-and-stata.html)).  
+如果你正在从别的语言转向R，我们可以为你提供一些建议和资源。
 
-Moreover, R is much easier to learn than it was 10 years ago. Previously, R had a reputation of being difficult for beginners. It is now much easier with friendly user-interfaces like RStudio, intuitive code like the **tidyverse**, and many tutorial resources.  
+R 语言在20世纪90年代末被创建，自那以后，其应用范围急剧扩大。它的功能是如此多样，以至于许多其他替代语言不得不时刻追赶R的发展，以保持竞争力。([此文章比较了 R, SPSS, SAS, STATA 和 Python](https://www.inwt-statistics.com/read-blog/comparison-of-r-python-sas-spss-and-stata.html)).
 
-<span style="color: darkgreen;">**Do not be intimidated - come discover the world of R!**</span>  
+除此之外，许多人发现 R 比 10 年前更容易学习。 最初，R 拥有对初学者很高的门槛。 而现在，有了 RStudio 这样友好的用户界面、**tidyverse** 这样的直观代码函数以及许多教程资源，学习 R 变得十分容易。
 
-  
+**不要被吓倒 - 快来探索 R 的世界吧！**
 
 ```{r, echo=F, out.width = "75%", out.height="75%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "transition_door.png"))
 ```
 
+## 使用过 Excel
 
+从 Excel 直接过渡到 R 是一个非常容易实现的目标。 这可能看起来令人生畏，但你是可以做到的！
 
+诚然，拥有强大的 Excel 技能的人可以单独在 Exce l中完成非常高级的计算与分析 - 使用 VBA 等脚本工具。而且 Excel 在全世界都被使用，是流行病学家的一个基本工具。然而，用 R 来辅助它可以极大地改善和扩展你的工作流程。
 
-## From Excel  
+### 优势 {.unnumbered}
 
-Transitioning from Excel directly to R is a very achievable goal. It may seem daunting, but you can do it!  
+使用 R 将提供巨大的优势：更节省时间、更一致和准确的分析、可重复性、可共享性以及更快的纠错能力。像任何新的软件一样，你必须投入一定的时间来学习和熟悉 R。但是，学习 R 的红利将是巨大的，而且， R 将为你的工作提供的新的可能性。
 
-It is true that someone with strong Excel skills can do very advanced activities in Excel alone - even using scripting tools like VBA. Excel is used across the world and is an essential tool for an epidemiologist. However, complementing it with R can dramatically improve and expand your work flows.  
+Excel是一个著名的软件，对于初学者来说，使用 Excel 可以很容易地通过 "点击 " 的动作来对数据进行简单的分析和可视化。相比之下，初学者可能需要几个星期才能适应 R 的功能和界面。然而，近些年来，R 已经发展到对初学者十分友好。
 
-### Benefits {.unnumbered}  
+许多Excel工作流程依赖于记忆和重复 - 因此，这会产生很多出错的机会。此外，Excel 的数据清理、分析方法和使用的方程式都是隐蔽的。一个新同事可能需要大量的时间来学习 Excel在做什么以及如何排除故障。但是有了 R，所有的操作步骤都明确地写在脚本中，新同事可以很容易地查看、编辑、纠正算法，并应用于其他数据集。
 
-You will find that using R offers immense benefits in time saved, more consistent and accurate analysis, reproducibility, shareability, and faster error-correction. Like any new software there is a learning "curve" of time you must invest to become familiar. The dividends will be significant and immense scope of new possibilities will open to you with R.  
+**要开始从 Excel 到 R 的过渡，你必须在几个重要方面调整你的心态。:**
 
-Excel is a well-known software that can be easy for a beginner to use to produce simple analysis and visualizations with "point-and-click". In comparison, it can take a couple weeks to become comfortable with R functions and interface. However, R has evolved in recent years to become much more friendly to beginners.  
+### 整理数据 {.unnumbered}
 
-Many Excel workflows rely on memory and on repetition - thus, there is much opportunity for error. Furthermore, generally the data cleaning, analysis methodology, and equations used are hidden from view. It can require substantial time for a new colleague to learn what an Excel workbook is doing and how to troubleshoot it. With R, all the steps are explicitly written in the script and can be easily viewed, edited, corrected, and applied to other datasets.   
+使用机器可读的 "整洁的 "数据，而不是混乱的 "仅人类可读的"数据。这是对 "整洁的 "数据的三个主要要求：（在这个关于[ R 的整洁数据](https://r4ds.had.co.nz/tidy-data.html)的教程里解释了这一点）
 
+-   每个变量都必须有自己的列\
+-   每种参数必须有自己的行\
+-   每个值都必须有自己的单元格
 
-**To begin your transition from Excel to R you must adjust your mindset in a few important ways:**  
+对于 Excel 用户来说 - 可以参考 Excel " Table "在标准化数据和使格式更可预测方面的作用。
 
-
-### Tidy data {.unnumbered}  
-
-Use machine-readable "tidy" data instead of messy "human-readable" data. These are the three main requirements for "tidy" data, as explained in this tutorial on ["tidy" data in R](https://r4ds.had.co.nz/tidy-data.html):  
-
-* Each variable must have its own column  
-* Each observation must have its own row  
-* Each value must have its own cell  
-
-To Excel users - think of the role that [Excel "tables"](https://exceljet.net/excel-tables) play in standardizing data and making the format more predictable.  
-
-An example of "tidy" data would be the case linelist used throughout this handbook - each variable is contained within one column, each observation (one case) has it's own row, and every value is in just one cell. Below you can view the first 50 rows of the linelist:  
+一个 "整洁的 "数据的例子是本指南中使用的案例线表 -每个变量都包含在一列中，每种参数（一种病例）都有自己的行，每个值都在一个单元格中。你可以在下面看到线表的前50行。
 
 ```{r, echo=F}
-# import the linelist into R
+# 将线表导入 R
 linelist <- rio::import(here::here("data", "case_linelists", "linelist_cleaned.rds"))
 ```
 
 ```{r, message=FALSE, echo=F}
-# display the linelist data as a table
+# 将线表数据显示为表格
 DT::datatable(head(linelist, 50), rownames = FALSE, filter="top", options = list(pageLength = 5, scrollX=T), class = 'white-space: nowrap' )
 ```
 
-*The main reason one encounters non-tidy data is because many Excel spreadsheets are designed to prioritize easy reading by humans, not easy reading by machines/software.*  
+*人们遇到不整洁的数据的主要原因是，许多 Excel 电子表格在设计时优先考虑的是使人类更容易阅读数据，而不是机器/软件容易阅读数据。*
 
-To help you see the difference, below are some fictional examples of **non-tidy data** that prioritize *human*-readability over *machine*-readability:  
+为了帮助你看到其中的区别，下面是一些虚构的非整洁数据的例子，它们把人的可读性放在机器可读性之上：
 
 ```{r, echo=F, out.width = "100%", out.height="75%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "Excel_nonTidy_1.png"))
 ```
 
-
-*Problems:* In the spreadsheet above, there are *merged cells* which are not easily digested by R. Which row should be considered the "header" is not clear. A color-based dictionary is to the right side and cell values are represented by colors - which is also not easily interpreted by R (nor by humans with color-blindness!). Furthermore, different pieces of information are combined into one cell (multiple partner organizations working in one area, or the status "TBC" in the same cell as "Partner D").  
-
+问题：在上面的电子表格中，有一些合并的单元格不容易被 R 识别。不清楚哪一行应该被认为是 "标题"。右边是一个基于颜色的字典，单元格的值用颜色表示 - 这也不容易被 R 理解（也不容易被有色盲的人理解！）。此外，不同的信息被合并到一个单元格中（在一个地区工作的多个组织在一个单元格中。还有， "TBC "状态与 "Partner D "在同一个单元格中）。
 
 ```{r, echo=F, out.width = "100%", out.height="100%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "Excel_nonTidy_2.png"))
 ```
 
+问题：在上面的电子表格中，数据集中有许多额外的空行和空列 - 这在R中会引起整理问题。此外，对于一个特定的治疗中心，GPS 坐标被分布在两行中。顺便提一下，GPS 坐标有两种不同的格式。
 
-*Problems:* In the spreadsheet above, there are numerous extra empty rows and columns within the dataset - this will cause cleaning headaches in R. Furthermore, the GPS coordinates are spread across two rows for a given treatment center. As a side note - the GPS coordinates are in two different formats!  
+"整洁的"数据集对人的眼睛来说可能不那么友好，但它们使数据的清理和分析变得更加容易。 整洁的数据可以以各种格式存储，例如 "长 "或 "宽""（见[数据透视]页面），但仍然要遵守上述原则。
 
-"Tidy" datasets may not be as readable to a human eye, but they make data cleaning and analysis much easier! Tidy data can be stored in various formats, for example "long" or "wide""(see page on [Pivoting data]), but the principles above are still observed.
+### 函数 {.unnumbered}
 
+R语言种的 "函数 "可能是个新词，但这个概念在 Excel 中也以公式的形式存在。Excel中的公式也需要精确的语法（例如，分号和括号的位置）。你所需要做的就是学习一些新的函数，以及它们在 R 中如何协同工作。
 
-### Functions {.unnumbered}  
+### 脚本 {.unnumbered}
 
-The R word "function" might be new, but the concept exists in Excel too as *formulas*. Formulas in Excel also require precise syntax (e.g. placement of semicolons and parentheses). All you need to do is learn a few new functions and how they work together in R.  
+在 R 种，你将把每一个步骤和程序写进一个 "脚本"，而不是通过点击按钮和拖动单元格的方式操作。Excel用户可能熟悉 "VBA宏"，它也采用了脚本的方式。
 
+R 脚本由步进的语言指令组成。这使得任何同事都可以阅读该脚本，并轻松地看到你所采取的步骤。这也有助于去掉错误或不准确的计算。参见[R 基础]中关于脚本的例子。
 
-
-### Scripts {.unnumbered}  
-
-Instead of clicking buttons and dragging cells you will be writing *every* step and procedure into a "script". 
-Excel users may be familiar with "VBA macros" which also employ a scripting approach.  
-
-*The R script consists of step-by-step instructions.* This allows any colleague to read the script and easily see the steps you took. This also helps de-bug errors or inaccurate calculations. See the [R basics] section on scripts for examples.  
-
-Here is an example of an R script:  
+下面是一个 R 脚本的例子：
 
 ```{r, echo=F, out.width = "75%", out.height="75%", fig.align = "center"}
 knitr::include_graphics(here::here("images", "example_script.png"))
 ```
 
+### Excel-to-R 资源 {.unnumbered}
 
+这里有一些教程的链接，它们可以帮助你从 Excel 过渡到 R：
 
+-   [R vs. Excel](https://www.northeastern.edu/graduate/blog/r-vs-excel/)\
+-   [RStudio course in R for Excel users](https://rstudio-conf-2020.github.io/r-for-excel/)
 
+### R-Excel 的交互 {.unnumbered}
 
+R有强大的能力来导入 Excel 工作簿，处理数据，导出/保存到 Excel 文件，以及处理 Excel 表格的细微改变。
 
+诚然，一些比较美观的 Excel 格式在转译中可能会丢失（例如斜体、侧向文字等）。如果你的工作流程需要在 R 和 Excel 之间来回传递数据，同时保留原来的 Excel 格式，可以试试 **openxlsx** 等 packages。
 
-### Excel-to-R resources {.unnumbered}
+## 使用过 Stata
 
-Here are some links to tutorials to help you transition to R from Excel:  
-
-* [R vs. Excel](https://www.northeastern.edu/graduate/blog/r-vs-excel/)  
-* [RStudio course in R for Excel users](https://rstudio-conf-2020.github.io/r-for-excel/)  
-
-
-### R-Excel interaction {.unnumbered}  
-
-R has robust ways to import Excel workbooks, work with the data, export/save Excel files, and work with the nuances of Excel sheets.  
-
-It is true that some of the more aesthetic Excel formatting can get lost in translation (e.g. italics, sideways text, etc.). If your work flow requires passing documents back-and-forth between R and Excel while retaining the original Excel formatting, try packages such as **openxlsx**.  
-
-
-
-
-
-
-
-## From Stata  
 <!-- ======================================================= -->
 
-**Coming to R from Stata**  
+**从 Stata 到 R**
 
-Many epidemiologists are first taught how to use Stata, and it can seem daunting to move into R. However, if you are a comfortable Stata user then the jump into R is certainly more manageable than you might think. While there are some key differences between Stata and R in how data can be created and modified, as well as how analysis functions are implemented – after learning these key differences you will be able to translate your skills.
+许多流行病学家最初被教导如何使用 Stata，他们有可能 觉得从新学习 R 会有点困难。然而，如果你是一个熟练的 Stata 用户，那么跳到 R 肯定比你想象的更容易。虽然在如何创建和修改数据以及如何分析方面，Stata 和 R之间有一些重要的区别 - 在学习了这些重要的区别之后，你将能够快速上手 R。
 
-Below are some key translations between Stata and R, which may be handy as your review this guide.
+下面是 Stata 和 R 之间的一些关键的区别。
 
+**一般的注意事项**
 
-**General notes**
+| **STATA**                                                                                                      | **R**                                                                                                                                                             |
+|-------------------------------|-----------------------------------------|
+| 您一次只能查看和操作一个数据集                                                                                 | 你可以同时查看和操作多个数据集，因此你将经常需要在代码中指定你的数据集                                                                                            |
+| 在线社区：<https://www.statalist.org/>                                                                         | 在线社区： [RStudio](https://community.rstudio.com/), [StackOverFlow](https://stackoverflow.com/questions/tagged/r), 和 [R-bloggers](https://www.r-bloggers.com/) |
+| 点击和选择功能是重要的                                                                                         | 最低限度的使用点击和选择                                                                                                                                          |
+| 获得帮助 `help [command]`                                                                                      | 获得帮助 `[function]?` 或在 "帮助 "窗格中搜索                                                                                                                     |
+| 注释代码使用 \* 或 /// 或 /\* TEXT \*/                                                                         | 注释代码使用 \#                                                                                                                                                   |
+| 几乎所有的命令都是 Stata 内置的。新的/用户编写的函数可以用 **ssc install** [package] 作为 **ado** 文件来安装。 | R 的 安装包带有基础函数，但其他高阶的函数需要从 CRAN上安装其他 packages （见[ R 基础]页面）                                                                       |
+| 分析通常写在一个 **do** 文件中                                                                                 | 在 RStudio 源窗格中以 R 脚本编写分析。R markdown 脚本是另一种选择                                                                                                 |
 
-**STATA**                    | **R**  
----------------------------- | ---------------------------------------------    
-You can only view and manipulate one dataset at a time | You can view and manipulate multiple datasets at the same time, therefore you will frequently have to specify your dataset within the code
-Online community available through [https://www.statalist.org/](https://www.statalist.org/) | Online community available through [RStudio](https://community.rstudio.com/), [StackOverFlow](https://stackoverflow.com/questions/tagged/r), and [R-bloggers](https://www.r-bloggers.com/)
-Point and click functionality as an option | Minimal point and click functionality
-Help for commands available by `help [command]` | Help available by `[function]?` or search in the Help pane
-Comment code using * or /// or  /* TEXT */ | Comment code using #
-Almost all commands are built-in to Stata. New/user-written functions can be installed as **ado** files using **ssc install** [package] | R installs with **base** functions, but typical use involves installing other packages from CRAN (see page on [R basics])
-Analysis is usually written in a **do** file | Analysis written in an R script in the RStudio source pane. R markdown scripts are an alternative.
+**工作目录**
 
+| **STATA**                                                         | **R**                                                                                              |
+|-----------------------------|-------------------------------------------|
+| 工作目录是绝对文件路径（如"C:/usename/documents/projects/data/"） | 工作目录可以是绝对的，也可以是通过使用 **here** package 变成相对于项目根文件夹的（见[导入和导出]） |
+| 用 **pwd** 查看当前工作目录                                       | 使用 `getwd()` 或 `here()`（如果使用 **here** package），括号内为空                                |
+| 用 **cd** "文件夹位置 "设置工作目录                               | 使用 `setwd(“文件夹位置”)`, 或 `set_here("文件夹位置")` （如果使用 **here** package）              |
 
-**Working directory**  
+**导入和查看数据**
 
-**STATA**                        | **R**  
--------------------------------- | ---------------------------------------------
-Working directories involve absolute filepaths (e.g. "C:/usename/documents/projects/data/")| Working directories can be either absolute, or relative to a project root folder by using the **here** package (see [Import and export]) 
-See current working directory with **pwd** | Use `getwd()` or `here()` (if using the **here** package), with empty parentheses 
-Set working directory with **cd** “folder location” | Use `setwd(“folder location”)`, or `set_here("folder location)` (if using **here** package)
+| **STATA**                                                               | **R**                                                                                                                                                    |
+|--------------------------|----------------------------------------------|
+| 每个文件类型有特定的命令                                                | 使用 **rio** package 的`import()`可以导入几乎所有的文件类型。一些特定的函数可以作为替代品（见[导入和导出]）                                              |
+| 读取 csv 文件的方法是 **import delimited** "文件名.csv"                 | 使用`import("文件名.csv")`                                                                                                                               |
+| 读取 xslx 文件的方法是 **import excel** "文件名.xlsx"                   | 使用 `import("文件名.xlsx")`                                                                                                                             |
+| 使用 **browse** 命令在新窗口中浏览你的数据                              | 使用 `View(dataset)` 在 RStudio 源窗格中查看一个数据集。因为R 可以同时持有多个数据集，你需要向 R 的函数指定你的数据集名称。注意这个函数中字母 "V" 是大写 |
+| 使用 **summarize** 获得你的数据集的高级概述，它提供了变量名称和基本信息 | 使用以下命令获得你的数据集的高级概述 `summary(dataset)`                                                                                                  |
 
-**Importing and viewing data**  
+**基本的数据操作**
 
-**STATA**                    | **R**  
--------------------------------- | ---------------------------------------------
-Specific commands per file type | Use `import()` from **rio** package for almost all filetypes. Specific functions exist as alternatives (see [Import and export])
-Reading in csv files is done by **import delimited** “filename.csv” | Use `import("filename.csv")`
-Reading in xslx files is done by **import excel** “filename.xlsx” | Use `import("filename.xlsx")`
-Browse your data in a new window using the command **browse** | View a dataset in the RStudio source pane using `View(dataset)`. *You need to specify your dataset name to the function in R because multiple datasets can be held at the same time. Note capital "V" in this function*
-Get a high-level overview of your dataset using **summarize**, which provides the variable names and basic information | Get a high-level overview of your dataset using `summary(dataset)`
+| **STATA**                                            | **R**                                                                                                              |
+|-------------------------|-----------------------------------------------|
+| 数据集列通常被称为 "变量"                            | 更多时候被称为 "列"，有时也被称为 "向量 "或 "变量"                                                                 |
+| 不需要指定数据集                                     | 在以下每个命令中，你需要指定数据集 - 见[整理数据和核心函数]页面的例子                                              |
+| 新的变量是用 **generate** *varname* = 命令创建的     | 使用函数 `mutate(varname = )` 生成新的变量。关于以下所有 **dplyr** 函数的详细信息，请参见[整理数据和核心函数]页面  |
+| 使用 **rename** *old_name new_name* 对变量进行重命名 | 列可以使用函数 `rename(new_name = old_name)` 重命名                                                                |
+| 使用 **drop** *varname* 删除变量                     | 可以使用函数 `select()` 删除列，括号中填写在减号后的列名                                                           |
+| 因子变量可以用一系列命令来标记，如 **label define**  | 标记数值可以通过将列转换为因子类并指定级别来完成。参见关于[因子]的页面。列名通常不会像 Stata 中那样进行标注        |
 
-**Basic data manipulation**  
+**描述性分析**
 
-**STATA**                    | **R**  
--------------------------------- | ---------------------------------------------
-Dataset columns are often referred to as "variables" | More often referred to as "columns" or sometimes as "vectors" or "variables"
-No need to specify the dataset | In each of the below commands, you need to specify the dataset - see the page on [Cleaning data and core functions] for examples
-New variables are created using the command **generate** *varname* =  | Generate new variables using the function `mutate(varname = )`. See page on [Cleaning data and core functions] for details on all the below **dplyr** functions.
-Variables are renamed using **rename** *old_name new_name* | Columns can be renamed using the function `rename(new_name = old_name)`
-Variables are dropped using **drop** *varname* | Columns can be removed using the function `select()` with the column name in the parentheses following a minus sign
-Factor variables can be labeled using a series of commands such as **label define** | Labeling values can done by converting the column to Factor class and specifying levels. See page on [Factors]. Column names are not typically labeled as they are in Stata.
+| **STATA**                                                                  | **R**                                                                                                                                     |
+|-------------------------|-----------------------------------------------|
+| 使用 **tab** *varname* 对某一变量的计数进行列表分析                        | `table()` 可以提供数据集和列名，如 `table(dataset$colname)`。或者使用 **dplyr** package 中的 `count(varname)`，[数据分组]中有详细的解释。 |
+| 在一个2x2的表格中，两个变量的交叉表是用 **tab** *varname1 varname2* 完成的 | 使用 `table(dataset$varname1, dataset$varname2` 或 `count(varname1, varname2)`                                                            |
 
-**Descriptive analysis**  
+虽然以上的列表概述了将 Stata 命令与 R 命令之间的基本差异，但它并不详尽。对于正在向 R 语言过渡的Stata 用户来说，以下还有许多其他优秀的资源：
 
-**STATA**                    | **R**  
--------------------------------- | ---------------------------------------------
-Tabulate counts of a variable using **tab** *varname* | Provide the dataset and column name to `table()` such as `table(dataset$colname)`. Alternatively, use `count(varname)` from the **dplyr** package, as explained in [Grouping data]
-Cross-tabulaton of two variables in a 2x2 table is done with **tab** *varname1 varname2* | Use `table(dataset$varname1, dataset$varname2` or `count(varname1, varname2)`
+-   <https://dss.princeton.edu/training/RStata.pdf>\
+-   <https://clanfear.github.io/Stata_R_Equivalency/docs/r_stata_commands.html>\
+-   <http://r4stats.com/books/r4stata/>
 
+## 使用过 SAS
 
-While this list gives an overview of the basics in translating Stata commands into R, it is not exhaustive. There are many other great resources for Stata users transitioning to R that could be of interest:  
-
-* https://dss.princeton.edu/training/RStata.pdf  
-* https://clanfear.github.io/Stata_R_Equivalency/docs/r_stata_commands.html  
-* http://r4stats.com/books/r4stata/  
-
-
-
-
-## From SAS  
 <!-- ======================================================= -->
 
-**Coming from SAS to R**  
+**从 SAS 到 R**
 
-SAS is commonly used at public health agencies and academic research fields. Although transitioning to a new language is rarely a simple process, understanding key differences between SAS and R may help you start to navigate the new language using your native language. 
-Below outlines the key translations in data management and descriptive analysis between SAS and R.   
+SAS通常在公共卫生机构和学术研究领域使用。虽然过渡到一种新的语言是一个简单的过程，但了解 SAS 和 R 之间的关键差异可能有助于你开始使用新的语言。下面概述了SAS和R之间在数据管理和描述性分析方面的关键差异。
 
-**General notes**  
+**一般的注意事项**
 
-**SAS**                          | **R**  
--------------------------------- | ---------------------------------------------
-Online community available through [SAS Customer Support](https://support.sas.com/en/support-home.html)|Online community available through RStudio, StackOverFlow, and R-bloggers
-Help for commands available by `help [command]`|Help available by [function]? or search in the Help pane
-Comment code using `* TEXT ;` or `/* TEXT */`|Comment code using #
-Almost all commands are built-in.  Users can write new functions using SAS macro, SAS/IML, SAS Component Language (SCL), and most recently, procedures `Proc Fcmp` and `Proc Proto`|R installs with **base** functions, but typical use involves installing other packages from CRAN (see page on [R basics])
-Analysis is usually conducted by writing a SAS program in the Editor window.|Analysis written in an R script in the RStudio source pane. R markdown scripts are an alternative.
+| **SAS**                                                                                                                         | **R**                                                                                                                                                             |
+|------------------------------------------|------------------------------|
+| 在线社区： [SAS Customer Support](https://support.sas.com/en/support-home.html)                                                 | 在线社区： [RStudio](https://community.rstudio.com/), [StackOverFlow](https://stackoverflow.com/questions/tagged/r), 和 [R-bloggers](https://www.r-bloggers.com/) |
+| 获得帮助 `help [command]`                                                                                                       | 获得帮助 `[function]?` 或在 "帮助 "窗格中搜索                                                                                                                     |
+| 注释代码使用 `* TEXT ;` 或 `/* TEXT */`                                                                                         | 注释代码使用 \#                                                                                                                                                   |
+| 几乎所有的命令都是内置的。用户可以使用 SAS宏、SAS/IML、SAS组件语言（SCL）以及最近的 `Proc Fcmp` 和 `roc Proto` 程序编写新的函数 | R 的 安装包带有基础函数，但其他高阶的函数需要从 CRAN上安装其他 packages （见[ R 基础]页面）                                                                       |
+| 分析通常是通过在编辑器窗口中写一个SAS程序来进行的                                                                               | 在 RStudio 源窗格中以 R 脚本编写分析。R markdown 脚本是另一种选择                                                                                                 |
 
-**Working directory**  
+**工作目录**
 
-**SAS**                          | **R**  
--------------------------------- | ---------------------------------------------
-Working directories can be either absolute, or relative to a project root folder by defining the root folder using `%let rootdir=/root path; %include “&rootdir/subfoldername/filename”`|Working directories can be either absolute, or relative to a project root folder by using the **here** package (see [Import and export])
-See current working directory with `%put %sysfunc(getoption(work));`|Use `getwd()` or `here()` (if using the **here** package), with empty parentheses
-Set working directory with `libname “folder location”`|Use `setwd(“folder location”)`, or `set_here("folder location)` if using **here** package
+| **SAS**                                                                                                                                       | **R**                                                                                              |
+|-----------------------------------------|-------------------------------|
+| 工作目录可以是绝对的，也可以是相对于项目根目录的，方法是使用 `%let rootdir=/root path; %include “&rootdir/subfoldername/filename”` 定义根目录 | 工作目录可以是绝对的，也可以是通过使用 **here** package 变成相对于项目根文件夹的（见[导入和导出]） |
+| 用 `%put %sysfunc(getoption(work));` 查看当前工作目录                                                                                         | 使用 `getwd()` 或 `here()`（如果使用 **here** package），括号内为空                                |
+| 用 `libname “文件夹位置”` 设置工作目录                                                                                                        | 使用 `setwd(“文件夹位置”)`, 或 `set_here("文件夹位置")` （如果使用 **here** package）              |
 
+**导入和查看数据**
 
-**Importing and viewing data**  
+| **SAS**                                                                                                                                                                                     | **R**                                                                                                                                                    |
+|-----------------------------------|-------------------------------------|
+| 使用程序 `Proc Import` 导入或使用 `Data Step Infile` 语句。                                                                                                                                 | 使用 **rio** package 的`import()`可以导入几乎所有的文件类型。一些特定的函数可以作为替代品（见[导入和导出]）                                              |
+| 读取 csv 文件是通过使用 `Proc Import datafile=”filename.csv” out=work.filename dbms=CSV; run;` 或者使用 [Data Step Infile](http://support.sas.com/techsup/technote/ts673.pdf) 语句完成的    | 使用`import("文件名.csv")`                                                                                                                               |
+| 读取 xlsx 文件是通过使用 `Proc Import datafile=”filename.xlsx” out=work.filename dbms=xlsx; run;` 或者使用 [Data Step Infile](http://support.sas.com/techsup/technote/ts673.pdf) 语句完成的 | 使用 `import("文件名.xlsx")`                                                                                                                             |
+| 通过打开资源管理器窗口在新窗口中浏览你的数据，并选择所需的库和数据集                                                                                                                        | 使用 `View(dataset)` 在 RStudio 源窗格中查看一个数据集。因为R 可以同时持有多个数据集，你需要向 R 的函数指定你的数据集名称。注意这个函数中字母 "V" 是大写 |
 
-**SAS**                          | **R**  
--------------------------------- | ---------------------------------------------
-Use `Proc Import` procedure or using `Data Step Infile` statement.|Use `import()` from **rio** package for almost all filetypes. Specific functions exist as alternatives (see [Import and export])
-Reading in csv files is done by using `Proc Import datafile=”filename.csv” out=work.filename dbms=CSV; run;` OR using [Data Step Infile statement](http://support.sas.com/techsup/technote/ts673.pdf)|Use `import("filename.csv")`
-Reading in xslx files is done by using `Proc Import datafile=”filename.xlsx” out=work.filename dbms=xlsx; run;` OR using [Data Step Infile statement](http://support.sas.com/techsup/technote/ts673.pdf)|Use import("filename.xlsx")
-Browse your data in a new window by opening the Explorer window and select desired library and the dataset|View a dataset in the RStudio source pane using View(dataset). You need to specify your dataset name to the function in R because multiple datasets can be held at the same time. Note capital “V” in this function
+**基本的数据操作**
 
-**Basic data manipulation**  
+| **SAS**                                                                                              | **R**                                                                                                              |
+|---------------------------------------|---------------------------------|
+| 数据集列通常被称为 "变量"                                                                            | 更多时候被称为 "列"，有时也被称为 "向量 "或 "变量"                                                                 |
+| 创建一个变量不需要特殊的程序。创建新的变量只需键入新的变量名称，后面是一个等号，然后是一个表达式的值 | 使用函数 `mutate(varname = )` 生成新的变量。关于以下所有 **dplyr** 函数的详细信息，请参见[整理数据和核心函数]页面  |
+| 变量的重命名使用 `rename *old_name=new_name*`                                                        | 列可以使用函数 `rename(new_name = old_name)` 重命名                                                                |
+| 选择变量可以使用 `**keep**=varname`                                                                  | 可以用函数 `select()` 来选择列，括号内为列名                                                                       |
+| 使用 `**drop**=varname` 删除变量                                                                     | 可以使用函数 `select()` 删除列，括号中填写在减号后的列名                                                           |
+| 因子变量可以在数据步骤中使用 `Label` 语句进行标注                                                    | 标记数值可以通过将列转换为因子类并指定级别来完成。参见关于[因子]的页面。列名通常不会进行标注                       |
+| 在数据步骤中使用 `Where` 或 `If` 语句记录选择。多个选择条件可以用 "和 "命令分开。                    | 使用函数 `filter()` 记录选择，多个选择条件用 AND 运算符（&）或逗号隔开                                             |
+| 数据集是通过数据步骤中的 `Merge` 语句进行合并的。要合并的数据集需要首先使用 `Proc Sort` 程序进行排序 | **dplyr** package 提供了一些用于合并数据集的功能。详见[连接数据]页                                                 |
 
-**SAS**                          | **R**  
--------------------------------- | ---------------------------------------------
-Dataset columns are often referred to as “variables”|More often referred to as “columns” or sometimes as “vectors” or “variables”
-No special procedures are needed to create a variable. New variables are created simply by typing the new variable name, followed by an equal sign, and then an expression for the value|Generate new variables using the function `mutate()`. See page on [Cleaning data and core functions] for details on all the below **dplyr** functions.
-Variables are renamed using `rename *old_name=new_name*`|Columns can be renamed using the function `rename(new_name = old_name)`
-Variables are kept using `**keep**=varname`|Columns can be selected using the function `select()` with the column name in the parentheses
-Variables are dropped using `**drop**=varname`|Columns can be removed using the function `select()` with the column name in the parentheses following a minus sign
-Factor variables can be labeled in the Data Step using `Label` statement|Labeling values can done by converting the column to Factor class and specifying levels. See page on [Factors]. Column names are not typically labeled.
-Records are selected using `Where` or `If` statement in the Data Step. Multiple selection conditions are separated using “and” command.|Records are selected using the function `filter()` with multiple selection conditions separated either by an AND operator (&) or a comma  
-Datasets are combined using `Merge` statement in the Data Step. The datasets to be merged need to be sorted first using `Proc Sort` procedure.|**dplyr** package offers a few functions for merging datasets. See page [Joining Data] for details.
+**描述性分析**
 
-**Descriptive analysis**  
+| **SAS**                                                                                      | **R**                                                                                                                                                         |
+|----------------------------|--------------------------------------------|
+| 使用 `Proc Summary` 程序获得数据集的高级概述，该程序提供了变量名称和描述性统计信息           | 使用 **skimr** package 中的 `summary(dataset)` 或 `skim(dataset)` 获得数据集的高级概述                                                                        |
+| 使用 `proc freq data=Dataset; Tables varname; Run;` 对某一变量的计数进行列表分析             | 参见[描述性表格]的页面。可使用的 package 包括 **base** R 的 `table()` 和 **janitor** package 的 `tabyl()` 等。注意你需要指定数据集和列名，因为R持有多个数据集 |
+| 用 `proc freq data=Dataset; Tables rowvar*colvar; Run;` 来完成 2x2 表格中两个变量的交叉分析  | 你可以使用 `table()`、`tabyl()`或其他函数，如[描述性表格]页面中所述                                                                                           |
 
-**SAS**                          | **R**  
--------------------------------- | ---------------------------------------------
-Get a high-level overview of your dataset using `Proc Summary` procedure, which provides the variable names and descriptive statistics|Get a high-level overview of your dataset using `summary(dataset)` or `skim(dataset)` from the **skimr** package
-Tabulate counts of a variable using `proc freq data=Dataset; Tables varname; Run;`|See the page on [Descriptive tables]. Options include `table()` from **base** R, and `tabyl()` from **janitor** package, among others. Note you will need to specify the dataset and column name as R holds multiple datasets.
-Cross-tabulation of two variables in a 2x2 table is done with `proc freq data=Dataset; Tables rowvar*colvar; Run;`|Again, you can use `table()`, `tabyl()` or other options as described in the [Descriptive tables] page.  
-
-**Some useful resources:**  
+**一些有用的资源:**
 
 [R for SAS and SPSS Users (2011)](https://www.amazon.com/SAS-SPSS-Users-Statistics-Computing/dp/1461406846/ref=sr_1_1?dchild=1&gclid=EAIaIQobChMIoqLOvf6u7wIVAhLnCh1c9w_DEAMYASAAEgJLIfD_BwE&hvadid=241675955927&hvdev=c&hvlocphy=9032185&hvnetw=g&hvqmt=e&hvrand=16854847287059617468&hvtargid=kwd-44746119007&hydadcr=16374_10302157&keywords=r+for+sas+users&qid=1615698213&sr=8-1)
 
 [SAS and R, Second Edition (2014)](https://www.amazon.com/SAS-Management-Statistical-Analysis-Graphics-dp-1466584491/dp/1466584491/ref=dp_ob_title_bk)
 
+## 数据的互用性
 
-
-## Data interoperability  
 <!-- ======================================================= -->
 
-See the [Import and export] page for details on how the R package **rio** can import and export files such as STATA .dta files, SAS .xpt and.sas7bdat files, SPSS .por and.sav files, and many others.  
-
-
-
+关于 R package **rio** 如何导入和导出 STATA .dta 文件、SAS .xpt 和 .sas7bdat文件、SPSS .por和.sav文件以及其他许多文件的细节，请参见[导入和导出]页面。
